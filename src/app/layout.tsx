@@ -2,8 +2,6 @@ import './globals.css';
 
 import type { Metadata } from 'next';
 
-import LocalizedLink from '@/app/ui/LocalizedLink';
-
 //TODO: for Real Estate SEO, make sure to use rel="alternate" hreflang="..." tags in your metadata so Google knows which page is for which language.
 
 export const metadata: Metadata = {
@@ -18,21 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">
-        <nav>
-          <LocalizedLink href="/">Home</LocalizedLink>
-          <LocalizedLink href="/about">About</LocalizedLink>
-          <LocalizedLink href="/buy">Buy</LocalizedLink>
-          <LocalizedLink href="/rent">Rent</LocalizedLink>
-          <LocalizedLink href="/sell">Sell</LocalizedLink>
-          <LocalizedLink href="/blog">Blog</LocalizedLink>
-          <LocalizedLink href="/contact">Contact</LocalizedLink>
-        </nav>
-        <main className="antialiased">{children}</main>
-        <footer>
-          <p>Copyright 2026 Leonetti&apos;s</p>
-        </footer>
-      </body>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }
