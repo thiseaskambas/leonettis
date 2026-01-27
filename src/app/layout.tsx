@@ -1,7 +1,8 @@
 import './globals.css';
 
 import type { Metadata } from 'next';
-import Link from 'next/link';
+
+import LocalizedLink from '@/app/ui/LocalizedLink';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -17,9 +18,9 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased">
         <nav>
-          <Link href="/">Home</Link>
-          <Link href="/about">About</Link>
-          <Link href="/contact">Contact</Link>
+          <LocalizedLink href="/">Home</LocalizedLink>
+          <LocalizedLink href="/about">About</LocalizedLink>
+          <LocalizedLink href="/contact">Contact</LocalizedLink>
         </nav>
         <main className="antialiased">{children}</main>
         <footer>
