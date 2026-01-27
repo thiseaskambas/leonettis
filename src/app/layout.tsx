@@ -20,6 +20,10 @@ export default function RootLayout({
         <nav>
           <LocalizedLink href="/">Home</LocalizedLink>
           <LocalizedLink href="/about">About</LocalizedLink>
+          <LocalizedLink href="/buy">Buy</LocalizedLink>
+          <LocalizedLink href="/rent">Rent</LocalizedLink>
+          <LocalizedLink href="/sell">Sell</LocalizedLink>
+          <LocalizedLink href="/blog">Blog</LocalizedLink>
           <LocalizedLink href="/contact">Contact</LocalizedLink>
         </nav>
         <main className="antialiased">{children}</main>
