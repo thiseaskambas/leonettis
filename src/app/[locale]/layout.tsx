@@ -9,6 +9,7 @@ import { ThemeProvider } from 'next-themes';
 import { routing } from '@/i18n/routing';
 
 import NavigationLink from '../ui/NavigationLink';
+import ThemeSwitch from '../ui/ThemeSwitcher';
 
 export default async function LocaleLayout({
   children,
@@ -30,10 +31,15 @@ export default async function LocaleLayout({
   const t = await getTranslations('nav');
 
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
       <body className="antialiased">
         <NextIntlClientProvider messages={messages}>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            themes={['light', 'dark']}
+            storageKey="theme">
             <nav>
               <NavigationLink href="/">{t('home')}</NavigationLink>
               <NavigationLink href="/buy">{t('buy')}</NavigationLink>
@@ -42,6 +48,7 @@ export default async function LocaleLayout({
               <NavigationLink href="/blog">{t('blog')}</NavigationLink>
               <NavigationLink href="/about">{t('about')}</NavigationLink>
               <NavigationLink href="/contact">{t('contact')}</NavigationLink>
+              <ThemeSwitch />
             </nav>
             <main>{children}</main>
             <footer>
