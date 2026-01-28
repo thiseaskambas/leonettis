@@ -1,6 +1,7 @@
 import './globals.css';
 
 import type { Metadata } from 'next';
+import { NextIntlClientProvider } from 'next-intl';
 
 //TODO: for Real Estate SEO, make sure to use rel="alternate" hreflang="..." tags in your metadata so Google knows which page is for which language.
 
@@ -16,7 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+      </body>
     </html>
   );
 }

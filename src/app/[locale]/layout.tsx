@@ -1,26 +1,26 @@
-import { getDictionary, Locale } from '../lib/dictionaries';
-import LocalizedLink from '../ui/LocalizedLink';
+import { getTranslations } from 'next-intl/server';
+
+import NavigationLink from '../ui/NavigationLink';
 
 // app/[locale]/layout.tsx
 export default async function LocaleLayout({
   children,
-  params,
 }: {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
-  const { locale } = await params;
-  const dict = await getDictionary(locale as Locale);
+  const t = await getTranslations('nav');
+
   return (
     <>
       <nav>
-        <LocalizedLink href="/">{dict.nav.home}</LocalizedLink>
-        <LocalizedLink href="/about">{dict.nav.about}</LocalizedLink>
-        <LocalizedLink href="/buy">{dict.nav.buy}</LocalizedLink>
-        <LocalizedLink href="/rent">{dict.nav.rent}</LocalizedLink>
-        <LocalizedLink href="/sell">{dict.nav.sell}</LocalizedLink>
-        <LocalizedLink href="/blog">{dict.nav.blog}</LocalizedLink>
-        <LocalizedLink href="/contact">{dict.nav.contact}</LocalizedLink>
+        <NavigationLink href="/">{t('home')}</NavigationLink>
+        <NavigationLink href="/about">{t('about')}</NavigationLink>
+        <NavigationLink href="/buy">{t('buy')}</NavigationLink>
+        <NavigationLink href="/rent">{t('rent')}</NavigationLink>
+        <NavigationLink href="/sell">{t('sell')}</NavigationLink>
+        <NavigationLink href="/blog">{t('blog')}</NavigationLink>
+        <NavigationLink href="/contact">{t('contact')}</NavigationLink>
       </nav>
       <main>{children}</main>
       <footer>
