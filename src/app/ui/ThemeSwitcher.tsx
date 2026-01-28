@@ -5,40 +5,36 @@ import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
 const ThemeSwitch = () => {
-  const { theme, setTheme } = useTheme();
+  const { _theme, setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
-  if (!mounted) return null;
+  if (!mounted) {
+    return <div className="size-10 flex items-center justify-center" />;
+  }
 
-  const darkModeIcons = {
-    on: Moon,
-    off: Sun,
-    selectClass: 'bg-blue-500',
-  };
-
-  const defaultSelected = theme === 'dark' || theme === 'system';
+  const isDark = resolvedTheme === 'dark';
 
   return (
     <div className="flex gap-3">
       <Switch
-        defaultSelected={defaultSelected}
-        value={theme}
+        isSelected={isDark}
+        aria-label="Toggle dark mode"
         onChange={(isSelected) => setTheme(isSelected ? 'dark' : 'light')}
         size="lg">
         {({ isSelected }) => (
           <>
-            <Switch.Control
-              className={isSelected ? darkModeIcons.selectClass : ''}>
+            <Switch.Control className={isSelected ? 'bg-blue-500' : ''}>
               <Switch.Thumb>
                 <Switch.Icon>
                   {isSelected ? (
-                    <darkModeIcons.on className="size-3 text-inherit opacity-100" />
+                    <Moon className="size-3 text-current opacity-100" />
                   ) : (
-                    <darkModeIcons.off className="size-3 text-inherit opacity-70" />
+                    <Sun className="size-3 text-current opacity-70" />
                   )}
                 </Switch.Icon>
               </Switch.Thumb>

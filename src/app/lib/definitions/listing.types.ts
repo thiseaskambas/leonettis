@@ -1,5 +1,3 @@
-// src/app/lib/definitions.ts
-
 export interface Address {
   streetNumber: string;
   streetName: string;
@@ -8,20 +6,20 @@ export interface Address {
   zipCode: string;
   country: string;
 
-  // CRITICAL for maps: Store these directly
   coordinates: {
     lat: number;
     lng: number;
   };
 
-  // Optional: Useful for privacy (e.g. "Near Central Park" instead of exact address)
   displayAddress?: string;
 }
 
 export interface Listing {
+  title: string;
+  slug: string;
+  address: Address;
   listingType: 'buy' | 'rent';
   propertyType: 'house' | 'apartment' | 'villa' | 'land' | 'commercial';
-  title: string;
   id: string;
   price: number;
   bedrooms: number;
@@ -31,7 +29,6 @@ export interface Listing {
   images: string[];
   features: string[];
   amenities: string[];
-  address: Address;
   publishedAt: Date;
   updatedAt: Date;
   isFeatured?: boolean;
