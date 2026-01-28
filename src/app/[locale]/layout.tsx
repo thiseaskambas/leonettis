@@ -4,6 +4,7 @@ import '../globals.css'; // Import global styles here since this will be the roo
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
+import { ThemeProvider } from 'next-themes';
 
 import { routing } from '@/i18n/routing';
 
@@ -32,19 +33,21 @@ export default async function LocaleLayout({
     <html lang={locale}>
       <body className="antialiased">
         <NextIntlClientProvider messages={messages}>
-          <nav>
-            <NavigationLink href="/">{t('home')}</NavigationLink>
-            <NavigationLink href="/about">{t('about')}</NavigationLink>
-            <NavigationLink href="/buy">{t('buy')}</NavigationLink>
-            <NavigationLink href="/rent">{t('rent')}</NavigationLink>
-            <NavigationLink href="/sell">{t('sell')}</NavigationLink>
-            <NavigationLink href="/blog">{t('blog')}</NavigationLink>
-            <NavigationLink href="/contact">{t('contact')}</NavigationLink>
-          </nav>
-          <main>{children}</main>
-          <footer>
-            <p>Copyright 2026 Leonetti&apos;s</p>
-          </footer>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <nav>
+              <NavigationLink href="/">{t('home')}</NavigationLink>
+              <NavigationLink href="/buy">{t('buy')}</NavigationLink>
+              <NavigationLink href="/rent">{t('rent')}</NavigationLink>
+              <NavigationLink href="/sell">{t('sell')}</NavigationLink>
+              <NavigationLink href="/blog">{t('blog')}</NavigationLink>
+              <NavigationLink href="/about">{t('about')}</NavigationLink>
+              <NavigationLink href="/contact">{t('contact')}</NavigationLink>
+            </nav>
+            <main>{children}</main>
+            <footer>
+              <p>Copyright 2026 Leonetti&apos;s</p>
+            </footer>
+          </ThemeProvider>
         </NextIntlClientProvider>
       </body>
     </html>
