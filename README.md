@@ -37,3 +37,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 Styled with :
 https://v3.heroui.com/
+
+Internationalization with :
+https://next-intl.dev
