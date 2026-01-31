@@ -30,7 +30,7 @@ export function LocaleDropDown() {
 
   return (
     <Dropdown>
-      <Button aria-label="Menu" variant="secondary">
+      <Button className="" aria-label="Menu" variant="secondary">
         {selected}
       </Button>
       <Dropdown.Popover>
