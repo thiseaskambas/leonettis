@@ -153,6 +153,7 @@ export interface ArticleApiResponse {
       createdAt?: string;
       updatedAt?: string;
       __v?: number;
+      schemaVersion?: number;
       id?: string;
     };
     images: Record<string, ImageMetadata>;

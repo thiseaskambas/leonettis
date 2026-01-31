@@ -6,6 +6,7 @@ export default function Blog() {
     <main>
       <h1>Blog</h1>
       <ArticleRenderer
+        title={blogpostsData[0].data.article.title}
         content={blogpostsData[0].data.article.content}
         images={blogpostsData[0].data.images}
       />

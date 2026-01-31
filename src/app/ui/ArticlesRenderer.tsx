@@ -332,15 +332,18 @@ export interface ArticleRendererProps {
   content: ContentBlock[];
   images: Record<string, ImageMetadata>;
   className?: string;
+  title: string;
 }
 
 export function ArticleRenderer({
   content,
   images,
   className,
+  title,
 }: ArticleRendererProps) {
   return (
     <article className={className}>
+      <h1>{title}</h1>
       {content.map((block) => (
         <BlockRenderer key={block.id} block={block} images={images} />
       ))}

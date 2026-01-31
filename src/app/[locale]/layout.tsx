@@ -8,8 +8,15 @@ import { ThemeProvider } from 'next-themes';
 
 import { routing } from '@/i18n/routing';
 
+import { LocaleDropDown } from '../ui/LocaleDropDown';
 import NavigationLink from '../ui/NavigationLink';
 import ThemeSwitch from '../ui/ThemeSwitcher';
+
+function isValidLocale(
+  locale: unknown
+): locale is (typeof routing.locales)[number] {
+  return routing.locales.includes(locale as (typeof routing.locales)[number]);
+}
 
 export default async function LocaleLayout({
   children,
@@ -22,7 +29,7 @@ export default async function LocaleLayout({
   const { locale } = await params;
 
   // Ensure that the incoming `locale` is valid
-  if (!routing.locales.includes(locale as (typeof routing.locales)[number])) {
+  if (!isValidLocale(locale)) {
     notFound();
   }
 
@@ -49,6 +56,7 @@ export default async function LocaleLayout({
               <NavigationLink href="/about">{t('about')}</NavigationLink>
               <NavigationLink href="/contact">{t('contact')}</NavigationLink>
               <ThemeSwitch />
+              <LocaleDropDown />
             </nav>
             <main>{children}</main>
             <footer>
