@@ -14,12 +14,97 @@ export interface Address {
   displayAddress?: string;
 }
 
+type ListingCategory =
+  | 'commercial'
+  | 'residential'
+  | 'industrial'
+  | 'agricultural'
+  | 'other';
+
+type PropertyType =
+  | 'house'
+  | 'apartment'
+  | 'villa'
+  | 'land'
+  | 'bungalow'
+  | 'studio'
+  | 'penthouse'
+  | 'chalet'
+  | 'farmhouse'
+  | 'cottage'
+  | 'townhouse'
+  | 'loft'
+  | 'commercial'
+  | 'industrial'
+  | 'agricultural'
+  | 'other';
+
+type ViewType =
+  | 'sea'
+  | 'mountain'
+  | 'city'
+  | 'countryside'
+  | 'lake'
+  | 'river'
+  | 'forest'
+  | 'park'
+  | 'beach'
+  | 'other';
+
+type Amenities =
+  | 'swimming pool'
+  | 'gym'
+  | 'jacuzzi'
+  | 'sauna'
+  | 'steam room'
+  | 'tennis court'
+  | 'golf course'
+  | 'parking'
+  | 'garage'
+  | 'terrace'
+  | 'other';
+
+type Features =
+  | 'air conditioning'
+  | 'heating'
+  | 'fireplace'
+  | 'balcony'
+  | 'terrace'
+  | 'garden'
+  | 'parking'
+  | 'garage'
+  | 'other';
+
+type Furnishing = 'furnished' | 'unfurnished' | 'partially furnished' | 'other';
+
+type SuitableFor =
+  | 'family'
+  | 'couple'
+  | 'single'
+  | 'business'
+  | 'students'
+  | 'investment'
+  | 'embassy'
+  | 'vacation home'
+  | 'other';
+
+type EnergyRating = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G';
+
+type Condition =
+  | 'new'
+  | 'used'
+  | 'renovated'
+  | 'partially renovated'
+  | 'renovation needed'
+  | 'other';
+
 export interface Listing {
   title: string;
   slug: string;
   address: Address;
   listingType: 'buy' | 'rent';
-  propertyType: 'house' | 'apartment' | 'villa' | 'land' | 'commercial';
+  category: ListingCategory;
+  propertyType: PropertyType;
   id: string;
   price: number;
   bedrooms: number;
@@ -27,27 +112,24 @@ export interface Listing {
   squareMeters: number;
   description: string;
   images: string[];
-  features: string[];
-  amenities: string[];
+  features: Features[];
+  furnishing: Furnishing;
+  amenities: Amenities[];
+  suitableFor: SuitableFor[];
+  view: ViewType[];
   publishedAt: Date;
   updatedAt: Date;
   isFeatured?: boolean;
   isActive?: boolean;
   isSold?: boolean;
   isRented?: boolean;
-  swimmingPool?: boolean;
-  garden?: boolean;
-  parking?: boolean;
-  garage?: boolean;
-  terrace?: boolean;
   tags: string[];
   favorite?: boolean;
   urgent?: boolean;
-  new?: boolean;
+  condition?: Condition;
   yearBuilt?: number;
-  energyRating?: 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G';
+  energyRating?: EnergyRating;
   yearRenovated?: number;
-  needsRenovation?: boolean;
   availableNow?: boolean;
   availableFrom?: Date;
   availableTo?: Date;

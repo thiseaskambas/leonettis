@@ -1,4 +1,4 @@
-export default function Home() {
+export default function Rent() {
   return (
     <main>
       <h1>Hello World</h1>

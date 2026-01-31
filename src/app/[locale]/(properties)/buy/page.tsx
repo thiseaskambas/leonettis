@@ -1,7 +1,7 @@
-export default function Home() {
+export default function Buy() {
   return (
     <main>
-      <h1>Hello World</h1>
+      <h1>Buy</h1>
     </main>
   );
 }
