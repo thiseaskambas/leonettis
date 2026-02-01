@@ -1,5 +1,6 @@
 import '../globals.css';
 
+import { Inter } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
@@ -8,6 +9,12 @@ import { ThemeProvider } from 'next-themes';
 import { routing } from '@/i18n/routing';
 
 import { NavBar } from '../ui/NavBar';
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  variable: '--font-inter',
+});
 
 function isValidLocale(
   locale: unknown
@@ -31,7 +38,7 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={locale} className={inter.variable} suppressHydrationWarning>
       <body className="antialiased">
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider

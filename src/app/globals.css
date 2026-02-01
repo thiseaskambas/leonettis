@@ -136,6 +136,10 @@
 
   /* Overlay */
   --color-overlay: var(--color-tiff-gray-900);
+
+  /* Fonts */
+  --font-inter: var(--font-inter);
+  --font-brand-primary: var(--font-inter);
 }
 
 .dark {
