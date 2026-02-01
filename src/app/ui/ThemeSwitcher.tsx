@@ -20,7 +20,7 @@ const ThemeSwitch = () => {
   const isDark = resolvedTheme === 'dark';
 
   return (
-    <div className="flex gap-3">
+    <div className="self-center">
       <Switch
         isSelected={isDark}
         aria-label="Toggle dark mode"
