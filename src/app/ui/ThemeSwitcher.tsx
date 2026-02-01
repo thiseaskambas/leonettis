@@ -14,7 +14,7 @@ const ThemeSwitch = () => {
   }, []);
 
   if (!mounted) {
-    return <div className="size-10 flex items-center justify-center" />;
+    return <div className="flex size-10 items-center justify-center" />;
   }
 
   const isDark = resolvedTheme === 'dark';
@@ -28,11 +28,12 @@ const ThemeSwitch = () => {
         size="lg">
         {({ isSelected }) => (
           <>
-            <Switch.Control className={isSelected ? 'bg-blue-500' : ''}>
+            <Switch.Control
+              className={isSelected ? 'bg-leon-800' : 'bg-tiff-gray-400'}>
               <Switch.Thumb>
                 <Switch.Icon>
                   {isSelected ? (
-                    <Moon className="size-3 text-current opacity-100" />
+                    <Moon className="dark:text-brand-tertiary size-3 text-current opacity-100" />
                   ) : (
                     <Sun className="size-3 text-current opacity-70" />
                   )}

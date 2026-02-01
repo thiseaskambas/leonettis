@@ -1,9 +1,9 @@
 import { defineRouting } from 'next-intl/routing';
 
 export const locales = {
-  en: { label: 'English', value: 'en', icon: '🇬🇧', short: 'En' },
-  fr: { label: 'Français', value: 'fr', icon: '🇫🇷', short: 'Fr' },
-  gr: { label: 'Ελληνικά', value: 'gr', icon: '🇬🇷', short: 'Gr' },
+  en: { label: 'English', value: 'en', short: 'En' },
+  fr: { label: 'Français', value: 'fr', short: 'Fr' },
+  gr: { label: 'Ελληνικά', value: 'gr', short: 'Gr' },
 } as const;
 
 export type Locale = keyof typeof locales;

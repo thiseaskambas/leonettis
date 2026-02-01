@@ -1,6 +1,8 @@
 @import 'tailwindcss';
 @import '@heroui/styles';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-tiff-50: oklch(0.971 0.027 188.25);
   --color-tiff-100: oklch(0.942 0.058 188.2);
