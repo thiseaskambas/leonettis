@@ -7,7 +7,7 @@ import ThemeSwitch from './ThemeSwitcher';
 export async function NavBar() {
   const t = await getTranslations('nav');
   return (
-    <nav className="flex items-center justify-between">
+    <nav className="bg-surface dark:bg-surface-raised flex items-center justify-between">
       <NavigationLink href="/">{t('home')}</NavigationLink>
       <NavigationLink href="/buy">{t('buy')}</NavigationLink>
       <NavigationLink href="/rent">{t('rent')}</NavigationLink>
