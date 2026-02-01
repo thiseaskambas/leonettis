@@ -46,4 +46,92 @@
   --color-tiff-pink-800: oklch(0.326 0.116 347.5);
   --color-tiff-pink-900: oklch(0.235 0.084 347.91);
   --color-tiff-pink-950: oklch(0.185 0.067 347.5);
+  --color-leon-50: oklch(0.954 0.033 203.46);
+  --color-leon-100: oklch(0.915 0.063 203.56);
+  --color-leon-200: oklch(0.829 0.087 202.98);
+  --color-leon-300: oklch(0.741 0.078 203.05);
+  --color-leon-400: oklch(0.657 0.069 203.04);
+  --color-leon-500: oklch(0.57 0.06 203.01);
+  --color-leon-600: oklch(0.486 0.051 202.82);
+  --color-leon-700: oklch(0.391 0.041 202.72);
+  --color-leon-800: oklch(0.306 0.032 205.17);
+  --color-leon-900: oklch(0.221 0.023 205.33);
+  --color-leon-950: oklch(0.175 0.019 201.72);
+  --color-leon-pink-50: oklch(0.959 0.021 358.78);
+  --color-leon-pink-100: oklch(0.927 0.038 357.07);
+  --color-leon-pink-200: oklch(0.856 0.078 358.4);
+  --color-leon-pink-300: oklch(0.776 0.131 358.46);
+  --color-leon-pink-400: oklch(0.707 0.186 358.02);
+  --color-leon-pink-500: oklch(0.626 0.234 357.68);
+  --color-leon-pink-600: oklch(0.526 0.197 358.12);
+  --color-leon-pink-700: oklch(0.435 0.162 357.79);
+  --color-leon-pink-800: oklch(0.335 0.125 357.41);
+  --color-leon-pink-900: oklch(0.244 0.092 357.99);
+  --color-leon-pink-950: oklch(0.187 0.07 357.92);
+  --color-leon-sat-50: oklch(0.958 0.052 193.32);
+  --color-leon-sat-100: oklch(0.919 0.112 192.57);
+  --color-leon-sat-200: oklch(0.843 0.12 192.44);
+  --color-leon-sat-300: oklch(0.755 0.107 192.05);
+  --color-leon-sat-400: oklch(0.671 0.095 192.45);
+  --color-leon-sat-500: oklch(0.578 0.082 191.91);
+  --color-leon-sat-600: oklch(0.491 0.07 192.48);
+  --color-leon-sat-700: oklch(0.399 0.057 191.71);
+  --color-leon-sat-800: oklch(0.313 0.044 192.8);
+  --color-leon-sat-900: oklch(0.22 0.031 191.51);
+  --color-leon-sat-950: oklch(0.175 0.025 190.36);
+  --color-leon-blue-50: oklch(0.966 0.013 277.13);
+  --color-leon-blue-100: oklch(0.931 0.027 276.87);
+  --color-leon-blue-200: oklch(0.863 0.055 274.99);
+  --color-leon-blue-300: oklch(0.796 0.084 273.85);
+  --color-leon-blue-400: oklch(0.72 0.118 270.84);
+  --color-leon-blue-500: oklch(0.653 0.15 267.6);
+  --color-leon-blue-600: oklch(0.585 0.182 263.63);
+  --color-leon-blue-700: oklch(0.516 0.161 263.3);
+  --color-leon-blue-800: oklch(0.445 0.14 263.49);
+  --color-leon-blue-900: oklch(0.287 0.091 263.82);
+  --color-leon-blue-950: oklch(0.219 0.067 263.44);
+
+  /* Brand – main */
+  --color-brand-primary: var(--color-leon-200);
+  --color-brand-primary-hover: var(--color-leon-300);
+  --color-brand-primary-muted: var(--color-leon-100);
+  --color-brand-secondary: var(--color-leon-pink-400);
+  --color-brand-secondary-hover: var(--color-leon-pink-500);
+  --color-brand-secondary-muted: var(--color-leon-pink-100);
+  --color-brand-accent: var(--color-leon-sat-200);
+  --color-brand-accent-hover: var(--color-leon-sat-300);
+  --color-brand-accent-muted: var(--color-leon-sat-100);
+  --color-brand-tertiary: var(--color-leon-blue-800);
+  --color-brand-tertiary-hover: var(--color-leon-blue-900);
+  --color-brand-tertiary-muted: var(--color-leon-blue-200);
+
+  /* Surfaces */
+  --color-surface: var(--color-tiff-gray-50);
+  --color-surface-raised: var(--color-tiff-gray-100);
+  --color-surface-sunken: var(--color-tiff-gray-200);
+
+  /* Text */
+  --color-text-primary: var(--color-tiff-gray-900);
+  --color-text-secondary: var(--color-tiff-gray-600);
+  --color-text-muted: var(--color-tiff-gray-500);
+  --color-text-inverse: var(--color-tiff-gray-50);
+
+  /* Borders */
+  --color-border-default: var(--color-tiff-gray-200);
+  --color-border-muted: var(--color-tiff-gray-100);
+  --color-border-focus: var(--color-leon-400);
+
+  /* Feedback */
+  --color-success: var(--color-leon-sat-600);
+  --color-warning: var(--color-leon-pink-500);
+  --color-error: var(--color-leon-pink-600);
+  --color-info: var(--color-leon-blue-600);
+
+  /* Link */
+  --color-link: var(--color-leon-600);
+  --color-link-hover: var(--color-leon-700);
+  --color-link-visited: var(--color-leon-400);
+
+  /* Overlay */
+  --color-overlay: var(--color-tiff-gray-900);
 }

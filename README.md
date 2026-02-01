@@ -40,3 +40,6 @@ https://v3.heroui.com/
 
 Internationalization with :
 https://next-intl.dev
+
+Color palette link :
+https://www.tints.dev/palette/v1:dGlmZnw4MUQ4RDB8MzAwfHB8MHwwfDB8MTAwfGF-dGlmZi1zYXR8MDBBREEyfDQwMHxwfDB8MHwwfDEwMHxhfnRpZmYtZ3JheXxFOEYzRjF8NTB8cHwwfDB8MHwxMDB8YX50aWZmLXBpbmt8RjA1NUIxfDQwMHxwfDB8MHwwfDEwMHxhfmxlb258N0VEOEUwfDIwMHxwfDB8MHwwfDEwMHxhfmxlb24tcGlua3xmNzY2YTB8NDAwfHB8MHwwfDB8MTAwfGF-bGVvbi1zYXR8NThlNGUwfDIwMHxwfDB8MHwwfDEwMHxhfmxlb24tYmx1ZXwyOTRlYTB8ODAwfHB8MHwwfDB8MTAwfGE
