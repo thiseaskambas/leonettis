@@ -29,7 +29,7 @@ const ThemeSwitch = () => {
         {({ isSelected }) => (
           <>
             <Switch.Control
-              className={isSelected ? 'bg-leon-800' : 'bg-tiff-gray-400'}>
+              className={isSelected ? 'bg-leon-blue-800' : 'bg-tiff-gray-400'}>
               <Switch.Thumb>
                 <Switch.Icon>
                   {isSelected ? (

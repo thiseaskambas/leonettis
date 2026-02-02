@@ -8,20 +8,24 @@ import ThemeSwitch from './ThemeSwitcher';
 export async function NavBar() {
   const t = await getTranslations('nav');
   return (
-    <nav className="bg-surface dark:bg-leon-900 flex items-end justify-between px-20 pt-5 pb-2">
-      <NavigationLink href="/">
+    <nav className="dark:bg-leon-blue-950 text-leon-blue-950 dark:text-leon-blue-50 flex w-full items-end justify-between gap-10 bg-white px-2 font-medium">
+      <NavigationLink className="ml-0 self-start" href="/">
         <ThemeLogo />
       </NavigationLink>
-      <NavigationLink href="/buy">{t('buy')}</NavigationLink>
-      <NavigationLink href="/rent">{t('rent')}</NavigationLink>
-      <NavigationLink href="/list-a-property">
-        {t('list-a-property')}
-      </NavigationLink>
-      <NavigationLink href="/blog">{t('blog')}</NavigationLink>
-      <NavigationLink href="/about">{t('about')}</NavigationLink>
-      <NavigationLink href="/contact">{t('contact')}</NavigationLink>
-      <LocaleDropDown />
-      <ThemeSwitch />
+      <div className="flex items-center gap-10">
+        <NavigationLink href="/buy">{t('buy')}</NavigationLink>
+        <NavigationLink href="/rent">{t('rent')}</NavigationLink>
+        <NavigationLink href="/list-a-property">
+          {t('list-a-property')}
+        </NavigationLink>
+        <NavigationLink href="/blog">{t('blog')}</NavigationLink>
+        <NavigationLink href="/about">{t('about')}</NavigationLink>
+        <NavigationLink href="/contact">{t('contact')}</NavigationLink>
+      </div>
+      <div className="flex items-center gap-2 self-start">
+        <LocaleDropDown />
+        <ThemeSwitch />
+      </div>
     </nav>
   );
 }
