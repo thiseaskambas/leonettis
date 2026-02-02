@@ -21,7 +21,7 @@ export async function NavBar() {
   ];
 
   return (
-    <nav className="dark:bg-leon-blue-950 text-leon-blue-950 dark:text-leon-blue-50 flex w-full items-end justify-between gap-10 bg-white px-2 pb-2 font-medium">
+    <nav className="dark:bg-leon-blue-950 text-leon-blue-950 dark:text-leon-blue-50 flex w-full items-end justify-between gap-10 bg-white pb-2 font-medium md:px-2">
       <NavigationLink className="ml-0 hidden self-start md:block" href="/">
         <ThemeLogo />
       </NavigationLink>
