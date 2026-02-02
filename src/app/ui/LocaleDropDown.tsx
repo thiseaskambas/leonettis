@@ -46,17 +46,18 @@ export function LocaleDropDown() {
         aria-label="select language">
         <SelectedFlag className="h-5 w-5" />
       </Button>
-      <Dropdown.Popover className="bg-surface dark:bg-leon-900 rounded-none border-none shadow-none">
+      <Dropdown.Popover className="bg-surface dark:bg-leon-blue-950 -ml-4 h-screen w-screen min-w-screen rounded-none border-none px-4 py-12 shadow-none md:relative md:top-auto md:ml-0 md:h-auto md:w-auto md:min-w-auto md:p-0 md:px-0">
         <Dropdown.Menu
           selectedKeys={selected}
           selectionMode="single"
           disallowEmptySelection
+          className="items-center gap-4 md:items-start md:gap-0"
           onSelectionChange={handleSelectionChange}>
           {Object.values(locales).map((locale) => {
             const Flag = FlagIcons[locale.value];
             return (
               <Dropdown.Item
-                className="rounded-none"
+                className="dark:hover:bg-brand-accent hover:bg-surface-hover justify-center rounded-none md:justify-start"
                 key={locale.short}
                 id={locale.short}
                 textValue={locale.label}>

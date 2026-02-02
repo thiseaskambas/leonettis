@@ -62,7 +62,9 @@ export function MobileNavBar({ navItems, children }: MobileNavBarProps) {
             </button>
           </div>
           {/* Links Container */}
-          <div className="mt-8 flex gap-4">{children}</div>
+          <div className="mt-8 flex items-center justify-center gap-4">
+            {children}
+          </div>
           <div className="text-leon-blue-950 dark:text-leon-blue-50 flex flex-1 flex-col items-center justify-center gap-8 text-2xl font-medium">
             {navItems.map((item) => (
               <Link
