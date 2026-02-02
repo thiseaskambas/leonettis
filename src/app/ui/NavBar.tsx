@@ -2,13 +2,16 @@ import { getTranslations } from 'next-intl/server';
 
 import { LocaleDropDown } from './LocaleDropDown';
 import NavigationLink from './NavigationLink';
+import { ThemeLogo } from './ThemeLogo';
 import ThemeSwitch from './ThemeSwitcher';
 
 export async function NavBar() {
   const t = await getTranslations('nav');
   return (
     <nav className="bg-surface dark:bg-leon-900 flex items-end justify-between px-20 pt-5 pb-2">
-      <NavigationLink href="/">{t('home')}</NavigationLink>
+      <NavigationLink href="/">
+        <ThemeLogo />
+      </NavigationLink>
       <NavigationLink href="/buy">{t('buy')}</NavigationLink>
       <NavigationLink href="/rent">{t('rent')}</NavigationLink>
       <NavigationLink href="/list-a-property">
