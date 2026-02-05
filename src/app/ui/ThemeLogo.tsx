@@ -16,7 +16,7 @@ export function ThemeLogo() {
 
   // Show a placeholder or the default logo during SSR/hydration to prevent layout shift
   if (!mounted) {
-    return <div style={{ width: 150, height: 150 }} />;
+    return <div style={{ width: 150, height: 60.5 }} />;
   }
 
   return (
@@ -24,7 +24,8 @@ export function ThemeLogo() {
       alt="Leonetti logo"
       src={resolvedTheme === 'dark' ? '/logo-lg-dark.png' : '/logo-lg.png'}
       width={150}
-      height={150}
+      className="min-h-[60.5px] min-w-[150px] object-contain"
+      height={60.5}
       priority
     />
   );
