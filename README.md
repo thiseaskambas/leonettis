@@ -43,3 +43,9 @@ https://next-intl.dev
 
 Color palette link :
 https://www.tints.dev/palette/v1:dGlmZnw4MUQ4RDB8MzAwfHB8MHwwfDB8MTAwfGF-dGlmZi1zYXR8MDBBREEyfDQwMHxwfDB8MHwwfDEwMHxhfnRpZmYtZ3JheXxFOEYzRjF8NTAwfHB8MHwwfDB8MTAwfG1-dGlmZi1waW5rfEYwNTVCMXw0MDB8cHwwfDB8MHwxMDB8YX5sZW9ufDdFRDhFMHwyMDB8cHwwfDB8MHwxMDB8YX5sZW9uLXBpbmt8Zjc2NmEwfDQwMHxwfDB8MHwwfDEwMHxhfmxlb24tc2F0fDU4ZTRlMHwyMDB8cHwwfDB8MHwxMDB8YX5sZW9uLWJsdWV8Mjk0ZWEwfDgwMHxwfDB8MHwwfDEwMHxh
+
+Some buttons :
+https://github.com/ibelick/buttons
+
+Icons:
+https://lucide.dev/

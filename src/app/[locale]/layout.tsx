@@ -1,4 +1,8 @@
 import '../globals.css';
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
 
 import { Inter } from 'next/font/google';
 import { notFound } from 'next/navigation';

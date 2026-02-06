@@ -2,6 +2,7 @@ export interface Address {
   streetNumber: string;
   streetName: string;
   city: string;
+  state?: string;
   region?: string;
   zipCode: string;
   country: string;

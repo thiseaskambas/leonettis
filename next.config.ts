@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
         hostname: 'du6v48geka0ok.cloudfront.net',
         pathname: '/images/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'placehold.co',
+        pathname: '/**',
+      },
     ],
   },
 };
