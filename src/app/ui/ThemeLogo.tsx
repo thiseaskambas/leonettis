@@ -23,9 +23,9 @@ export function ThemeLogo() {
     <Image
       alt="Leonetti logo"
       src={resolvedTheme === 'dark' ? '/logo-lg-dark.png' : '/logo-lg.png'}
-      width={150}
-      className="min-h-[60.5px] min-w-[150px] object-contain"
-      height={60.5}
+      width={200}
+      className="min-h-[80.3px] min-w-[200px] object-contain"
+      height={80.3}
       priority
     />
   );

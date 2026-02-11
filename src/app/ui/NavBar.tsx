@@ -21,34 +21,40 @@ export async function NavBar() {
   ];
 
   return (
-    <nav className="dark:bg-leon-blue-950 text-leon-blue-950 dark:text-leon-blue-50 bg-surface flex w-full items-end justify-between gap-10 font-medium shadow-xs md:px-2 md:pb-3 dark:shadow-none">
-      <NavigationLink className="ml-0 hidden self-start md:block" href="/">
-        <ThemeLogo />
-      </NavigationLink>
-
-      <div className="hidden items-center gap-10 md:flex">
-        {navLinks.map((link) =>
-          link.href === '/contact' ? (
-            <NavLinkButton key={link.href} href={link.href}>
-              {link.label}
-            </NavLinkButton>
-          ) : (
-            <NavigationLink key={link.href} href={link.href}>
-              {link.label}
-            </NavigationLink>
-          )
-        )}
+    <div className="bg-surface dark:bg-leon-blue-950">
+      <div className="hidden w-full items-center px-5 md:flex">
+        <div className="flex-1" aria-hidden />
+        <NavigationLink className="hidden self-center md:block" href="/">
+          <ThemeLogo />
+        </NavigationLink>
+        <div className="flex flex-1 items-center justify-end gap-2 md:flex">
+          <LocaleDropDown />
+          <ThemeSwitch />
+        </div>
       </div>
+      <nav className="text-tiff-gray-950 dark:text-leon-blue-50 flex w-full items-end justify-around gap-10 font-light shadow-xs md:px-2 md:pb-3 dark:shadow-none">
+        <div className="hidden items-end gap-10 md:flex">
+          {navLinks.map((link) =>
+            link.href === '/contact' ? (
+              <NavLinkButton
+                className="font-medium"
+                key={link.href}
+                href={link.href}>
+                {link.label}
+              </NavLinkButton>
+            ) : (
+              <NavigationLink key={link.href} href={link.href}>
+                {link.label}
+              </NavigationLink>
+            )
+          )}
+        </div>
 
-      <div className="hidden items-center gap-2 self-start md:flex">
-        <LocaleDropDown />
-        <ThemeSwitch />
-      </div>
-
-      <MobileNavBar navItems={navLinks}>
-        <LocaleDropDown />
-        <ThemeSwitch />
-      </MobileNavBar>
-    </nav>
+        <MobileNavBar navItems={navLinks}>
+          <LocaleDropDown />
+          <ThemeSwitch />
+        </MobileNavBar>
+      </nav>
+    </div>
   );
 }

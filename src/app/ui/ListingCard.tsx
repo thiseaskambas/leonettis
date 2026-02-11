@@ -10,7 +10,6 @@ export default function ListingCard({ listing }: { listing: Listing }) {
     listing;
   return (
     <div className="h-80 w-96 rounded-lg border border-gray-200 p-4 shadow-md">
-      <h3 className="text-lg font-bold">{title}</h3>
       <Swiper
         pagination={{
           type: 'fraction',
@@ -31,6 +30,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
           </SwiperSlide>
         ))}
       </Swiper>
+      <h3 className="text-lg font-bold">{title}</h3>
     </div>
   );
 }
