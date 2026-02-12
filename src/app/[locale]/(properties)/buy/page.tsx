@@ -4,13 +4,12 @@ import ListingCard from '@/app/ui/ListingCard';
 export default function Buy() {
   const listings = listingsData;
   return (
-    <>
-      <h1>Buy</h1>
+    <main className="dark:bg-tiff-gray-950 min-h-screen p-5 md:p-10">
       <div className="grid min-w-0 grid-cols-1 gap-8 md:grid-cols-2">
-        {listings.map((listing) => (
-          <ListingCard key={listing.id} listing={listing} />
+        {listings.map((listing, index) => (
+          <ListingCard key={index} listing={listing} />
         ))}
       </div>
-    </>
+    </main>
   );
 }

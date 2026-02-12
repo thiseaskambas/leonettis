@@ -16,3 +16,21 @@
   background: var(--color-brand-primary);
   transform: scale(1.2);
 }
+
+/* Hide by default */
+.swiper-controls-desktop .swiper-button-next,
+.swiper-controls-desktop .swiper-button-prev,
+.swiper-controls-desktop .swiper-pagination {
+  display: none !important;
+}
+
+/* Show on desktop (md and up) */
+@media (min-width: 768px) {
+  .swiper-controls-desktop .swiper-button-next,
+  .swiper-controls-desktop .swiper-button-prev {
+    display: flex !important;
+  }
+  .swiper-controls-desktop .swiper-pagination {
+    display: block !important;
+  }
+}

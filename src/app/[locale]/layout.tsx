@@ -48,9 +48,7 @@ export default async function LocaleLayout({
             themes={['light', 'dark']}
             storageKey="theme">
             <NavBar />
-            <main className="dark:bg-tiff-gray-950 min-h-screen p-5 md:p-10">
-              {children}
-            </main>
+            {children}
             <footer>
               <p>Copyright 2026 Leonetti&apos;s</p>
             </footer>
