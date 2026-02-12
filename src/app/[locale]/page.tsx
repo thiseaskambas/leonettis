@@ -52,7 +52,7 @@ export default function Home() {
                   fill
                   className="object-cover object-top"
                   sizes="100vw"
-                  priority={index === 0}
+                  priority={true}
                 />
               )}
             </div>
