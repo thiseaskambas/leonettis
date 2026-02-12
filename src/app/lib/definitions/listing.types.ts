@@ -1,6 +1,6 @@
 export interface Address {
-  streetNumber: string;
-  streetName: string;
+  streetNumber?: string;
+  streetName?: string;
   city: string;
   state?: string;
   region?: string;
@@ -23,6 +23,7 @@ type ListingCategory =
   | 'other';
 
 type PropertyType =
+  | 'field'
   | 'house'
   | 'apartment'
   | 'villa'
@@ -108,16 +109,18 @@ export interface Listing {
   propertyType: PropertyType;
   id: string;
   price: number;
-  bedrooms: number;
-  bathrooms: number;
-  squareMeters: number;
-  description: string;
-  images: string[];
-  features: Features[];
-  furnishing: Furnishing;
-  amenities: Amenities[];
-  suitableFor: SuitableFor[];
-  view: ViewType[];
+  bedrooms?: number;
+  bathrooms?: number;
+  squareMetersInterior?: number;
+  squareMetersOutdoor?: number;
+  squareMetersTotal?: number;
+  description?: string;
+  images?: string[];
+  features?: Features[];
+  furnishing?: Furnishing;
+  amenities?: Amenities[];
+  suitableFor?: SuitableFor[];
+  view?: ViewType[];
   publishedAt: Date;
   updatedAt: Date;
   isFeatured?: boolean;

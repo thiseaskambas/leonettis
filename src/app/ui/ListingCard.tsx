@@ -6,8 +6,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Listing } from '@/app/lib/definitions/listing.types';
 
 export default function ListingCard({ listing }: { listing: Listing }) {
-  const { title, address, price, bedrooms, bathrooms, squareMeters, images } =
-    listing;
+  const { title, images } = listing;
 
   return (
     <div className="dark:border-leon-blue-900 w-full min-w-0 overflow-hidden rounded-xl border border-gray-200 transition-shadow duration-300 hover:cursor-pointer hover:shadow-md">
@@ -22,7 +21,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
           navigation={true}
           modules={[Keyboard, Pagination, Navigation]}
           className="mySwiper block h-full! w-full! cursor-default">
-          {images.map((image, index) => (
+          {images?.map((image, index) => (
             <SwiperSlide key={index} className="h-full! w-full!">
               <div className="relative h-full w-full">
                 <Image

@@ -5,11 +5,11 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 
 export default function Home() {
   const slides = [
-    { type: 'image', src: 'homepage/1.JPG' },
+    { type: 'image', src: 'homepage/1.webp' },
     { type: 'video', src: 'homepage/1.mov' },
     { type: 'video', src: 'homepage/2.mov' },
-    { type: 'image', src: 'homepage/2.JPG' },
-    { type: 'image', src: 'homepage/3.JPG' },
+    { type: 'image', src: 'homepage/2.webp' },
+    { type: 'image', src: 'homepage/3.webp' },
   ];
 
   return (

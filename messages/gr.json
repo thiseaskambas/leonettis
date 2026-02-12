@@ -7,5 +7,17 @@
     "list-a-property": "Καταχώρηση Ακινήτου",
     "blog": "Blog",
     "contact": "Επικοινωνία"
+  },
+  "buy": {
+    "title": "ΑΚΙΝΗΤΑ ΠΡΟΣ ΠΩΛΗΣΗ",
+    "description": "Αγοράτε το ιδανικό σας ακίνητο από την Leonetti&apos;s."
+  },
+  "rent": {
+    "title": "ΑΚΙΝΗΤΑ ΠΡΟΣ ΕΝΟΙΚΙΑΣΗ",
+    "description": "Ενοικιάστε το ιδανικό σας ακίνητο από την Leonetti&apos;s."
+  },
+  "list-a-property": {
+    "title": "ΚΑΤΑΧΩΡΗΣΗ ΝΕΟΥ ΑΚΙΝΗΤΟΥ",
+    "description": "Καταχωρήστε το ιδανικό σας ακίνητο από την Leonetti&apos;s."
   }
 }

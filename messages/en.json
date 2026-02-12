@@ -7,5 +7,17 @@
     "list-a-property": "List a Property",
     "blog": "Blog",
     "contact": "Contact"
+  },
+  "buy": {
+    "title": "PROPERTIES FOR SALE",
+    "description": "Buy the ideal property from Leonetti&apos;s."
+  },
+  "rent": {
+    "title": "PROPERTIES FOR RENT",
+    "description": "Rent the ideal property from Leonetti&apos;s."
+  },
+  "list-a-property": {
+    "title": "LIST A NEW PROPERTY",
+    "description": "List the ideal property from Leonetti&apos;s."
   }
 }
