@@ -1,8 +1,4 @@
 import '../globals.css';
-// Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/pagination';
-import 'swiper/css/navigation';
 
 import { Inter } from 'next/font/google';
 import { notFound } from 'next/navigation';
@@ -52,7 +48,9 @@ export default async function LocaleLayout({
             themes={['light', 'dark']}
             storageKey="theme">
             <NavBar />
-            <main>{children}</main>
+            <main className="dark:bg-tiff-gray-950 min-h-screen p-5 md:p-10">
+              {children}
+            </main>
             <footer>
               <p>Copyright 2026 Leonetti&apos;s</p>
             </footer>

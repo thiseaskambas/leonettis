@@ -1,7 +1,7 @@
 export default function Rent() {
   return (
-    <main>
-      <h1>Hello World</h1>
-    </main>
+    <>
+      <h1>Rent</h1>
+    </>
   );
 }
