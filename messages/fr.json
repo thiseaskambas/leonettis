@@ -7,5 +7,17 @@
     "list-a-property": "Déposer une Annonce",
     "blog": "Blog",
     "contact": "Contact"
+  },
+  "buy": {
+    "title": "PROPRIÉTÉS À VENDRE",
+    "description": "Achetez la propriété idéale chez Leonetti&apos;s."
+  },
+  "rent": {
+    "title": "PROPRIÉTÉS À LOUER",
+    "description": "Louez la propriété idéale chez Leonetti&apos;s."
+  },
+  "list-a-property": {
+    "title": "DÉPOSER UNE NOUVELLE ANNONCE",
+    "description": "Déposez la propriété idéale chez Leonetti&apos;s."
   }
 }
