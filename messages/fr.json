@@ -1,0 +1,11 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "about": "À propos",
+    "buy": "Acheter",
+    "rent": "Louer",
+    "list-a-property": "Déposer une Annonce",
+    "blog": "Blog",
+    "contact": "Contact"
+  }
+}

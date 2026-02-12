@@ -1,0 +1,11 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "buy": "Buy",
+    "rent": "Rent",
+    "list-a-property": "List a Property",
+    "blog": "Blog",
+    "contact": "Contact"
+  }
+}
