@@ -6,8 +6,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Listing } from '@/app/lib/definitions/listing.types';
 
 export default function ListingCard({ listing }: { listing: Listing }) {
-  const { title, address, price, bedrooms, bathrooms, squareMeters, images } =
-    listing;
+  const { title, images } = listing;
 
   return (
     <div className="dark:border-leon-blue-900 w-full min-w-0 overflow-hidden rounded-xl border border-gray-200 transition-shadow duration-300 hover:cursor-pointer hover:shadow-md">
