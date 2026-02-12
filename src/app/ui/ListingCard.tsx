@@ -21,7 +21,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
           navigation={true}
           modules={[Keyboard, Pagination, Navigation]}
           className="mySwiper block h-full! w-full! cursor-default">
-          {images.map((image, index) => (
+          {images?.map((image, index) => (
             <SwiperSlide key={index} className="h-full! w-full!">
               <div className="relative h-full w-full">
                 <Image
