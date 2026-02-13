@@ -111,7 +111,7 @@ export default function ListingCard({
       </div>
 
       <div className="bg-surface-raised dark:bg-leon-blue-950 p-4">
-        <h3 className="text-lg font-bold">{title}</h3>
+        <h3 className="text-base font-medium">{title}</h3>
         {/* You can add more details here like price, address, etc. */}
       </div>
     </div>
