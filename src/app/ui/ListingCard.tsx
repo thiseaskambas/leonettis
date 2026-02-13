@@ -6,6 +6,7 @@ import { Keyboard, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 import { LocalizedListing } from '@/app/lib/definitions/listing.types';
+import { Link } from '@/i18n/navigation';
 
 import { getMediaBlurDataURL, getMediaUrl } from '../lib/helpers/media-helpers';
 
@@ -110,10 +111,12 @@ export default function ListingCard({
         </Swiper>
       </div>
 
-      <div className="bg-surface-raised dark:bg-leon-blue-950 p-4">
+      <Link
+        href={`/property/${listing.slug}`}
+        className="bg-surface-raised dark:bg-leon-blue-950 block p-4">
         <h3 className="text-base font-medium">{title}</h3>
         {/* You can add more details here like price, address, etc. */}
-      </div>
+      </Link>
     </div>
   );
 }
