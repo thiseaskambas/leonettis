@@ -7,7 +7,51 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 
 import { LocalizedListing } from '@/app/lib/definitions/listing.types';
 
-import { getMediaUrl } from '../lib/helpers/media-helpers';
+import { getMediaBlurDataURL, getMediaUrl } from '../lib/helpers/media-helpers';
+
+const ListingImage = ({
+  src,
+  blurSrc,
+  alt,
+  priority,
+  loading,
+}: {
+  src: string;
+  blurSrc: string;
+  alt: string;
+  priority: boolean;
+  loading: 'eager' | 'lazy';
+}) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  return (
+    <>
+      {/* 1. Low-Res Placeholder (Visible initially) */}
+      <Image
+        src={blurSrc}
+        alt={alt}
+        fill
+        className="scale-[1.02] object-cover blur-lg" // Add blur-lg for the effect
+        sizes="(max-width: 768px) 100vw, 50vw"
+        priority={priority} // Load placeholder fast
+      />
+
+      {/* 2. Main Image (Fades in on top) */}
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        className={`scale-[1.02] object-cover transition-opacity duration-500 ${
+          isLoaded ? 'opacity-100' : 'opacity-0'
+        }`}
+        sizes="(max-width: 768px) 100vw, 50vw"
+        priority={priority}
+        loading={loading}
+        onLoad={() => setIsLoaded(true)}
+      />
+    </>
+  );
+};
 
 export default function ListingCard({
   listing,
@@ -49,12 +93,10 @@ export default function ListingCard({
           {images?.map((image, index) => (
             <SwiperSlide key={index} className="h-full! w-full!">
               <div className="relative h-full w-full">
-                <Image
+                <ListingImage
                   src={getMediaUrl(image)}
+                  blurSrc={getMediaBlurDataURL(image)}
                   alt={title}
-                  fill
-                  className="scale-[1.02] object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
                   priority={index === 0}
                   loading={
                     index === 0 || loadedIndices.includes(index)
