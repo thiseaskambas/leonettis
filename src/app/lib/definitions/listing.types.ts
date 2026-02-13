@@ -1,3 +1,5 @@
+import { Locale } from '@/i18n/routing';
+
 export interface Address {
   streetNumber?: string;
   streetName?: string;
@@ -24,6 +26,7 @@ type ListingCategory =
 
 type PropertyType =
   | 'field'
+  | 'plot'
   | 'house'
   | 'apartment'
   | 'villa'
@@ -101,7 +104,8 @@ type Condition =
   | 'other';
 
 export interface Listing {
-  title: string;
+  title: Record<Locale, string>;
+  description?: Record<Locale, string>;
   slug: string;
   address: Address;
   listingType: 'buy' | 'rent';
@@ -114,8 +118,9 @@ export interface Listing {
   squareMetersInterior?: number;
   squareMetersOutdoor?: number;
   squareMetersTotal?: number;
-  description?: string;
   images?: string[];
+  mainImage?: string;
+  videos?: string[];
   features?: Features[];
   furnishing?: Furnishing;
   amenities?: Amenities[];
@@ -140,4 +145,12 @@ export interface Listing {
   leaseDuration?: number;
   leaseDurationUnit?: 'month' | 'year';
   leaseDurationType?: 'fixed' | 'flexible';
+}
+
+export interface LocalizedListing extends Omit<
+  Listing,
+  'title' | 'description'
+> {
+  title: string;
+  description?: string;
 }

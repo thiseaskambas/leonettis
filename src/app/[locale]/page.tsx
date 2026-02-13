@@ -3,13 +3,15 @@ import Image from 'next/image';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
+import { getMediaUrl } from '../lib/helpers/media-helpers';
+
 export default function Home() {
   const slides = [
-    { type: 'image', src: 'homepage/1.webp' },
-    { type: 'video', src: 'homepage/1.mov' },
-    { type: 'video', src: 'homepage/2.mov' },
-    { type: 'image', src: 'homepage/2.webp' },
-    { type: 'image', src: 'homepage/3.webp' },
+    { type: 'image', src: 'images/leonettis/homepage/1.webp' },
+    { type: 'video', src: 'images/leonettis/homepage/1.mov' },
+    { type: 'video', src: 'images/leonettis/homepage/2.mov' },
+    { type: 'image', src: 'images/leonettis/homepage/2.webp' },
+    { type: 'image', src: 'images/leonettis/homepage/3.webp' },
   ];
 
   return (
@@ -41,13 +43,12 @@ export default function Home() {
                   loop
                   playsInline
                   suppressHydrationWarning>
-                  <source src={slide.src} type="video/mp4" />
+                  <source src={getMediaUrl(slide.src)} type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
               ) : (
                 <Image
-                  unoptimized
-                  src={slide.src}
+                  src={getMediaUrl(slide.src)}
                   alt="Property Image"
                   fill
                   className="object-cover object-top"
