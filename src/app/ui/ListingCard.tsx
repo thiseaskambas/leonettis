@@ -3,9 +3,15 @@ import Image from 'next/image';
 import { Keyboard, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { Listing } from '@/app/lib/definitions/listing.types';
+import { LocalizedListing } from '@/app/lib/definitions/listing.types';
 
-export default function ListingCard({ listing }: { listing: Listing }) {
+import { getMediaUrl } from '../lib/helpers/media-helpers';
+
+export default function ListingCard({
+  listing,
+}: {
+  listing: LocalizedListing;
+}) {
   const { title, images } = listing;
 
   return (
@@ -25,8 +31,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
             <SwiperSlide key={index} className="h-full! w-full!">
               <div className="relative h-full w-full">
                 <Image
-                  unoptimized
-                  src={image}
+                  src={getMediaUrl(image)}
                   alt={title}
                   fill
                   className="scale-[1.02] object-cover"
