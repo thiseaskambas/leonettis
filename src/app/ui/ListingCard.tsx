@@ -1,5 +1,7 @@
 'use client';
 import Image from 'next/image';
+import { useState } from 'react';
+import type { Swiper as SwiperType } from 'swiper';
 import { Keyboard, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
@@ -13,12 +15,29 @@ export default function ListingCard({
   listing: LocalizedListing;
 }) {
   const { title, images } = listing;
+  // State to track which images should be forced to load
+  // Initialize with [0, 1] to ensure first two are ready
+  const [loadedIndices, setLoadedIndices] = useState<number[]>([0, 1]);
+
+  const handleSlideChange = (swiper: SwiperType) => {
+    const currentIndex = swiper.activeIndex;
+    const nextIndex = currentIndex + 1;
+
+    // If the next image hasn't been marked for loading yet, add it
+    if (
+      nextIndex < (images?.length || 0) &&
+      !loadedIndices.includes(nextIndex)
+    ) {
+      setLoadedIndices((prev) => [...prev, nextIndex]);
+    }
+  };
 
   return (
     <div className="dark:border-leon-blue-900 w-full min-w-0 overflow-hidden rounded-xl border border-gray-200 transition-shadow duration-300 hover:cursor-pointer hover:shadow-md">
       {/* Aspect Ratio Container */}
       <div className="relative aspect-4/3 w-full">
         <Swiper
+          onSlideChange={handleSlideChange}
           slidesPerView={1}
           spaceBetween={30}
           pagination={{
@@ -36,6 +55,12 @@ export default function ListingCard({
                   fill
                   className="scale-[1.02] object-cover"
                   sizes="(max-width: 768px) 100vw, 50vw"
+                  priority={index === 0}
+                  loading={
+                    index === 0 || loadedIndices.includes(index)
+                      ? 'eager'
+                      : 'lazy'
+                  }
                 />
               </div>
             </SwiperSlide>
