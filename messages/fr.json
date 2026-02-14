@@ -9,10 +9,12 @@
     "contact": "Contact"
   },
   "buy": {
+    "cta": "Acheter",
     "title": "PROPRIÉTÉS À VENDRE",
     "description": "Achetez la propriété idéale chez Leonetti&apos;s."
   },
   "rent": {
+    "cta": "Louer",
     "title": "PROPRIÉTÉS À LOUER",
     "description": "Louez la propriété idéale chez Leonetti&apos;s."
   },

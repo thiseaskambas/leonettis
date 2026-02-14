@@ -9,10 +9,12 @@
     "contact": "Contact"
   },
   "buy": {
+    "cta": "Buy",
     "title": "PROPERTIES FOR SALE",
     "description": "Buy the ideal property from Leonetti&apos;s."
   },
   "rent": {
+    "cta": "Rent",
     "title": "PROPERTIES FOR RENT",
     "description": "Rent the ideal property from Leonetti&apos;s."
   },

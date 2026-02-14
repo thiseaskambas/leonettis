@@ -38,6 +38,9 @@ export default function Home() {
     id: key,
   }));
 
+  const tBuy = useTranslations('buy');
+  const tRent = useTranslations('rent');
+
   const [selectedPropertyType, setSelectedPropertyType] = useState<Key | null>(
     'house'
   );
@@ -100,7 +103,7 @@ export default function Home() {
                   className={
                     activeTab === 'buy' ? 'border-b border-white pb-1' : ''
                   }>
-                  Buy
+                  {tBuy('cta')}
                 </span>
               </button>
               <button
@@ -110,7 +113,7 @@ export default function Home() {
                   className={
                     activeTab === 'rent' ? 'border-b border-white pb-1' : ''
                   }>
-                  Rent
+                  {tRent('cta')}
                 </span>
               </button>
             </div>
