@@ -19,5 +19,16 @@
   "list-a-property": {
     "title": "LIST A NEW PROPERTY",
     "description": "List the ideal property from Leonetti&apos;s."
+  },
+  "property-type": {
+    "apartment": "Apartment",
+    "field": "Field",
+    "house": "House",
+    "land": "Land",
+    "business": "Business",
+    "garage/parking": "Garage/Parking",
+    "building": "Building",
+    "office": "Office",
+    "warehouse": "Warehouse"
   }
 }

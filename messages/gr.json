@@ -19,5 +19,16 @@
   "list-a-property": {
     "title": "ΚΑΤΑΧΩΡΗΣΗ ΝΕΟΥ ΑΚΙΝΗΤΟΥ",
     "description": "Καταχωρήστε το ιδανικό σας ακίνητο από την Leonetti&apos;s."
+  },
+  "property-type": {
+    "apartment": "Διαμέρισμα",
+    "field": "Χωράφι",
+    "house": "Σπίτι",
+    "land": "Οικόπεδο",
+    "business": "Επαγγελματικό",
+    "garage/parking": "Γκαράζ/Πάρκινγκ",
+    "building": "Κτίριο",
+    "office": "Γραφείο",
+    "warehouse": "Αποθήκη"
   }
 }

@@ -19,5 +19,16 @@
   "list-a-property": {
     "title": "DÉPOSER UNE NOUVELLE ANNONCE",
     "description": "Déposez la propriété idéale chez Leonetti&apos;s."
+  },
+  "property-type": {
+    "apartment": "Appartement",
+    "field": "Champ",
+    "house": "Maison",
+    "land": "Terrain",
+    "business": "Entreprise",
+    "garage/parking": "Garage/Parking",
+    "building": "Bâtiment",
+    "office": "Bureau",
+    "warehouse": "Entrepôt"
   }
 }

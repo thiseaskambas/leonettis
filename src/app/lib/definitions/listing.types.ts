@@ -25,29 +25,15 @@ type ListingCategory =
   | 'other';
 
 export type PropertyType =
-  | 'field'
-  | 'plot'
-  | 'house'
   | 'apartment'
-  | 'villa'
+  | 'field'
+  | 'house'
   | 'land'
-  | 'bungalow'
-  | 'studio'
-  | 'penthouse'
-  | 'chalet'
-  | 'farmhouse'
-  | 'cottage'
-  | 'townhouse'
-  | 'loft'
-  | 'commercial'
-  | 'industrial'
-  | 'agricultural'
-  | 'garage'
+  | 'business'
+  | 'garage/parking'
   | 'building'
   | 'office'
-  | 'warehouse'
-  | 'shop'
-  | 'other';
+  | 'warehouse';
 
 type ViewType =
   | 'sea'

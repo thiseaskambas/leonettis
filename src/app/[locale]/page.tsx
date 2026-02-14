@@ -1,6 +1,8 @@
 'use client';
-import { Label, ListBox, Select } from '@heroui/react';
+import { Button, Label, ListBox, Select } from '@heroui/react';
+import { Search } from 'lucide-react';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import type { Key } from 'react-aria-components';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
@@ -8,6 +10,18 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 
 import { PropertyType } from '../lib/definitions/listing.types';
 import { getMediaUrl } from '../lib/helpers/media-helpers';
+
+const PROPERTY_TYPES: PropertyType[] = [
+  'house',
+  'apartment',
+  'field',
+  'land',
+  'business',
+  'garage/parking',
+  'building',
+  'office',
+  'warehouse',
+];
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<'buy' | 'rent'>('buy');
@@ -18,17 +32,11 @@ export default function Home() {
     { type: 'image', src: 'images/leonettis/homepage/2.webp' },
     { type: 'image', src: 'images/leonettis/homepage/3.webp' },
   ];
-  const propertyTypes: { name: string; id: PropertyType }[] = [
-    { name: 'Apartment', id: 'apartment' },
-    { name: 'House', id: 'house' },
-    { name: 'Villa', id: 'villa' },
-    { name: 'Land', id: 'land' },
-    { name: 'Bungalow', id: 'bungalow' },
-    { name: 'Garage', id: 'garage' },
-    { name: 'Office', id: 'office' },
-    { name: 'Warehouse', id: 'warehouse' },
-    { name: 'Shop', id: 'shop' },
-  ];
+  const t = useTranslations('property-type');
+  const listingTypes = PROPERTY_TYPES.map((key) => ({
+    name: t(key),
+    id: key,
+  }));
 
   const [selectedPropertyType, setSelectedPropertyType] = useState<Key | null>(
     'house'
@@ -83,7 +91,7 @@ export default function Home() {
         </Swiper>
         {/* Overlay: centered on top of Swiper */}
         <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
-          <div className="pointer-events-auto">
+          <div className="pointer-events-auto -mt-52">
             <div className="flex rounded-xl">
               <button
                 onClick={() => setActiveTab('buy')}
@@ -106,35 +114,36 @@ export default function Home() {
                 </span>
               </button>
             </div>
-            <div className="bg-surface-raised/90 w-56 rounded-r-full p-4">
-              {activeTab === 'buy' ? (
-                <Select
-                  className="w-[200px]"
-                  placeholder="Select a property type"
-                  value={selectedPropertyType}
-                  onChange={(value) => setSelectedPropertyType(value)}>
-                  <Label>Property Type</Label>
-                  <Select.Trigger>
-                    <Select.Value />
-                    <Select.Indicator />
-                  </Select.Trigger>
-                  <Select.Popover className="bg-surface-raised">
-                    <ListBox>
-                      {propertyTypes.map((propertyType) => (
-                        <ListBox.Item
-                          key={propertyType.id}
-                          id={propertyType.id}
-                          textValue={propertyType.name}>
-                          {propertyType.name}
-                          <ListBox.ItemIndicator />
-                        </ListBox.Item>
-                      ))}
-                    </ListBox>
-                  </Select.Popover>
-                </Select>
-              ) : (
-                <div>Rent</div>
-              )}
+            <div className="bg-surface-raised/90 flex gap-2 rounded-r-full">
+              <Select
+                className="w-[200px] p-4"
+                placeholder="Select a property type"
+                value={selectedPropertyType}
+                onChange={(value) => setSelectedPropertyType(value)}>
+                <Label className="hidden">Property Type</Label>
+                <Select.Trigger>
+                  <Select.Value />
+                  <Select.Indicator />
+                </Select.Trigger>
+                <Select.Popover className="bg-surface-raised">
+                  <ListBox>
+                    {listingTypes.map((filterOption) => (
+                      <ListBox.Item
+                        key={filterOption.id}
+                        id={filterOption.id}
+                        textValue={filterOption.name}>
+                        {filterOption.name}
+                        <ListBox.ItemIndicator />
+                      </ListBox.Item>
+                    ))}
+                  </ListBox>
+                </Select.Popover>
+              </Select>
+              <div className="flex w-40 items-center justify-end">
+                <Button className="bg-brand-primary hover:bg-brand-primary-hover aspect-square h-full rounded-full">
+                  <Search className="size-6" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>

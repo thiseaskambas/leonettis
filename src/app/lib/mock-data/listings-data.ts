@@ -78,7 +78,7 @@ export const listingsData: Listing[] = [
     },
     listingType: 'buy',
     category: 'residential',
-    propertyType: 'plot',
+    propertyType: 'land',
     price: 100000,
     bedrooms: 3,
     bathrooms: 2,
