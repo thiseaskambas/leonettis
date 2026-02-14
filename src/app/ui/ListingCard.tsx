@@ -82,6 +82,7 @@ export default function ListingCard({
       {/* Aspect Ratio Container */}
       <div className="relative aspect-4/3 w-full">
         <Swiper
+          rewind={true}
           onSlideChange={handleSlideChange}
           slidesPerView={1}
           spaceBetween={30}
