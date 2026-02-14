@@ -1,5 +1,6 @@
 'use client';
 import { Button, Label, ListBox, Select } from '@heroui/react';
+import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
@@ -117,10 +118,9 @@ export default function Home() {
                 </span>
               </button>
             </div>
-            <div className="bg-surface-raised/90 flex gap-2 rounded-r-full">
+            <div className="bg-surface-raised/90 flex h-16 gap-2 rounded-r-full">
               <Select
-                className="w-[200px] p-4"
-                placeholder="Select a property type"
+                className="my-auto ml-4 w-[200px]"
                 value={selectedPropertyType}
                 onChange={(value) => setSelectedPropertyType(value)}>
                 <Label className="hidden">Property Type</Label>
@@ -143,9 +143,20 @@ export default function Home() {
                 </Select.Popover>
               </Select>
               <div className="flex w-40 items-center justify-end">
-                <Button className="bg-brand-primary hover:bg-brand-primary-hover aspect-square h-full rounded-full">
-                  <Search className="size-6" />
-                </Button>
+                <motion.div
+                  initial={{ x: -100, rotate: -360, opacity: 0 }}
+                  animate={{ x: 0, rotate: 0, opacity: 1 }}
+                  transition={{
+                    type: 'spring',
+                    stiffness: 50,
+                    damping: 10,
+                    delay: 0.4,
+                  }}
+                  className="aspect-square h-full">
+                  <Button className="bg-brand-primary hover:bg-brand-primary-hover flex h-full w-full min-w-0 items-center justify-center rounded-full p-0">
+                    <Search className="size-6 text-white" />
+                  </Button>
+                </motion.div>
               </div>
             </div>
           </div>
