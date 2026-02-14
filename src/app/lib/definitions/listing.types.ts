@@ -24,7 +24,7 @@ type ListingCategory =
   | 'agricultural'
   | 'other';
 
-type PropertyType =
+export type PropertyType =
   | 'field'
   | 'plot'
   | 'house'
@@ -42,6 +42,11 @@ type PropertyType =
   | 'commercial'
   | 'industrial'
   | 'agricultural'
+  | 'garage'
+  | 'building'
+  | 'office'
+  | 'warehouse'
+  | 'shop'
   | 'other';
 
 type ViewType =
