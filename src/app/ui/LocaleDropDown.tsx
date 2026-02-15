@@ -51,7 +51,7 @@ export function LocaleDropDown() {
           selectedKeys={selected}
           selectionMode="single"
           disallowEmptySelection
-          className="bg-glass-no-border items-center gap-4 md:items-start md:gap-0"
+          className="items-center gap-4 bg-none md:items-start md:gap-0"
           onSelectionChange={handleSelectionChange}>
           {Object.values(locales)
             .filter((locale) => locale.value !== currentLocale)
