@@ -1,0 +1,54 @@
+@layer utilities {
+  .glass-adaptive {
+    --glass-bg: color-mix(in oklab, var(--bg, transparent) 40%, transparent);
+    background: var(--glass-bg);
+    border: 1px solid color-mix(in oklab, var(--glass-bg) 70%, white);
+  }
+
+  .glass-adaptive-no-border {
+    --glass-bg: color-mix(in oklab, var(--bg, transparent) 40%, transparent);
+    background: var(--glass-bg);
+    border: none;
+  }
+
+  .filter-liquid {
+    filter: url(#liquid-filter);
+  }
+
+  .bg-glass-no-border {
+    /* Inherit the adaptive logic */
+    /* Same as .glass-adaptive-no-border, inlined */
+    --glass-bg: color-mix(in oklab, var(--bg, transparent) 40%, transparent);
+    background: var(--glass-bg);
+    border: none;
+
+    /* Add the standard glass props */
+    @apply backdrop-blur-md;
+
+    /* Add the liquid animation props */
+    @apply animate-liquid bg-size-[200%_200%];
+    @apply bg-linear-to-r from-white/5 via-white/20 to-white/5;
+    @apply dark:from-black/5 dark:via-black/20 dark:to-black/5;
+
+    /* Set default variables */
+    --bg: white;
+  }
+
+  .bg-glass {
+    --glass-bg: color-mix(in oklab, var(--bg, transparent) 40%, transparent);
+    background: var(--glass-bg);
+    border: 1px solid color-mix(in oklab, var(--glass-bg) 70%, white);
+    @apply backdrop-blur-md;
+    @apply animate-liquid bg-size-[200%_200%];
+    @apply bg-linear-to-r from-white/5 via-white/20 to-white/5;
+    @apply dark:from-black/5 dark:via-black/20 dark:to-black/5;
+    --bg: white;
+  }
+  .dark .bg-glass {
+    --bg: black;
+  }
+
+  .dark .bg-glass-no-border {
+    --bg: black;
+  }
+}

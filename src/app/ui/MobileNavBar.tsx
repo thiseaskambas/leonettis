@@ -1,7 +1,7 @@
 'use client';
 
 import { Menu, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect } from 'react';
 
 import { Link } from '@/i18n/navigation';
 
@@ -15,16 +15,21 @@ interface NavItem {
 
 interface MobileNavBarProps {
   navItems: NavItem[];
+  isOpen: boolean;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
   children?: React.ReactNode; // For ThemeSwitcher / LocaleDropDown if you want them inside
 }
 
-export function MobileNavBar({ navItems, children }: MobileNavBarProps) {
-  const [isOpen, setIsOpen] = useState(false);
-
+export function MobileNavBar({
+  navItems,
+  children,
+  isOpen,
+  setIsOpen,
+}: MobileNavBarProps) {
   // Prevent scrolling when menu is open
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = 'unset';
     } else {
       document.body.style.overflow = 'unset';
     }
@@ -35,11 +40,13 @@ export function MobileNavBar({ navItems, children }: MobileNavBarProps) {
 
   return (
     <div className="w-full md:hidden">
-      {/* Burger Button */}
-      <div className="flex justify-between p-2">
-        <NavigationLink href="/">
-          <ThemeLogo />
-        </NavigationLink>
+      <div className={`flex justify-between p-2 ${isOpen ? 'hidden' : ''}`}>
+        <div className="relative flex items-center justify-center">
+          <div className="absolute inset-0 rounded-full bg-white/50 blur-xl dark:bg-black/30" />
+          <NavigationLink href="/" className="relative z-10 drop-shadow-md">
+            <ThemeLogo />
+          </NavigationLink>
+        </div>
         <button
           onClick={() => setIsOpen((prev) => !prev)}
           aria-label={isOpen ? 'Close menu' : 'Open menu'}
@@ -47,13 +54,19 @@ export function MobileNavBar({ navItems, children }: MobileNavBarProps) {
           <Menu size={32} />
         </button>
       </div>
-      {/* Fullscreen Overlay */}
+
       {isOpen && (
-        <div className="dark:bg-leon-blue-950 fixed inset-0 z-50 flex flex-col bg-white">
+        <div className="bg-glass-no-border fixed inset-0 z-50 h-screen w-full">
           <div className="flex justify-between p-2">
-            <NavigationLink href="/" onClick={() => setIsOpen(false)}>
-              <ThemeLogo />
-            </NavigationLink>
+            <div className="relative flex items-center justify-center">
+              <div className="absolute inset-0 rounded-full bg-white/50 blur-xl dark:bg-black/30" />
+              <NavigationLink
+                href="/"
+                onClick={() => setIsOpen(false)}
+                className="relative z-10 drop-shadow-md">
+                <ThemeLogo />
+              </NavigationLink>
+            </div>
             <button
               onClick={() => setIsOpen(false)}
               aria-label="Close menu"

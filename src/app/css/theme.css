@@ -137,6 +137,19 @@
   /* Fonts */
   --font-inter: var(--font-inter);
   --font-brand-primary: var(--font-inter);
+
+  /* Glass Effects */
+  --animate-liquid: liquid 15s ease-in-out infinite;
+
+  @keyframes liquid {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
 }
 
 .dark {
