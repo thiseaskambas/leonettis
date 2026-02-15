@@ -1,15 +1,7 @@
 @layer utilities {
   .glass-adaptive {
-    /* 
-        1. Define the background: 80% of the --bg color, 20% transparent.
-           Defaults to transparent if --bg is not set.
-      */
     --glass-bg: color-mix(in oklab, var(--bg, transparent) 40%, transparent);
     background: var(--glass-bg);
-    /* 
-        2. Define the border: 70% of the background color, 30% white.
-           This creates that "lit edge" effect that matches the surface color.
-      */
     border: 1px solid color-mix(in oklab, var(--glass-bg) 70%, white);
   }
 
@@ -18,19 +10,45 @@
     background: var(--glass-bg);
     border: none;
   }
+
+  .filter-liquid {
+    filter: url(#liquid-filter);
+  }
+
+  .bg-glass-no-border {
+    /* Inherit the adaptive logic */
+    /* Same as .glass-adaptive-no-border, inlined */
+    --glass-bg: color-mix(in oklab, var(--bg, transparent) 40%, transparent);
+    background: var(--glass-bg);
+    border: none;
+
+    /* Add the standard glass props */
+    @apply backdrop-blur-md;
+
+    /* Add the liquid animation props */
+    @apply animate-liquid bg-size-[200%_200%];
+    @apply bg-linear-to-r from-white/5 via-white/20 to-white/5;
+    @apply dark:from-black/5 dark:via-black/20 dark:to-black/5;
+
+    /* Set default variables */
+    --bg: white;
+  }
+
+  .bg-glass {
+    --glass-bg: color-mix(in oklab, var(--bg, transparent) 40%, transparent);
+    background: var(--glass-bg);
+    border: 1px solid color-mix(in oklab, var(--glass-bg) 70%, white);
+    @apply backdrop-blur-md;
+    @apply animate-liquid bg-size-[200%_200%];
+    @apply bg-linear-to-r from-white/5 via-white/20 to-white/5;
+    @apply dark:from-black/5 dark:via-black/20 dark:to-black/5;
+    --bg: white;
+  }
+  .dark .bg-glass {
+    --bg: black;
+  }
+
+  .dark .bg-glass-no-border {
+    --bg: black;
+  }
 }
-/*
- // Example 1: With a black background (like your navbar)
- <div className="glass-adaptive [--bg:black] backdrop-blur-md">
-   Content
- </div>
- 
- // Example 2: With a brand color
- <div className="glass-adaptive [--bg:#0000ff] backdrop-blur-md">
-   Blue Glass
- </div>
- 
- // Example 3: Using your theme colors (referencing CSS variables)
- <div className="glass-adaptive [--bg:var(--color-leon-950)] backdrop-blur-md">
-   Theme Color Glass
- </div>*/

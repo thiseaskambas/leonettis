@@ -40,7 +40,6 @@ export function MobileNavBar({
 
   return (
     <div className="w-full md:hidden">
-      {/* Burger Button */}
       <div className={`flex justify-between p-2 ${isOpen ? 'hidden' : ''}`}>
         <NavigationLink href="/">
           <ThemeLogo />
@@ -52,9 +51,9 @@ export function MobileNavBar({
           <Menu size={32} />
         </button>
       </div>
-      {/* Fullscreen Overlay */}
+
       {isOpen && (
-        <div className="glass-adaptive-no-border animate-liquid h-screen w-full bg-linear-to-r from-white/5 via-white/20 to-white/5 bg-size-[200%_200%] backdrop-blur-md [--bg:white] dark:from-black/5 dark:via-black/20 dark:to-black/5 dark:[--bg:black]">
+        <div className="bg-glass-no-border fixed inset-0 z-50 h-screen w-full">
           <div className="flex justify-between p-2">
             <NavigationLink href="/" onClick={() => setIsOpen(false)}>
               <ThemeLogo />

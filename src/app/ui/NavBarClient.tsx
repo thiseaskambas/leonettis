@@ -22,12 +22,19 @@ export function NavBarClient({ navLinks }: NavBarClientProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="glass-adaptive-no-border animate-liquid absolute top-0 left-0 z-50 w-full bg-linear-to-r from-white/5 via-white/20 to-white/5 bg-size-[200%_200%] backdrop-blur-md [--bg:white] dark:from-black/5 dark:via-black/20 dark:to-black/5 dark:[--bg:black]">
+    // NavBarClient.tsx line 25
+    <div
+      className={`absolute top-0 left-0 z-50 w-full ${isOpen ? '' : 'bg-glass-no-border'}`}>
       <div className="hidden w-full items-center px-5 md:flex">
         <div className="flex-1" aria-hidden />
-        <NavigationLink className="hidden self-center md:block" href="/">
-          <ThemeLogo />
-        </NavigationLink>
+        <div className="relative flex items-center justify-center">
+          <div className="absolute inset-0 rounded-full bg-white/50 blur-xl dark:bg-black/30" />
+          <NavigationLink
+            className="hidden self-center drop-shadow-md md:block"
+            href="/">
+            <ThemeLogo />
+          </NavigationLink>
+        </div>
         <div className="flex flex-1 items-center justify-end gap-2 md:flex">
           <LocaleDropDown />
           <ThemeSwitch />

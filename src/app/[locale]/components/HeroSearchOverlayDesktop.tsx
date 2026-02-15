@@ -57,7 +57,7 @@ export default function HeroSearchOverlayDesktop() {
           </span>
         </button>
       </div>
-      <div className="bg-surface-raised/90 flex h-16 gap-2 rounded-r-full">
+      <div className="bg-glass flex h-16 gap-2 rounded-r-full">
         <Select
           className="my-auto ml-4 w-[200px]"
           value={selectedPropertyType}

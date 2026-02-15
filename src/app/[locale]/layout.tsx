@@ -8,6 +8,7 @@ import { ThemeProvider } from 'next-themes';
 
 import { routing } from '@/i18n/routing';
 
+import GlassSVG from '../ui/GlassSVG';
 import { NavBar } from '../ui/NavBar';
 
 const inter = Inter({
@@ -54,6 +55,7 @@ export default async function LocaleLayout({
             </footer>
           </ThemeProvider>
         </NextIntlClientProvider>
+        <GlassSVG />
       </body>
     </html>
   );
