@@ -9,15 +9,28 @@
     "contact": "Contact"
   },
   "buy": {
+    "cta": "Buy",
     "title": "PROPERTIES FOR SALE",
     "description": "Buy the ideal property from Leonetti&apos;s."
   },
   "rent": {
+    "cta": "Rent",
     "title": "PROPERTIES FOR RENT",
     "description": "Rent the ideal property from Leonetti&apos;s."
   },
   "list-a-property": {
     "title": "LIST A NEW PROPERTY",
     "description": "List the ideal property from Leonetti&apos;s."
+  },
+  "property-type": {
+    "apartment": "Apartment",
+    "field": "Agricultural land",
+    "house": "House",
+    "land": "Plot / Land",
+    "business": "Commercial property",
+    "garage": "Garage/Parking",
+    "building": "Building",
+    "office": "Office",
+    "warehouse": "Warehouse"
   }
 }

@@ -21,28 +21,18 @@ type ListingCategory =
   | 'commercial'
   | 'residential'
   | 'industrial'
-  | 'agricultural'
-  | 'other';
+  | 'agricultural';
 
-type PropertyType =
-  | 'field'
-  | 'plot'
-  | 'house'
+export type PropertyType =
   | 'apartment'
-  | 'villa'
+  | 'field'
+  | 'house'
   | 'land'
-  | 'bungalow'
-  | 'studio'
-  | 'penthouse'
-  | 'chalet'
-  | 'farmhouse'
-  | 'cottage'
-  | 'townhouse'
-  | 'loft'
-  | 'commercial'
-  | 'industrial'
-  | 'agricultural'
-  | 'other';
+  | 'business'
+  | 'garage'
+  | 'building'
+  | 'office'
+  | 'warehouse';
 
 type ViewType =
   | 'sea'
@@ -73,6 +63,7 @@ type Features =
   | 'air conditioning'
   | 'heating'
   | 'fireplace'
+  | 'stove'
   | 'balcony'
   | 'terrace'
   | 'garden'

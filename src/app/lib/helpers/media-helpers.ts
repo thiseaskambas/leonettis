@@ -33,6 +33,6 @@ export function getMediaBlurDataURL(path: string): string {
 
   // Ensure base doesn't have a trailing slash and join
   const result = `${base.replace(/\/$/, '')}/${iconPath}`;
-  console.log('blur data url', result);
+
   return result;
 }

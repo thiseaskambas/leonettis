@@ -9,15 +9,28 @@
     "contact": "Επικοινωνία"
   },
   "buy": {
+    "cta": "Αγορά",
     "title": "ΑΚΙΝΗΤΑ ΠΡΟΣ ΠΩΛΗΣΗ",
     "description": "Αγοράτε το ιδανικό σας ακίνητο από την Leonetti&apos;s."
   },
   "rent": {
+    "cta": "Ενοικίαση",
     "title": "ΑΚΙΝΗΤΑ ΠΡΟΣ ΕΝΟΙΚΙΑΣΗ",
     "description": "Ενοικιάστε το ιδανικό σας ακίνητο από την Leonetti&apos;s."
   },
   "list-a-property": {
     "title": "ΚΑΤΑΧΩΡΗΣΗ ΝΕΟΥ ΑΚΙΝΗΤΟΥ",
     "description": "Καταχωρήστε το ιδανικό σας ακίνητο από την Leonetti&apos;s."
+  },
+  "property-type": {
+    "apartment": "Διαμέρισμα",
+    "field": "Χωράφι",
+    "house": "Σπίτι",
+    "land": "Οικόπεδο",
+    "business": "Επαγγελματικός Χώρος",
+    "garage": "Γκαράζ/Πάρκινγκ",
+    "building": "Κτίριο",
+    "office": "Γραφείο",
+    "warehouse": "Αποθήκη"
   }
 }

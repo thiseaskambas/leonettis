@@ -1,7 +1,33 @@
-/* Navigation: color and size of the default arrow */
+/* Navigation container: the circle */
 .mySwiper .swiper-button-prev,
 .mySwiper .swiper-button-next {
-  color: var(--color-brand-primary);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--color-brand-primary);
+  margin: 0 10px;
+  /* Flexbox is needed to center the new SVG */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Remove default Swiper styles that might interfere */
+  --swiper-navigation-size: 0; /* Resets default size logic */
+  &:hover {
+    background-color: var(--color-brand-primary-hover);
+  }
+}
+
+/* The arrow icon itself */
+.mySwiper .swiper-button-prev svg,
+.mySwiper .swiper-button-next svg {
+  width: 16px; /* Adjust this to change arrow size */
+  height: 16px; /* Adjust this to change arrow size */
+  color: white; /* SVG fill/stroke color */
+
+  /* Add these lines to make it thicker */
+  stroke: currentColor;
+  stroke-width: 2;
 }
 
 /* Pagination: color and size */

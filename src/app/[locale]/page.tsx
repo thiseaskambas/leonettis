@@ -1,12 +1,13 @@
 'use client';
-import Image from 'next/image';
-import { Autoplay, Navigation, Pagination } from 'swiper/modules';
-import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { getMediaUrl } from '../lib/helpers/media-helpers';
+import { useMediaQuery } from '@heroui/react';
+
+import HeroCarousel from './components/HeroCarousel';
+import HeroSearchOverlayDesktop from './components/HeroSearchOverlayDesktop';
+import HeroSearchOverlayMobile from './components/HeroSearchOverlayMobile';
 
 export default function Home() {
-  const slides = [
+  const slides: { type: 'image' | 'video'; src: string }[] = [
     { type: 'image', src: 'images/leonettis/homepage/1.webp' },
     { type: 'video', src: 'images/leonettis/homepage/1.mov' },
     { type: 'video', src: 'images/leonettis/homepage/2.mov' },
@@ -14,52 +15,26 @@ export default function Home() {
     { type: 'image', src: 'images/leonettis/homepage/3.webp' },
   ];
 
+  const isDesktop = useMediaQuery('(min-width: 768px)');
+
+  // Prevent hydration mismatch: render nothing or a neutral placeholder until we know
+  if (isDesktop === null) {
+    return <div className="pointer-events-auto -mt-52 h-24" />; // placeholder to avoid layout shift
+  }
+
   return (
     <main className="dark:bg-tiff-gray-950 min-h-screen">
-      <Swiper
-        spaceBetween={0}
-        centeredSlides={true}
-        autoplay={{
-          delay: 2000,
-          disableOnInteraction: false,
-        }}
-        pagination={{
-          clickable: true,
-        }}
-        navigation={true}
-        modules={[Autoplay, Pagination, Navigation]}
-        className="mySwiper swiper-controls-desktop h-[85vh] w-full md:h-[50vh]">
-        {slides.map((slide, index) => (
-          <SwiperSlide
-            key={index}
-            className="h-full! w-full!"
-            data-swiper-autoplay={slide.type === 'video' ? '5000' : '2000'}>
-            <div className="relative h-full w-full">
-              {slide.type === 'video' ? (
-                <video
-                  className="h-full w-full object-cover object-top"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  suppressHydrationWarning>
-                  <source src={getMediaUrl(slide.src)} type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-              ) : (
-                <Image
-                  src={getMediaUrl(slide.src)}
-                  alt="Property Image"
-                  fill
-                  className="object-cover object-top"
-                  sizes="100vw"
-                  priority={true}
-                />
-              )}
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+      <div className="relative">
+        <HeroCarousel slides={slides} />
+        {/* Overlay: centered on top of Swiper */}
+        <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+          {isDesktop ? (
+            <HeroSearchOverlayDesktop />
+          ) : (
+            <HeroSearchOverlayMobile />
+          )}
+        </div>
+      </div>
     </main>
   );
 }
