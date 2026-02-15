@@ -19,7 +19,7 @@ const PROPERTY_TYPES: PropertyType[] = [
   'warehouse',
 ];
 
-export default function HeroSearchOverlay() {
+export default function HeroSearchOverlayDesktop() {
   const t = useTranslations('property-type');
   const listingTypes = PROPERTY_TYPES.map((key) => ({
     name: t(key),

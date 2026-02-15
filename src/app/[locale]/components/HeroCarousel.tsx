@@ -22,7 +22,7 @@ export default function HeroCarousel({
       }}
       navigation={true}
       modules={[Autoplay, Pagination, Navigation]}
-      className="mySwiper swiper-controls-desktop h-[85vh] w-full md:h-[calc(100vh-145px)]">
+      className="mySwiper swiper-controls-desktop h-[calc(100vh-105px)] w-full md:h-[calc(100vh-145px)]">
       {slides.map((slide, index) => (
         <SwiperSlide
           key={index}
