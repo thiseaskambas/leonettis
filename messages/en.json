@@ -24,11 +24,11 @@
   },
   "property-type": {
     "apartment": "Apartment",
-    "field": "Field",
+    "field": "Agricultural land",
     "house": "House",
-    "land": "Land",
-    "business": "Business",
-    "garage/parking": "Garage/Parking",
+    "land": "Plot / Land",
+    "business": "Commercial property",
+    "garage": "Garage/Parking",
     "building": "Building",
     "office": "Office",
     "warehouse": "Warehouse"

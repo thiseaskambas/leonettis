@@ -21,8 +21,7 @@ type ListingCategory =
   | 'commercial'
   | 'residential'
   | 'industrial'
-  | 'agricultural'
-  | 'other';
+  | 'agricultural';
 
 export type PropertyType =
   | 'apartment'
@@ -30,7 +29,7 @@ export type PropertyType =
   | 'house'
   | 'land'
   | 'business'
-  | 'garage/parking'
+  | 'garage'
   | 'building'
   | 'office'
   | 'warehouse';
@@ -64,6 +63,7 @@ type Features =
   | 'air conditioning'
   | 'heating'
   | 'fireplace'
+  | 'stove'
   | 'balcony'
   | 'terrace'
   | 'garden'

@@ -24,12 +24,12 @@
   },
   "property-type": {
     "apartment": "Appartement",
-    "field": "Champ",
+    "field": "Terrain agricole",
     "house": "Maison",
-    "land": "Terrain",
-    "business": "Entreprise",
-    "garage/parking": "Garage/Parking",
-    "building": "Bâtiment",
+    "land": "Terrain constructible",
+    "business": "Local commercial",
+    "garage": "Garage/Parking",
+    "building": "Immeuble",
     "office": "Bureau",
     "warehouse": "Entrepôt"
   }
