@@ -41,9 +41,12 @@ export function MobileNavBar({
   return (
     <div className="w-full md:hidden">
       <div className={`flex justify-between p-2 ${isOpen ? 'hidden' : ''}`}>
-        <NavigationLink href="/">
-          <ThemeLogo />
-        </NavigationLink>
+        <div className="relative flex items-center justify-center">
+          <div className="absolute inset-0 rounded-full bg-white/50 blur-xl dark:bg-black/30" />
+          <NavigationLink href="/" className="relative z-10 drop-shadow-md">
+            <ThemeLogo />
+          </NavigationLink>
+        </div>
         <button
           onClick={() => setIsOpen((prev) => !prev)}
           aria-label={isOpen ? 'Close menu' : 'Open menu'}
@@ -55,9 +58,15 @@ export function MobileNavBar({
       {isOpen && (
         <div className="bg-glass-no-border fixed inset-0 z-50 h-screen w-full">
           <div className="flex justify-between p-2">
-            <NavigationLink href="/" onClick={() => setIsOpen(false)}>
-              <ThemeLogo />
-            </NavigationLink>
+            <div className="relative flex items-center justify-center">
+              <div className="absolute inset-0 rounded-full bg-white/50 blur-xl dark:bg-black/30" />
+              <NavigationLink
+                href="/"
+                onClick={() => setIsOpen(false)}
+                className="relative z-10 drop-shadow-md">
+                <ThemeLogo />
+              </NavigationLink>
+            </div>
             <button
               onClick={() => setIsOpen(false)}
               aria-label="Close menu"

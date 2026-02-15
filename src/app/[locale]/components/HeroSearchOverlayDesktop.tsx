@@ -57,18 +57,18 @@ export default function HeroSearchOverlayDesktop() {
           </span>
         </button>
       </div>
-      <div className="bg-glass flex h-16 gap-2 rounded-r-full">
+      <div className="bg-glass-no-border flex h-16 gap-2 rounded-r-full">
         <Select
-          className="my-auto ml-4 w-[200px]"
+          className="my-auto ml-4 w-[200px] bg-transparent"
           value={selectedPropertyType}
           onChange={(value) => setSelectedPropertyType(value)}>
           <Label className="hidden">Property Type</Label>
-          <Select.Trigger>
+          <Select.Trigger className="bg-glass">
             <Select.Value />
             <Select.Indicator />
           </Select.Trigger>
-          <Select.Popover className="bg-surface-raised">
-            <ListBox>
+          <Select.Popover className="bg-transparent backdrop-blur-md">
+            <ListBox className="bg-glass">
               {listingTypes.map((filterOption) => (
                 <ListBox.Item
                   key={filterOption.id}
