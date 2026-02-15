@@ -13,7 +13,7 @@ export default async function Rent() {
     .map((listing) => getLocalizedListing(listing, locale as Locale))
     .filter((listing) => listing.listingType === 'rent');
   return (
-    <main className="dark:bg-tiff-gray-950 min-h-screen p-5 md:p-10">
+    <main className="dark:bg-tiff-gray-950 mt-40 min-h-screen p-5 md:p-10">
       <h1 className="text-center text-2xl font-light">{t('title')}</h1>
       <p className="text-center font-light text-gray-600 dark:text-gray-400">
         {t('description')}

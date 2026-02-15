@@ -1,0 +1,36 @@
+@layer utilities {
+  .glass-adaptive {
+    /* 
+        1. Define the background: 80% of the --bg color, 20% transparent.
+           Defaults to transparent if --bg is not set.
+      */
+    --glass-bg: color-mix(in oklab, var(--bg, transparent) 40%, transparent);
+    background: var(--glass-bg);
+    /* 
+        2. Define the border: 70% of the background color, 30% white.
+           This creates that "lit edge" effect that matches the surface color.
+      */
+    border: 1px solid color-mix(in oklab, var(--glass-bg) 70%, white);
+  }
+
+  .glass-adaptive-no-border {
+    --glass-bg: color-mix(in oklab, var(--bg, transparent) 40%, transparent);
+    background: var(--glass-bg);
+    border: none;
+  }
+}
+/*
+ // Example 1: With a black background (like your navbar)
+ <div className="glass-adaptive [--bg:black] backdrop-blur-md">
+   Content
+ </div>
+ 
+ // Example 2: With a brand color
+ <div className="glass-adaptive [--bg:#0000ff] backdrop-blur-md">
+   Blue Glass
+ </div>
+ 
+ // Example 3: Using your theme colors (referencing CSS variables)
+ <div className="glass-adaptive [--bg:var(--color-leon-950)] backdrop-blur-md">
+   Theme Color Glass
+ </div>*/

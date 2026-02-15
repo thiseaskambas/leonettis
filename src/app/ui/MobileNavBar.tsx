@@ -1,7 +1,7 @@
 'use client';
 
 import { Menu, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect } from 'react';
 
 import { Link } from '@/i18n/navigation';
 
@@ -15,16 +15,21 @@ interface NavItem {
 
 interface MobileNavBarProps {
   navItems: NavItem[];
+  isOpen: boolean;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
   children?: React.ReactNode; // For ThemeSwitcher / LocaleDropDown if you want them inside
 }
 
-export function MobileNavBar({ navItems, children }: MobileNavBarProps) {
-  const [isOpen, setIsOpen] = useState(false);
-
+export function MobileNavBar({
+  navItems,
+  children,
+  isOpen,
+  setIsOpen,
+}: MobileNavBarProps) {
   // Prevent scrolling when menu is open
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = 'unset';
     } else {
       document.body.style.overflow = 'unset';
     }
@@ -36,7 +41,7 @@ export function MobileNavBar({ navItems, children }: MobileNavBarProps) {
   return (
     <div className="w-full md:hidden">
       {/* Burger Button */}
-      <div className="flex justify-between p-2">
+      <div className={`flex justify-between p-2 ${isOpen ? 'hidden' : ''}`}>
         <NavigationLink href="/">
           <ThemeLogo />
         </NavigationLink>
@@ -49,7 +54,7 @@ export function MobileNavBar({ navItems, children }: MobileNavBarProps) {
       </div>
       {/* Fullscreen Overlay */}
       {isOpen && (
-        <div className="dark:bg-leon-blue-950 fixed inset-0 z-50 flex flex-col bg-white">
+        <div className="glass-adaptive-no-border animate-liquid h-screen w-full bg-linear-to-r from-white/5 via-white/20 to-white/5 bg-size-[200%_200%] backdrop-blur-md [--bg:white] dark:from-black/5 dark:via-black/20 dark:to-black/5 dark:[--bg:black]">
           <div className="flex justify-between p-2">
             <NavigationLink href="/" onClick={() => setIsOpen(false)}>
               <ThemeLogo />
