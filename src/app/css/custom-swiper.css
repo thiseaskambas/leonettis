@@ -4,17 +4,48 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: var(--color-brand-primary);
   margin: 0 10px;
   /* Flexbox is needed to center the new SVG */
   display: flex;
   align-items: center;
   justify-content: center;
 
+  /* Inherit the adaptive logic */
+  /* Same as .glass-adaptive-no-border, inlined */
+  --glass-bg: color-mix(in oklab, var(--bg, transparent) 40%, transparent);
+  background: var(--glass-bg);
+  border: none;
+
+  /* Add the standard glass props */
+  @apply backdrop-blur-md;
+
+  /* Add the liquid animation props */
+  @apply animate-liquid bg-size-[200%_200%];
+  @apply bg-linear-to-r from-white/5 via-white/20 to-white/5;
+  @apply dark:from-black/5 dark:via-black/20 dark:to-black/5;
+
+  /* Set default variables */
+  --bg: white;
+
   /* Remove default Swiper styles that might interfere */
   --swiper-navigation-size: 0; /* Resets default size logic */
   &:hover {
-    background-color: var(--color-brand-primary-hover);
+    /* Inherit the adaptive logic */
+    /* Same as .glass-adaptive-no-border, inlined */
+    --glass-bg: color-mix(in oklab, var(--bg, transparent) 60%, transparent);
+    background: var(--glass-bg);
+    border: none;
+
+    /* Add the standard glass props */
+    @apply backdrop-blur-md;
+
+    /* Add the liquid animation props */
+    @apply animate-liquid bg-size-[200%_200%];
+    @apply bg-linear-to-r from-white/5 via-white/20 to-white/5;
+    @apply dark:from-black/5 dark:via-black/20 dark:to-black/5;
+
+    /* Set default variables */
+    --bg: white;
   }
 }
 
@@ -40,7 +71,6 @@
 .mySwiper .swiper-pagination-bullet-active {
   opacity: 1;
   background: var(--color-brand-primary);
-  transform: scale(1.2);
 }
 
 /* Hide by default */
@@ -59,4 +89,46 @@
   .swiper-controls-desktop .swiper-pagination {
     display: block !important;
   }
+}
+
+/** 
+ * Show only pagination on mobile and show navigation buttons + pagination on desktop 
+ */
+.swiper-pagination-only-mobile .swiper-button-next,
+.swiper-pagination-only-mobile .swiper-button-prev {
+  display: none !important;
+}
+.swiper-pagination-only-mobile .swiper-pagination {
+  display: block !important;
+}
+
+@media (min-width: 768px) {
+  .swiper-pagination-only-mobile .swiper-button-next,
+  .swiper-pagination-only-mobile .swiper-button-prev {
+    display: flex !important;
+  }
+  .swiper-pagination-only-mobile .swiper-pagination {
+    display: block !important;
+  }
+}
+
+.mySwiper .swiper-pagination-progressbar {
+  background: rgba(255, 255, 255, 0.2); /* Subtle semi-transparent track */
+  height: 3px !important; /* Sleek and thin */
+  top: 0 !important;
+  bottom: auto !important;
+  position: absolute;
+  width: 100%;
+  z-index: 20;
+}
+
+.mySwiper .swiper-pagination-progressbar-fill {
+  /* Option 1: Brand Color (Matches your buttons) */
+  background: var(--color-brand-primary) !important;
+
+  /* Option 2: Pure White (Cleaner, higher contrast) */
+  /* background: white !important; */
+
+  border-radius: 0 4px 4px 0; /* Soften the leading edge */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }

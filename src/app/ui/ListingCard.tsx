@@ -1,4 +1,5 @@
 'use client';
+import { Bath, Bed, MapPin, Maximize } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 import type { Swiper as SwiperType } from 'swiper';
@@ -27,17 +28,14 @@ const ListingImage = ({
 
   return (
     <>
-      {/* 1. Low-Res Placeholder (Visible initially) */}
       <Image
         src={blurSrc}
         alt={alt}
         fill
-        className="scale-[1.02] object-cover blur-lg" // Add blur-lg for the effect
+        className="scale-[1.02] object-cover blur-lg"
         sizes="(max-width: 768px) 100vw, 50vw"
-        priority={priority} // Load placeholder fast
+        priority={priority}
       />
-
-      {/* 2. Main Image (Fades in on top) */}
       <Image
         src={src}
         alt={alt}
@@ -59,16 +57,20 @@ export default function ListingCard({
 }: {
   listing: LocalizedListing;
 }) {
-  const { title, images } = listing;
-  // State to track which images should be forced to load
-  // Initialize with [0, 1] to ensure first two are ready
+  const {
+    title,
+    images,
+    price,
+    address,
+    bedrooms,
+    bathrooms,
+    squareMetersTotal,
+  } = listing;
   const [loadedIndices, setLoadedIndices] = useState<number[]>([0, 1]);
 
   const handleSlideChange = (swiper: SwiperType) => {
     const currentIndex = swiper.activeIndex;
     const nextIndex = currentIndex + 1;
-
-    // If the next image hasn't been marked for loading yet, add it
     if (
       nextIndex < (images?.length || 0) &&
       !loadedIndices.includes(nextIndex)
@@ -77,24 +79,37 @@ export default function ListingCard({
     }
   };
 
+  const formattedPrice = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 0,
+  }).format(price);
+
   return (
-    <div className="dark:border-leon-blue-900 w-full min-w-0 overflow-hidden rounded-xl border border-gray-200 transition-shadow duration-300 hover:cursor-pointer hover:shadow-md">
+    <div className="group relative w-full min-w-0 overflow-hidden rounded-2xl shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-xl">
+      {/* Price Tag (Top Right) */}
+      <div className="bg-glass-no-border absolute top-3 right-3 z-20 rounded-full px-3 py-1 text-sm font-semibold text-gray-900 dark:text-white">
+        {formattedPrice}
+      </div>
+
       {/* Aspect Ratio Container */}
-      <div className="relative aspect-4/3 w-full">
+      <div className="relative aspect-3/4 w-full md:aspect-4/3">
         <Swiper
           rewind={true}
           onSlideChange={handleSlideChange}
           slidesPerView={1}
           spaceBetween={30}
           pagination={{
-            clickable: true,
+            type: 'progressbar',
           }}
           navigation={true}
           modules={[Keyboard, Pagination, Navigation]}
-          className="mySwiper block h-full! w-full! cursor-default">
+          className="mySwiper swiper-pagination-only-mobile swiper-pagination-progressbar swiper-pagination-progressbar-fill block h-full! w-full! cursor-default">
           {images?.map((image, index) => (
-            <SwiperSlide key={index} className="h-full! w-full!">
-              <div className="relative h-full w-full">
+            <SwiperSlide
+              key={index}
+              className="h-full! w-full! overflow-hidden">
+              <div className="relative h-full w-full transition-transform duration-700 group-hover:scale-105">
                 <ListingImage
                   src={getMediaUrl(image)}
                   blurSrc={getMediaBlurDataURL(image)}
@@ -112,11 +127,44 @@ export default function ListingCard({
         </Swiper>
       </div>
 
+      {/* Glass Overlay Link */}
       <Link
         href={`/property/${listing.slug}`}
-        className="bg-surface-raised dark:bg-leon-blue-950 block p-4">
-        <h3 className="text-base font-medium">{title}</h3>
-        {/* You can add more details here like price, address, etc. */}
+        className="bg-glass-no-border absolute right-0 bottom-0 left-0 z-10 m-3 flex flex-col gap-2 rounded-xl border border-white/20 p-4 shadow-lg transition-all duration-300 hover:bg-white/40 dark:hover:bg-black/40">
+        {/* Title & Location */}
+        <div>
+          <h3 className="truncate text-lg font-medium tracking-wide text-gray-900 dark:text-white">
+            {title}
+          </h3>
+          <div className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-300">
+            <MapPin className="h-3 w-3" />
+            <span className="truncate">
+              {address.city}, {address.region}
+            </span>
+          </div>
+        </div>
+
+        {/* Specs Row */}
+        <div className="flex items-center gap-4 border-t border-gray-200/20 pt-2 text-xs font-medium text-gray-700 dark:text-gray-200">
+          {bedrooms && (
+            <div className="flex items-center gap-1">
+              <Bed className="h-3.5 w-3.5" />
+              <span>{bedrooms} Beds</span>
+            </div>
+          )}
+          {bathrooms && (
+            <div className="flex items-center gap-1">
+              <Bath className="h-3.5 w-3.5" />
+              <span>{bathrooms} Baths</span>
+            </div>
+          )}
+          {squareMetersTotal && (
+            <div className="flex items-center gap-1">
+              <Maximize className="h-3.5 w-3.5" />
+              <span>{squareMetersTotal}m²</span>
+            </div>
+          )}
+        </div>
       </Link>
     </div>
   );
