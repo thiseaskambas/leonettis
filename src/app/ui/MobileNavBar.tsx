@@ -78,7 +78,7 @@ export function MobileNavBar({
           <div className="mt-8 flex items-center justify-center gap-4">
             {children}
           </div>
-          <div className="text-leon-blue-950 dark:text-leon-blue-50 mt-12 flex flex-1 flex-col items-center gap-8 text-2xl font-medium">
+          <div className="text-leon-blue-950 dark:text-leon-blue-50 mt-12 flex flex-1 flex-col items-center gap-8 text-xl font-medium tracking-wide">
             {navItems.map((item) => (
               <Link
                 key={item.href}

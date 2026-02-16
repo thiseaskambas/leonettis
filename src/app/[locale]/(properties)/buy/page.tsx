@@ -13,12 +13,14 @@ export default async function Buy() {
     .map((listing) => getLocalizedListing(listing, locale as Locale))
     .filter((listing) => listing.listingType === 'buy');
   return (
-    <main className="dark:bg-tiff-gray-950 bg-tiff-gray-200 mt-40 min-h-screen p-5 md:p-10">
-      <h1 className="text-center text-2xl font-light">{t('title')}</h1>
-      <p className="text-center font-light text-gray-600 dark:text-gray-400">
+    <main className="from-tiff-gray-50 via-tiff-gray-100 to-leon-blue-50 dark:from-tiff-gray-950 dark:via-leon-blue-950 dark:to-tiff-gray-900 min-h-screen bg-linear-to-br p-5 pt-32 sm:px-10 md:px-32 md:pt-52">
+      <h1 className="text-center text-2xl font-light tracking-wider">
+        {t('title')}
+      </h1>
+      <p className="text-center font-light tracking-wide text-gray-600 dark:text-gray-400">
         {t('description')}
       </p>
-      <div className="mt-10 grid min-w-0 grid-cols-1 gap-8 md:grid-cols-2">
+      <div className="mt-10 grid min-w-0 grid-cols-1 gap-10 lg:grid-cols-2">
         {listings.map((listing, index) => (
           <ListingCard key={index} listing={listing} />
         ))}

@@ -63,9 +63,9 @@ export function LocaleDropDown() {
                   key={locale.short}
                   id={locale.short}
                   textValue={locale.label}>
-                  <Label className="flex items-center gap-2">
-                    <Flag className="size-8 rounded-full md:size-7" />{' '}
-                    {locale.label}
+                  <Label className="flex w-36 items-center justify-start gap-4 md:w-auto md:gap-2">
+                    <Flag className="size-8 shrink-0 rounded-full md:size-7" />
+                    <span className="text-left text-xl">{locale.label}</span>
                   </Label>
                 </Dropdown.Item>
               );

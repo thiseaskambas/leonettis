@@ -25,7 +25,7 @@ export function NavBarClient({ navLinks }: NavBarClientProps) {
     // NavBarClient.tsx line 25
     <div
       className={`fixed top-0 left-0 z-50 w-full ${isOpen ? '' : 'bg-glass-no-border'}`}>
-      <div className="hidden w-full items-center px-5 md:flex">
+      <div className="hidden w-full items-center px-5 md:flex md:px-14">
         <div className="flex-1" aria-hidden />
         <div className="relative flex items-center justify-center">
           <div className="absolute inset-0 rounded-full bg-white/50 blur-xl dark:bg-black/30" />
