@@ -29,7 +29,7 @@ export function MobileNavBar({
   // Prevent scrolling when menu is open
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
     }
@@ -56,7 +56,7 @@ export function MobileNavBar({
       </div>
 
       {isOpen && (
-        <div className="bg-glass-no-border fixed inset-0 z-50 h-screen w-full">
+        <div className="bg-glass-no-border fixed inset-0 z-50 h-dvh w-full">
           <div className="flex justify-between p-2">
             <div className="relative flex items-center justify-center">
               <div className="absolute inset-0 rounded-full bg-white/50 blur-xl dark:bg-black/30" />

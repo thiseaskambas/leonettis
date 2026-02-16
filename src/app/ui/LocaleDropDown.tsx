@@ -1,7 +1,7 @@
 'use client';
 
 import { Button, Dropdown, Label, Selection } from '@heroui/react';
-import { FR, GB, GR } from 'country-flag-icons/react/3x2';
+import { FR, GB, GR } from 'country-flag-icons/react/1x1';
 import { useLocale } from 'next-intl';
 import { useState } from 'react';
 
@@ -44,7 +44,7 @@ export function LocaleDropDown() {
       <Button
         className="rounded-none bg-transparent"
         aria-label="select language">
-        <SelectedFlag className="h-5 w-5" />
+        <SelectedFlag className="size-8 rounded-full md:size-7" />
       </Button>
       <Dropdown.Popover className="-ml-4 h-screen w-screen min-w-screen rounded-none border-none bg-transparent px-4 py-12 shadow-none backdrop-blur-md md:relative md:top-auto md:ml-0 md:h-auto md:w-auto md:min-w-auto md:p-0 md:px-0">
         <Dropdown.Menu
@@ -64,7 +64,8 @@ export function LocaleDropDown() {
                   id={locale.short}
                   textValue={locale.label}>
                   <Label className="flex items-center gap-2">
-                    <Flag className="h-5 w-5" /> {locale.label}
+                    <Flag className="size-8 rounded-full md:size-7" />{' '}
+                    {locale.label}
                   </Label>
                 </Dropdown.Item>
               );

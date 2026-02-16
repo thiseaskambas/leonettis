@@ -24,7 +24,7 @@ export function NavBarClient({ navLinks }: NavBarClientProps) {
   return (
     // NavBarClient.tsx line 25
     <div
-      className={`absolute top-0 left-0 z-50 w-full ${isOpen ? '' : 'bg-glass-no-border'}`}>
+      className={`fixed top-0 left-0 z-50 w-full ${isOpen ? '' : 'bg-glass-no-border'}`}>
       <div className="hidden w-full items-center px-5 md:flex">
         <div className="flex-1" aria-hidden />
         <div className="relative flex items-center justify-center">
