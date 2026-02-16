@@ -29,13 +29,13 @@ const ThemeSwitch = () => {
         {({ isSelected }) => (
           <>
             <Switch.Control
-              className={isSelected ? 'bg-leon-blue-800' : 'bg-tiff-gray-400'}>
-              <Switch.Thumb>
+              className={`h-10 w-20 md:h-8 md:w-16 ${isSelected ? 'bg-leon-blue-800' : 'bg-tiff-gray-400'}`}>
+              <Switch.Thumb className="size-8 group-data-[selected=true]:ml-10">
                 <Switch.Icon>
                   {isSelected ? (
-                    <Moon className="dark:text-brand-tertiary size-3 text-current opacity-100" />
+                    <Moon className="dark:text-brand-tertiary size-5 text-current opacity-100 md:size-4" />
                   ) : (
-                    <Sun className="size-3 text-current opacity-70" />
+                    <Sun className="size-5 text-current opacity-70 md:size-4" />
                   )}
                 </Switch.Icon>
               </Switch.Thumb>
