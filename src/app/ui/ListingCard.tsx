@@ -78,9 +78,9 @@ export default function ListingCard({
   };
 
   return (
-    <div className="dark:border-leon-blue-900 w-full min-w-0 overflow-hidden rounded-xl border border-gray-200 transition-shadow duration-300 hover:cursor-pointer hover:shadow-md">
+    <div className="dark:border-leon-blue-900 w-full min-w-0 overflow-hidden rounded-sm transition-shadow duration-300 hover:cursor-pointer hover:shadow-md">
       {/* Aspect Ratio Container */}
-      <div className="relative aspect-4/3 w-full">
+      <div className="relative aspect-3/4 w-full md:aspect-4/3">
         <Swiper
           rewind={true}
           onSlideChange={handleSlideChange}
@@ -88,10 +88,11 @@ export default function ListingCard({
           spaceBetween={30}
           pagination={{
             clickable: true,
+            dynamicBullets: true,
           }}
           navigation={true}
           modules={[Keyboard, Pagination, Navigation]}
-          className="mySwiper block h-full! w-full! cursor-default">
+          className="mySwiper swiper-pagination-only-mobile block h-full! w-full! cursor-default">
           {images?.map((image, index) => (
             <SwiperSlide key={index} className="h-full! w-full!">
               <div className="relative h-full w-full">
@@ -114,7 +115,7 @@ export default function ListingCard({
 
       <Link
         href={`/property/${listing.slug}`}
-        className="bg-surface-raised dark:bg-leon-blue-950 block p-4">
+        className="dark:bg-leon-blue-950 block bg-white p-4">
         <h3 className="text-base font-medium">{title}</h3>
         {/* You can add more details here like price, address, etc. */}
       </Link>

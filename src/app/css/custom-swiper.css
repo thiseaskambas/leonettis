@@ -40,7 +40,6 @@
 .mySwiper .swiper-pagination-bullet-active {
   opacity: 1;
   background: var(--color-brand-primary);
-  transform: scale(1.2);
 }
 
 /* Hide by default */
@@ -57,6 +56,27 @@
     display: flex !important;
   }
   .swiper-controls-desktop .swiper-pagination {
+    display: block !important;
+  }
+}
+
+/** 
+ * Show only pagination on mobile and show navigation buttons + pagination on desktop 
+ */
+.swiper-pagination-only-mobile .swiper-button-next,
+.swiper-pagination-only-mobile .swiper-button-prev {
+  display: none !important;
+}
+.swiper-pagination-only-mobile .swiper-pagination {
+  display: block !important;
+}
+
+@media (min-width: 768px) {
+  .swiper-pagination-only-mobile .swiper-button-next,
+  .swiper-pagination-only-mobile .swiper-button-prev {
+    display: flex !important;
+  }
+  .swiper-pagination-only-mobile .swiper-pagination {
     display: block !important;
   }
 }
