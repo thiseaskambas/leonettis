@@ -29,7 +29,14 @@ const ThemeSwitch = () => {
         {({ isSelected }) => (
           <>
             <Switch.Control
-              className={`h-10 w-20 md:h-8 md:w-16 ${isSelected ? 'bg-leon-blue-800' : 'bg-tiff-gray-400'}`}>
+              style={
+                {
+                  '--bg': isSelected
+                    ? 'var(--color-leon-blue-800)'
+                    : 'var(--color-tiff-gray-400)',
+                } as React.CSSProperties
+              }
+              className={`h-10 w-20 md:h-8 md:w-16 ${isSelected ? 'bg-glass-no-border' : 'bg-glass'}`}>
               <Switch.Thumb className="size-8 group-data-[selected=true]:ml-10">
                 <Switch.Icon>
                   {isSelected ? (

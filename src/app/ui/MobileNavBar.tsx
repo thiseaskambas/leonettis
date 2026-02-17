@@ -55,8 +55,9 @@ export function MobileNavBar({
         </button>
       </div>
 
-      {isOpen && (
-        <div className="bg-glass-no-border fixed inset-0 z-50 h-dvh w-full">
+      <div
+        className={`bg-glass-no-border fixed inset-0 z-50 h-dvh w-full ${isOpen ? '' : 'pointer-events-none invisible'}`}>
+        <div className="fixed inset-0 z-50 h-dvh w-full">
           <div className="flex justify-between p-2">
             <div className="relative flex items-center justify-center">
               <div className="absolute inset-0 rounded-full bg-white/50 blur-xl dark:bg-black/30" />
@@ -90,7 +91,7 @@ export function MobileNavBar({
             ))}
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

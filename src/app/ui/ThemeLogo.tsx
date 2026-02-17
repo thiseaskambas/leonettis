@@ -16,7 +16,7 @@ export function ThemeLogo() {
 
   // Show a placeholder or the default logo during SSR/hydration to prevent layout shift
   if (!mounted) {
-    return <div style={{ width: 150, height: 60.5 }} />;
+    return <div style={{ width: 200, height: 80.63 }} />;
   }
 
   return (
