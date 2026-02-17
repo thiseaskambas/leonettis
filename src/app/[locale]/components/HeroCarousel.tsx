@@ -7,7 +7,7 @@ import { getMediaUrl } from '@/app/lib/helpers/media-helpers';
 export default function HeroCarousel({
   slides,
 }: {
-  slides: { type: 'image' | 'video'; src: string }[];
+  slides: { type: 'image' | 'video'; src: string; poster?: string }[];
 }) {
   return (
     <Swiper
@@ -36,9 +36,10 @@ export default function HeroCarousel({
                 muted
                 loop
                 playsInline
-                suppressHydrationWarning>
+                suppressHydrationWarning
+                preload="auto"
+                poster={slide.poster ? getMediaUrl(slide.poster) : undefined}>
                 <source src={getMediaUrl(slide.src)} type="video/mp4" />
-                Your browser does not support the video tag.
               </video>
             ) : (
               <Image

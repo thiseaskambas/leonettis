@@ -86,7 +86,7 @@ export default function ListingCard({
   }).format(price);
 
   return (
-    <div className="group relative w-full min-w-0 overflow-hidden rounded-2xl shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-xl">
+    <div className="group relative w-full min-w-0 overflow-hidden rounded-2xl shadow-sm transition-all duration-500 hover:shadow-xl">
       {/* Price Tag (Top Right) */}
       <div className="bg-glass-no-border absolute top-3 right-3 z-20 rounded-full px-3 py-1 text-sm font-semibold text-gray-900 dark:text-white">
         {formattedPrice}
