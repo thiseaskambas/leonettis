@@ -32,5 +32,114 @@
     "building": "Building",
     "office": "Office",
     "warehouse": "Warehouse"
+  },
+  "search-bar": {
+    "title": "Search",
+    "close": "Close search",
+    "listing-type-label": "Listing Type",
+    "buy-label": "Buy",
+    "buy-description": "Properties for sale",
+    "rent-label": "Rent",
+    "rent-description": "Properties for rent",
+    "selected-count": "{count} selected",
+    "filters": {
+      "category": {
+        "label": "Category",
+        "residential": "Residential",
+        "commercial": "Commercial",
+        "industrial": "Industrial",
+        "agricultural": "Agricultural"
+      },
+      "propertyType": {
+        "label": "Property Type",
+        "apartment": "Apartment",
+        "house": "House",
+        "building": "Building",
+        "office": "Office",
+        "business": "Business",
+        "warehouse": "Warehouse",
+        "field": "Field",
+        "land": "Land",
+        "garage": "Garage"
+      },
+      "condition": {
+        "label": "Condition",
+        "new": "New",
+        "used": "Used",
+        "renovated": "Renovated",
+        "partially-renovated": "Partially Renovated",
+        "renovation-needed": "Renovation Needed",
+        "other": "Other"
+      },
+      "furnishing": {
+        "label": "Furnishing",
+        "furnished": "Furnished",
+        "unfurnished": "Unfurnished",
+        "partially-furnished": "Partially Furnished",
+        "other": "Other"
+      },
+      "energyRating": {
+        "label": "Energy Rating",
+        "A": "A",
+        "B": "B",
+        "C": "C",
+        "D": "D",
+        "E": "E",
+        "F": "F",
+        "G": "G"
+      },
+      "viewType": {
+        "label": "View",
+        "sea": "Sea",
+        "mountain": "Mountain",
+        "city": "City",
+        "countryside": "Countryside",
+        "lake": "Lake",
+        "river": "River",
+        "forest": "Forest",
+        "park": "Park",
+        "beach": "Beach",
+        "other": "Other"
+      },
+      "features": {
+        "label": "Features",
+        "air-conditioning": "Air Conditioning",
+        "heating": "Heating",
+        "fireplace": "Fireplace",
+        "stove": "Stove",
+        "balcony": "Balcony",
+        "terrace": "Terrace",
+        "garden": "Garden",
+        "parking": "Parking",
+        "garage": "Garage",
+        "other": "Other"
+      },
+      "amenities": {
+        "label": "Amenities",
+        "swimming-pool": "Swimming Pool",
+        "gym": "Gym",
+        "jacuzzi": "Jacuzzi",
+        "sauna": "Sauna",
+        "steam-room": "Steam Room",
+        "tennis-court": "Tennis Court",
+        "golf-course": "Golf Course",
+        "parking": "Parking",
+        "garage": "Garage",
+        "terrace": "Terrace",
+        "other": "Other"
+      },
+      "suitableFor": {
+        "label": "Suitable For",
+        "family": "Family",
+        "couple": "Couple",
+        "single": "Single",
+        "business": "Business",
+        "students": "Students",
+        "investment": "Investment",
+        "embassy": "Embassy",
+        "vacation-home": "Vacation Home",
+        "other": "Other"
+      }
+    }
   }
 }
