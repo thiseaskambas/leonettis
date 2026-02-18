@@ -53,7 +53,7 @@ export function LocaleDropDown() {
           selectedKeys={selected}
           selectionMode="single"
           disallowEmptySelection
-          className="items-center gap-4 bg-none md:items-start md:gap-0"
+          className="items-center gap-4 bg-none md:items-start md:gap-4"
           onSelectionChange={handleSelectionChange}>
           {Object.values(locales)
             .filter((locale) => locale.value !== currentLocale)
@@ -67,7 +67,9 @@ export function LocaleDropDown() {
                   textValue={locale.label}>
                   <Label className="flex w-36 items-center justify-start gap-4 md:w-auto md:gap-2">
                     <Flag className="size-8 shrink-0 rounded-full md:size-7" />
-                    <span className="text-left text-xl">{locale.label}</span>
+                    <span className="font-brand-primary text-left text-xl md:text-base md:font-light">
+                      {locale.label}
+                    </span>
                   </Label>
                 </Dropdown.Item>
               );
