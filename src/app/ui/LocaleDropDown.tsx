@@ -1,7 +1,7 @@
 'use client';
 
 import { Button, Dropdown, Label, Selection } from '@heroui/react';
-import { FR, GB, GR } from 'country-flag-icons/react/1x1';
+import { DE, FR, GB, GR, IT } from 'country-flag-icons/react/1x1';
 import { useLocale } from 'next-intl';
 import { useState } from 'react';
 
@@ -12,6 +12,8 @@ const FlagIcons = {
   en: GB,
   fr: FR,
   gr: GR,
+  de: DE,
+  it: IT,
 };
 
 export function LocaleDropDown() {

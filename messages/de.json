@@ -1,0 +1,36 @@
+{
+  "nav": {
+    "home": "Startseite",
+    "about": "Über uns",
+    "buy": "Kaufen",
+    "rent": "Mieten",
+    "list-a-property": "Immobilie inserieren",
+    "blog": "Blog",
+    "contact": "Kontakt"
+  },
+  "buy": {
+    "cta": "Kaufen",
+    "title": "IMMOBILIEN ZUM KAUF",
+    "description": "Finden Sie die ideale Immobilie zum Kauf bei Leonettis"
+  },
+  "rent": {
+    "cta": "Mieten",
+    "title": "IMMOBILIEN ZUR MIETE",
+    "description": "Finden Sie die ideale Mietimmobilie bei Leonettis"
+  },
+  "list-a-property": {
+    "title": "NEUE IMMOBILIE INSERIEREN",
+    "description": "Inserieren Sie Ihre Immobilie bei Leonettis"
+  },
+  "property-type": {
+    "apartment": "Wohnung",
+    "field": "Ackerland",
+    "house": "Haus",
+    "land": "Grundstück",
+    "business": "Gewerbeimmobilie",
+    "garage": "Garage/Parkplatz",
+    "building": "Gebäude",
+    "office": "Büro",
+    "warehouse": "Lagerhalle"
+  }
+}

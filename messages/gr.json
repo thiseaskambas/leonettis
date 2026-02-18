@@ -11,16 +11,16 @@
   "buy": {
     "cta": "Αγορά",
     "title": "ΑΚΙΝΗΤΑ ΠΡΟΣ ΠΩΛΗΣΗ",
-    "description": "Αγοράτε το ιδανικό σας ακίνητο από την Leonetti&apos;s."
+    "description": "Βρείτε το ιδανικό ακίνητο προς πώληση στην Leonettis"
   },
   "rent": {
     "cta": "Ενοικίαση",
     "title": "ΑΚΙΝΗΤΑ ΠΡΟΣ ΕΝΟΙΚΙΑΣΗ",
-    "description": "Ενοικιάστε το ιδανικό σας ακίνητο από την Leonetti&apos;s."
+    "description": "Βρείτε το ιδανικό ακίνητο προς ενοικίαση στην Leonettis"
   },
   "list-a-property": {
     "title": "ΚΑΤΑΧΩΡΗΣΗ ΝΕΟΥ ΑΚΙΝΗΤΟΥ",
-    "description": "Καταχωρήστε το ιδανικό σας ακίνητο από την Leonetti&apos;s."
+    "description": "Καταχωρήστε το ακίνητό σας στην Leonettis"
   },
   "property-type": {
     "apartment": "Διαμέρισμα",

@@ -11,16 +11,16 @@
   "buy": {
     "cta": "Acheter",
     "title": "PROPRIÉTÉS À VENDRE",
-    "description": "Achetez la propriété idéale chez Leonetti&apos;s."
+    "description": "Trouvez la propriété idéale à vendre chez Leonettis"
   },
   "rent": {
     "cta": "Louer",
     "title": "PROPRIÉTÉS À LOUER",
-    "description": "Louez la propriété idéale chez Leonetti&apos;s."
+    "description": "Trouvez la propriété idéale à louer chez Leonettis"
   },
   "list-a-property": {
     "title": "DÉPOSER UNE NOUVELLE ANNONCE",
-    "description": "Déposez la propriété idéale chez Leonetti&apos;s."
+    "description": "Mettez votre bien en vente ou location avec Leonettis"
   },
   "property-type": {
     "apartment": "Appartement",

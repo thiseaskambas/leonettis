@@ -1,0 +1,36 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "Chi siamo",
+    "buy": "Compra",
+    "rent": "Affitta",
+    "list-a-property": "Inserisci un annuncio",
+    "blog": "Blog",
+    "contact": "Contatti"
+  },
+  "buy": {
+    "cta": "Compra",
+    "title": "IMMOBILI IN VENDITA",
+    "description": "Trova l'immobile ideale in vendita su Leonettis"
+  },
+  "rent": {
+    "cta": "Affitta",
+    "title": "IMMOBILI IN AFFITTO",
+    "description": "Trova l'immobile ideale in affitto su Leonettis"
+  },
+  "list-a-property": {
+    "title": "INSERISCI UN NUOVO IMMOBILE",
+    "description": "Pubblica il tuo annuncio immobiliare con Leonettis"
+  },
+  "property-type": {
+    "apartment": "Appartamento",
+    "field": "Terreno agricolo",
+    "house": "Casa",
+    "land": "Terreno edificabile",
+    "business": "Immobile commerciale",
+    "garage": "Garage/Parcheggio",
+    "building": "Edificio",
+    "office": "Ufficio",
+    "warehouse": "Magazzino"
+  }
+}
