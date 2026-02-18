@@ -32,5 +32,114 @@
     "building": "Immeuble",
     "office": "Bureau",
     "warehouse": "Entrepôt"
+  },
+  "search-bar": {
+    "title": "Recherche",
+    "close": "Fermer la recherche",
+    "listing-type-label": "Type d'annonce",
+    "buy-label": "Acheter",
+    "buy-description": "Biens immobiliers à vendre",
+    "rent-label": "Louer",
+    "rent-description": "Biens immobiliers à louer",
+    "selected-count": "{count} sélectionnés",
+    "filters": {
+      "category": {
+        "label": "Catégorie",
+        "residential": "Résidentiel",
+        "commercial": "Commercial",
+        "industrial": "Industriel",
+        "agricultural": "Agricole"
+      },
+      "propertyType": {
+        "label": "Type de bien",
+        "apartment": "Appartement",
+        "house": "Maison",
+        "building": "Immeuble",
+        "office": "Bureau",
+        "business": "Local commercial",
+        "warehouse": "Entrepôt",
+        "field": "Terrain agricole",
+        "land": "Terrain constructible",
+        "garage": "Garage"
+      },
+      "condition": {
+        "label": "État",
+        "new": "Neuf",
+        "used": "Occasion",
+        "renovated": "Rénové",
+        "partially-renovated": "Partiellement rénové",
+        "renovation-needed": "À rénover",
+        "other": "Autre"
+      },
+      "furnishing": {
+        "label": "Ameublement",
+        "furnished": "Meublé",
+        "unfurnished": "Non meublé",
+        "partially-furnished": "Partiellement meublé",
+        "other": "Autre"
+      },
+      "energyRating": {
+        "label": "Classe énergétique",
+        "A": "A",
+        "B": "B",
+        "C": "C",
+        "D": "D",
+        "E": "E",
+        "F": "F",
+        "G": "G"
+      },
+      "viewType": {
+        "label": "Vue",
+        "sea": "Mer",
+        "mountain": "Montagne",
+        "city": "Ville",
+        "countryside": "Campagne",
+        "lake": "Lac",
+        "river": "Rivière",
+        "forest": "Forêt",
+        "park": "Parc",
+        "beach": "Plage",
+        "other": "Autre"
+      },
+      "features": {
+        "label": "Équipements",
+        "air-conditioning": "Climatisation",
+        "heating": "Chauffage",
+        "fireplace": "Cheminée",
+        "stove": "Poêle",
+        "balcony": "Balcon",
+        "terrace": "Terrasse",
+        "garden": "Jardin",
+        "parking": "Parking",
+        "garage": "Garage",
+        "other": "Autre"
+      },
+      "amenities": {
+        "label": "Commodités",
+        "swimming-pool": "Piscine",
+        "gym": "Salle de sport",
+        "jacuzzi": "Jacuzzi",
+        "sauna": "Sauna",
+        "steam-room": "Hammam",
+        "tennis-court": "Court de tennis",
+        "golf-course": "Terrain de golf",
+        "parking": "Parking",
+        "garage": "Garage",
+        "terrace": "Terrasse",
+        "other": "Autre"
+      },
+      "suitableFor": {
+        "label": "Convient pour",
+        "family": "Famille",
+        "couple": "Couple",
+        "single": "Célibataire",
+        "business": "Entreprises",
+        "students": "Étudiants",
+        "investment": "Investissement",
+        "embassy": "Ambassade",
+        "vacation-home": "Résidence de vacances",
+        "other": "Autre"
+      }
+    }
   }
 }

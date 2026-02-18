@@ -13,12 +13,13 @@ import {
 } from '@heroui/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import type { FilterDef } from '../lib/definitions/search-filters';
 import {
   FILTERS,
-  getButtonLabel,
   getSelectedIds,
   getVisibleOptions,
   pruneSelections,
@@ -30,8 +31,43 @@ interface SearchBarProps {
 }
 
 const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
+  const t = useTranslations('search-bar');
   const [mounted, setMounted] = useState(false);
   const [selections, setSelections] = useState<Record<string, Selection>>({});
+
+  const getFilterLabel = useCallback(
+    (filterId: string) =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      t(`filters.${filterId}.label` as any),
+    [t]
+  );
+
+  const getOptionLabel = useCallback(
+    (filterId: string, optionId: string) =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      t(`filters.${filterId}.${optionId.replace(/ /g, '-')}` as any),
+    [t]
+  );
+
+  const getSummary = useCallback(
+    (filter: FilterDef, selection: Selection | undefined) => {
+      const ids = getSelectedIds(selection);
+      const filterLabel = getFilterLabel(filter.id);
+      if (ids.length === 0) return { label: filterLabel, hasSelection: false };
+
+      const labels = filter.options
+        .filter((opt) => ids.includes(opt.id))
+        .map((opt) => getOptionLabel(filter.id, opt.id));
+
+      const displayLabel =
+        labels.length <= 2
+          ? labels.join(', ')
+          : t('selected-count', { count: labels.length });
+
+      return { label: displayLabel, hasSelection: true };
+    },
+    [getFilterLabel, getOptionLabel, t]
+  );
 
   useEffect(() => {
     /* eslint-disable react-hooks/set-state-in-effect */
@@ -82,25 +118,25 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
               isIconOnly
               variant="ghost"
               onPress={onClose}
-              aria-label="Close search">
+              aria-label={t('close')}>
               <X className="size-5" />
             </Button>
 
-            <h2 className="text-center text-lg font-semibold">Search</h2>
+            <h2 className="text-center text-lg font-semibold">{t('title')}</h2>
 
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
               <RadioGroup
                 defaultValue="buy"
                 name="listing-type"
                 orientation="horizontal">
-                <Label>Listing Type</Label>
+                <Label>{t('listing-type-label')}</Label>
                 <Radio value="buy">
                   <Radio.Control>
                     <Radio.Indicator />
                   </Radio.Control>
                   <Radio.Content>
-                    <Label>Buy</Label>
-                    <Description>Properties for sale</Description>
+                    <Label>{t('buy-label')}</Label>
+                    <Description>{t('buy-description')}</Description>
                   </Radio.Content>
                 </Radio>
                 <Radio value="rent">
@@ -108,8 +144,8 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
                     <Radio.Indicator />
                   </Radio.Control>
                   <Radio.Content>
-                    <Label>Rent</Label>
-                    <Description>Properties for rent</Description>
+                    <Label>{t('rent-label')}</Label>
+                    <Description>{t('rent-description')}</Description>
                   </Radio.Content>
                 </Radio>
               </RadioGroup>
@@ -121,15 +157,17 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
                     filter.options,
                     selections
                   );
-                  const summary = getButtonLabel(filter, selections[filter.id]);
-                  const hasSelection = summary !== filter.label;
+                  const { label: summary, hasSelection } = getSummary(
+                    filter,
+                    selections[filter.id]
+                  );
 
                   return (
                     <Accordion.Item key={filter.id} id={filter.id}>
                       <Accordion.Heading>
                         <Accordion.Trigger>
                           <div className="flex flex-col items-start">
-                            <span>{filter.label}</span>
+                            <span>{getFilterLabel(filter.id)}</span>
                             {hasSelection && (
                               <span className="text-brand-primary text-sm font-normal">
                                 {summary}
@@ -156,7 +194,9 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
                                     <Radio.Indicator />
                                   </Radio.Control>
                                   <Radio.Content>
-                                    <Label>{option.label}</Label>
+                                    <Label>
+                                      {getOptionLabel(filter.id, option.id)}
+                                    </Label>
                                   </Radio.Content>
                                 </Radio>
                               ))}
@@ -173,7 +213,9 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
                                     <Checkbox.Indicator />
                                   </Checkbox.Control>
                                   <Checkbox.Content>
-                                    <Label>{option.label}</Label>
+                                    <Label>
+                                      {getOptionLabel(filter.id, option.id)}
+                                    </Label>
                                   </Checkbox.Content>
                                 </Checkbox>
                               ))}

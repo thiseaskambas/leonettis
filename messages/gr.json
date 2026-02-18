@@ -32,5 +32,114 @@
     "building": "Κτίριο",
     "office": "Γραφείο",
     "warehouse": "Αποθήκη"
+  },
+  "search-bar": {
+    "title": "Αναζήτηση",
+    "close": "Κλείσιμο αναζήτησης",
+    "listing-type-label": "Τύπος Αγγελίας",
+    "buy-label": "Αγορά",
+    "buy-description": "Ακίνητα προς πώληση",
+    "rent-label": "Ενοικίαση",
+    "rent-description": "Ακίνητα προς ενοικίαση",
+    "selected-count": "{count} επιλεγμένα",
+    "filters": {
+      "category": {
+        "label": "Κατηγορία",
+        "residential": "Κατοικία",
+        "commercial": "Εμπορικό",
+        "industrial": "Βιομηχανικό",
+        "agricultural": "Αγροτικό"
+      },
+      "propertyType": {
+        "label": "Τύπος Ακινήτου",
+        "apartment": "Διαμέρισμα",
+        "house": "Σπίτι",
+        "building": "Κτίριο",
+        "office": "Γραφείο",
+        "business": "Επαγγελματικός Χώρος",
+        "warehouse": "Αποθήκη",
+        "field": "Χωράφι",
+        "land": "Οικόπεδο",
+        "garage": "Γκαράζ"
+      },
+      "condition": {
+        "label": "Κατάσταση",
+        "new": "Νέο",
+        "used": "Μεταχειρισμένο",
+        "renovated": "Ανακαινισμένο",
+        "partially-renovated": "Μερικώς Ανακαινισμένο",
+        "renovation-needed": "Χρειάζεται Ανακαίνιση",
+        "other": "Άλλο"
+      },
+      "furnishing": {
+        "label": "Επίπλωση",
+        "furnished": "Επιπλωμένο",
+        "unfurnished": "Χωρίς Έπιπλα",
+        "partially-furnished": "Μερικώς Επιπλωμένο",
+        "other": "Άλλο"
+      },
+      "energyRating": {
+        "label": "Ενεργειακή Κλάση",
+        "A": "Α",
+        "B": "Β",
+        "C": "Γ",
+        "D": "Δ",
+        "E": "Ε",
+        "F": "Ζ",
+        "G": "Η"
+      },
+      "viewType": {
+        "label": "Θέα",
+        "sea": "Θάλασσα",
+        "mountain": "Βουνό",
+        "city": "Πόλη",
+        "countryside": "Εξοχή",
+        "lake": "Λίμνη",
+        "river": "Ποτάμι",
+        "forest": "Δάσος",
+        "park": "Πάρκο",
+        "beach": "Παραλία",
+        "other": "Άλλο"
+      },
+      "features": {
+        "label": "Χαρακτηριστικά",
+        "air-conditioning": "Κλιματισμός",
+        "heating": "Θέρμανση",
+        "fireplace": "Τζάκι",
+        "stove": "Σόμπα",
+        "balcony": "Μπαλκόνι",
+        "terrace": "Ταράτσα",
+        "garden": "Κήπος",
+        "parking": "Πάρκινγκ",
+        "garage": "Γκαράζ",
+        "other": "Άλλο"
+      },
+      "amenities": {
+        "label": "Παροχές",
+        "swimming-pool": "Πισίνα",
+        "gym": "Γυμναστήριο",
+        "jacuzzi": "Τζακούζι",
+        "sauna": "Σάουνα",
+        "steam-room": "Χαμάμ",
+        "tennis-court": "Γήπεδο Τένις",
+        "golf-course": "Γήπεδο Γκολφ",
+        "parking": "Πάρκινγκ",
+        "garage": "Γκαράζ",
+        "terrace": "Ταράτσα",
+        "other": "Άλλο"
+      },
+      "suitableFor": {
+        "label": "Κατάλληλο Για",
+        "family": "Οικογένεια",
+        "couple": "Ζευγάρι",
+        "single": "Μονός",
+        "business": "Επαγγελματική χρήση",
+        "students": "Φοιτητές",
+        "investment": "Επένδυση",
+        "embassy": "Πρεσβεία",
+        "vacation-home": "Εξοχική Κατοικία",
+        "other": "Άλλο"
+      }
+    }
   }
 }

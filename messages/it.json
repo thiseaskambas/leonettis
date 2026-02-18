@@ -32,5 +32,114 @@
     "building": "Edificio",
     "office": "Ufficio",
     "warehouse": "Magazzino"
+  },
+  "search-bar": {
+    "title": "Ricerca",
+    "close": "Chiudi ricerca",
+    "listing-type-label": "Tipo di annuncio",
+    "buy-label": "Compra",
+    "buy-description": "Immobili in vendita",
+    "rent-label": "Affitta",
+    "rent-description": "Immobili in affitto",
+    "selected-count": "{count} selezionati",
+    "filters": {
+      "category": {
+        "label": "Categoria",
+        "residential": "Residenziale",
+        "commercial": "Commerciale",
+        "industrial": "Industriale",
+        "agricultural": "Agricolo"
+      },
+      "propertyType": {
+        "label": "Tipo di immobile",
+        "apartment": "Appartamento",
+        "house": "Casa",
+        "building": "Edificio",
+        "office": "Ufficio",
+        "business": "Immobile commerciale",
+        "warehouse": "Magazzino",
+        "field": "Terreno agricolo",
+        "land": "Terreno edificabile",
+        "garage": "Garage"
+      },
+      "condition": {
+        "label": "Condizione",
+        "new": "Nuovo",
+        "used": "Usato",
+        "renovated": "Ristrutturato",
+        "partially-renovated": "Parzialmente ristrutturato",
+        "renovation-needed": "Da ristrutturare",
+        "other": "Altro"
+      },
+      "furnishing": {
+        "label": "Arredamento",
+        "furnished": "Arredato",
+        "unfurnished": "Non arredato",
+        "partially-furnished": "Parzialmente arredato",
+        "other": "Altro"
+      },
+      "energyRating": {
+        "label": "Classe energetica",
+        "A": "A",
+        "B": "B",
+        "C": "C",
+        "D": "D",
+        "E": "E",
+        "F": "F",
+        "G": "G"
+      },
+      "viewType": {
+        "label": "Vista",
+        "sea": "Mare",
+        "mountain": "Montagna",
+        "city": "Città",
+        "countryside": "Campagna",
+        "lake": "Lago",
+        "river": "Fiume",
+        "forest": "Foresta",
+        "park": "Parco",
+        "beach": "Spiaggia",
+        "other": "Altro"
+      },
+      "features": {
+        "label": "Caratteristiche",
+        "air-conditioning": "Aria condizionata",
+        "heating": "Riscaldamento",
+        "fireplace": "Caminetto",
+        "stove": "Stufa",
+        "balcony": "Balcone",
+        "terrace": "Terrazza",
+        "garden": "Giardino",
+        "parking": "Parcheggio",
+        "garage": "Garage",
+        "other": "Altro"
+      },
+      "amenities": {
+        "label": "Servizi",
+        "swimming-pool": "Piscina",
+        "gym": "Palestra",
+        "jacuzzi": "Jacuzzi",
+        "sauna": "Sauna",
+        "steam-room": "Bagno turco",
+        "tennis-court": "Campo da tennis",
+        "golf-course": "Campo da golf",
+        "parking": "Parcheggio",
+        "garage": "Garage",
+        "terrace": "Terrazza",
+        "other": "Altro"
+      },
+      "suitableFor": {
+        "label": "Adatto a",
+        "family": "Famiglia",
+        "couple": "Coppia",
+        "single": "Singolo",
+        "business": "Aziende",
+        "students": "Studenti",
+        "investment": "Investimento",
+        "embassy": "Ambasciata",
+        "vacation-home": "Casa vacanze",
+        "other": "Altro"
+      }
+    }
   }
 }
