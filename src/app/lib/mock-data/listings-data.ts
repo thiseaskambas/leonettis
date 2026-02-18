@@ -7,6 +7,8 @@ export const listingsData: Listing[] = [
       en: 'Golden Beach Plot',
       fr: 'Parcelle à Golden Beach',
       gr: 'Οικόπεδο στην Χρυσή Ακτή',
+      de: 'Goldener Strand Plot',
+      it: 'Plot di Golden Beach',
     },
     slug: 'golden-beach-plot',
     address: {
@@ -54,6 +56,8 @@ export const listingsData: Listing[] = [
       en: 'Description 1',
       fr: 'Description 1',
       gr: 'Description 1',
+      de: 'Description 1',
+      it: 'Description 1',
     },
   },
   {
@@ -62,6 +66,8 @@ export const listingsData: Listing[] = [
       en: 'Plot in Pyrgaki',
       fr: 'Parcelle à Pyrgaki',
       gr: 'Οικόπεδο στο Πυργάκι',
+      de: 'Plot in Pyrgaki',
+      it: 'Plot in Pyrgaki',
     },
     slug: 'plot-in-pyrgaki',
     address: {
@@ -114,6 +120,8 @@ export const listingsData: Listing[] = [
       en: 'Description 1',
       fr: 'Description 1',
       gr: 'Description 1',
+      de: 'Description 1',
+      it: 'Description 1',
     },
   },
 ];
