@@ -20,6 +20,7 @@ export default async function Buy() {
       <p className="text-center font-light tracking-wide text-gray-600 dark:text-gray-400">
         {t('description')}
       </p>
+      <div className=""></div>
       <div className="mt-10 grid min-w-0 grid-cols-1 gap-10 lg:grid-cols-2">
         {listings.map((listing, index) => (
           <ListingCard key={index} listing={listing} />

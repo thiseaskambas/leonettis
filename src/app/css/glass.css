@@ -2,7 +2,8 @@
   .glass-adaptive {
     --glass-bg: color-mix(in oklab, var(--bg, transparent) 40%, transparent);
     background: var(--glass-bg);
-    border: 1px solid color-mix(in oklab, var(--glass-bg) 70%, white);
+    /* border: 1px solid color-mix(in oklab, var(--glass-bg) 70%, white); */
+    @apply inset-ring inset-ring-gray-950/8 dark:inset-ring-white/15;
   }
 
   .glass-adaptive-no-border {
@@ -37,7 +38,8 @@
   .bg-glass {
     --glass-bg: color-mix(in oklab, var(--bg, transparent) 40%, transparent);
     background: var(--glass-bg);
-    border: 1px solid color-mix(in oklab, var(--glass-bg) 70%, white);
+    /* border: 1px solid color-mix(in oklab, var(--glass-bg) 70%, white); */
+    @apply inset-ring inset-ring-gray-950/8 dark:inset-ring-white/15;
     @apply backdrop-blur-md;
     @apply animate-liquid bg-size-[200%_200%];
     @apply bg-linear-to-r from-white/5 via-white/20 to-white/5;
