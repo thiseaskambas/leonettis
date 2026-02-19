@@ -42,6 +42,7 @@
     "rent-label": "Ενοικίαση",
     "rent-description": "Ακίνητα προς ενοικίαση",
     "selected-count": "{count} επιλεγμένα",
+    "search-button": "Αναζήτηση",
     "filters": {
       "category": {
         "label": "Κατηγορία",
