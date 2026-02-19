@@ -131,9 +131,9 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
                 className="p-4">
                 <Label className="text-base">{t('listing-type-label')}</Label>
                 <div className="flex gap-4">
-                  <Radio value="buy">
+                  <Radio value="buy" className="group">
                     <Radio.Control>
-                      <Radio.Indicator />
+                      <Radio.Indicator className="radio-indicator-brand" />
                     </Radio.Control>
                     <Radio.Content>
                       <Label className="text-base">{t('buy-label')}</Label>
@@ -142,9 +142,9 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
                       </Description>
                     </Radio.Content>
                   </Radio>
-                  <Radio value="rent">
+                  <Radio value="rent" className="group">
                     <Radio.Control>
-                      <Radio.Indicator />
+                      <Radio.Indicator className="radio-indicator-brand" />
                     </Radio.Control>
                     <Radio.Content>
                       <Label className="text-base">{t('rent-label')}</Label>
@@ -197,9 +197,12 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
                               }
                               name={`filter-${filter.id}`}>
                               {visibleOptions.map((option) => (
-                                <Radio key={option.id} value={option.id}>
+                                <Radio
+                                  key={option.id}
+                                  value={option.id}
+                                  className="group">
                                   <Radio.Control>
-                                    <Radio.Indicator />
+                                    <Radio.Indicator className="radio-indicator-brand" />
                                   </Radio.Control>
                                   <Radio.Content>
                                     <Label className="text-base">
@@ -216,9 +219,12 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
                                 handleMultiSelect(filter.id, values)
                               }>
                               {visibleOptions.map((option) => (
-                                <Checkbox key={option.id} value={option.id}>
-                                  <Checkbox.Control>
-                                    <Checkbox.Indicator />
+                                <Checkbox
+                                  key={option.id}
+                                  value={option.id}
+                                  className="group">
+                                  <Checkbox.Control className="checkbox-control-brand">
+                                    <Checkbox.Indicator className="checkbox-indicator-brand" />
                                   </Checkbox.Control>
                                   <Checkbox.Content>
                                     <Label>

@@ -1,0 +1,30 @@
+@layer utilities {
+  .radio-indicator-brand {
+    border-radius: 9999px;
+    border: 1px solid rgb(255 255 255 / 0.5);
+  }
+
+  .group[data-selected='true'] .radio-indicator-brand {
+    border-color: var(--color-brand-primary-muted);
+    background-color: var(--color-brand-primary);
+  }
+
+  .checkbox-control-brand {
+    border: 1px solid rgb(255 255 255 / 0.5);
+  }
+
+  /* Must target ::before (HeroUI's background layer) and override border */
+  .checkbox.group[data-selected='true'] .checkbox-control-brand {
+    border-color: var(--color-brand-primary-muted);
+  }
+
+  .checkbox.group[data-selected='true'] .checkbox-control-brand::before {
+    background-color: var(--color-brand-primary);
+    opacity: 1;
+    scale: 1;
+  }
+
+  .checkbox-indicator-brand {
+    color: white;
+  }
+}
