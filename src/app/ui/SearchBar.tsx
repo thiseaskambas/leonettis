@@ -332,7 +332,7 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
               </Accordion>
             </div>
 
-            <div className="border-tiff-gray-200 dark:border-white/10 border-t p-4">
+            <div className="border-tiff-gray-200 border-t p-4 dark:border-white/10">
               <Button
                 className="bg-brand-primary w-full text-base font-semibold text-white"
                 onPress={handleSearch}>
