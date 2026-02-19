@@ -1,6 +1,6 @@
 'use client';
 
-import type { Selection } from '@heroui/react';
+import type { Key, Selection } from '@heroui/react';
 import {
   Accordion,
   Button,
@@ -12,10 +12,12 @@ import {
   RadioGroup,
 } from '@heroui/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { X } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+
+import { useRouter } from '@/i18n/navigation';
 
 import type { FilterDef } from '../lib/definitions/search-filters';
 import {
@@ -23,6 +25,7 @@ import {
   getSelectedIds,
   getVisibleOptions,
   pruneSelections,
+  selectionsToParams,
 } from '../lib/definitions/search-filters';
 
 interface SearchBarProps {
@@ -32,8 +35,11 @@ interface SearchBarProps {
 
 const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
   const t = useTranslations('search-bar');
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [selections, setSelections] = useState<Record<string, Selection>>({});
+  const [expandedKeys, setExpandedKeys] = useState<Set<Key>>(new Set());
+  const [listingType, setListingType] = useState<'buy' | 'rent'>('buy');
 
   const getFilterLabel = useCallback(
     (filterId: string) =>
@@ -90,6 +96,13 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
     []
   );
 
+  const handleSearch = useCallback(() => {
+    const params = selectionsToParams(listingType, selections);
+    const route = listingType === 'rent' ? '/rent' : '/buy';
+    onClose();
+    router.push(`${route}?${params.toString()}`);
+  }, [listingType, selections, onClose, router]);
+
   if (!mounted) return null;
 
   return createPortal(
@@ -126,7 +139,8 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
 
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 text-lg">
               <RadioGroup
-                defaultValue="buy"
+                value={listingType}
+                onChange={(value) => setListingType(value as 'buy' | 'rent')}
                 name="listing-type"
                 className="p-4">
                 <Label className="text-base">{t('listing-type-label')}</Label>
@@ -156,7 +170,10 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
                 </div>
               </RadioGroup>
 
-              <Accordion allowsMultipleExpanded>
+              <Accordion
+                allowsMultipleExpanded
+                expandedKeys={expandedKeys}
+                onExpandedChange={(keys) => setExpandedKeys(keys as Set<Key>)}>
                 {FILTERS.map((filter) => {
                   const visibleOptions = getVisibleOptions(
                     filter.id,
@@ -171,7 +188,8 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
                   return (
                     <Accordion.Item key={filter.id} id={filter.id}>
                       <Accordion.Heading>
-                        <Accordion.Trigger>
+                        <Accordion.Trigger
+                          className={expandedKeys.has(filter.id) ? 'pb-0' : ''}>
                           <div className="flex flex-col items-start">
                             <span className="text-base">
                               {getFilterLabel(filter.id)}
@@ -239,6 +257,15 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
                   );
                 })}
               </Accordion>
+            </div>
+
+            <div className="border-t border-white/10 p-4">
+              <Button
+                className="bg-brand-primary w-full text-base font-semibold text-white"
+                onPress={handleSearch}>
+                <Search className="size-5" />
+                {t('search-button')}
+              </Button>
             </div>
           </div>
         </motion.div>

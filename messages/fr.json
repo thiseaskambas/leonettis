@@ -42,6 +42,7 @@
     "rent-label": "Louer",
     "rent-description": "Biens immobiliers à louer",
     "selected-count": "{count} sélectionnés",
+    "search-button": "Rechercher",
     "filters": {
       "category": {
         "label": "Catégorie",

@@ -42,6 +42,7 @@
     "rent-label": "Affitta",
     "rent-description": "Immobili in affitto",
     "selected-count": "{count} selezionati",
+    "search-button": "Cerca",
     "filters": {
       "category": {
         "label": "Categoria",

@@ -42,6 +42,7 @@
     "rent-label": "Mieten",
     "rent-description": "Immobilien zur Miete",
     "selected-count": "{count} ausgewählt",
+    "search-button": "Suchen",
     "filters": {
       "category": {
         "label": "Kategorie",

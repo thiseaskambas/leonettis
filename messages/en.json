@@ -42,6 +42,7 @@
     "rent-label": "Rent",
     "rent-description": "Properties for rent",
     "selected-count": "{count} selected",
+    "search-button": "Search",
     "filters": {
       "category": {
         "label": "Category",
