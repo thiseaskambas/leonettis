@@ -2,10 +2,11 @@ import { Button, Label, ListBox, Select } from '@heroui/react';
 import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import type { Key } from 'react-aria-components';
 
 import { PropertyType } from '@/app/lib/definitions/listing.types';
+import { useRouter } from '@/i18n/navigation';
 
 const PROPERTY_TYPES: PropertyType[] = [
   'house',
@@ -21,6 +22,7 @@ const PROPERTY_TYPES: PropertyType[] = [
 
 export default function HeroSearchOverlayDesktop() {
   const t = useTranslations('property-type');
+  const router = useRouter();
   const listingTypes = PROPERTY_TYPES.map((key) => ({
     name: t(key),
     id: key,
@@ -34,6 +36,16 @@ export default function HeroSearchOverlayDesktop() {
   );
 
   const [activeTab, setActiveTab] = useState<'buy' | 'rent'>('buy');
+
+  const handleSearch = useCallback(() => {
+    const params = new URLSearchParams();
+    if (selectedPropertyType) {
+      params.set('propertyType', String(selectedPropertyType));
+    }
+    const route = activeTab === 'rent' ? '/rent' : '/buy';
+    const qs = params.toString();
+    router.push(qs ? `${route}?${qs}` : route);
+  }, [activeTab, selectedPropertyType, router]);
 
   return (
     <div className="pointer-events-auto -mt-52">
@@ -92,7 +104,9 @@ export default function HeroSearchOverlayDesktop() {
               delay: 0.4,
             }}
             className="aspect-square h-full">
-            <Button className="bg-brand-primary hover:bg-brand-primary-hover flex h-full w-full min-w-0 items-center justify-center rounded-full p-0">
+            <Button
+              onPress={handleSearch}
+              className="bg-brand-primary hover:bg-brand-primary-hover flex h-full w-full min-w-0 items-center justify-center rounded-full p-0">
               <Search className="size-6 text-white" />
             </Button>
           </motion.div>

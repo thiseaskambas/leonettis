@@ -43,6 +43,7 @@
     "rent-description": "Biens immobiliers à louer",
     "selected-count": "{count} sélectionnés",
     "search-button": "Rechercher",
+    "reset-filters": "Tout réinitialiser",
     "price-range": "Fourchette de prix",
     "price-no-limit": "Sans limite",
     "filters": {

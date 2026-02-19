@@ -43,6 +43,7 @@
     "rent-description": "Properties for rent",
     "selected-count": "{count} selected",
     "search-button": "Search",
+    "reset-filters": "Reset all",
     "price-range": "Price Range",
     "price-no-limit": "No limit",
     "filters": {

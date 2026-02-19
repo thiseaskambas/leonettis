@@ -101,6 +101,19 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
     []
   );
 
+  const hasActiveFilters =
+    Object.values(selections).some(
+      (sel) => sel !== 'all' && (sel as Set<Key>).size > 0
+    ) ||
+    priceRange[0] > 0 ||
+    priceRange[1] < PRICE_MAX;
+
+  const handleReset = useCallback(() => {
+    setSelections({});
+    setPriceRange([0, PRICE_MAX]);
+    setExpandedKeys(new Set());
+  }, []);
+
   const handleSearch = useCallback(() => {
     const params = selectionsToParams(listingType, selections);
     if (priceRange[0] > 0) {
@@ -136,7 +149,7 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
           exit={{ x: '-100%' }}
           transition={{ type: 'spring', damping: 25, stiffness: 200 }}
           className="bg-glass-no-border fixed inset-y-0 left-0 z-150 w-full shadow-2xl md:w-[400px]">
-          <div className="flex h-full flex-col">
+          <div className="text-tiff-gray-900 dark:text-tiff-gray-50 flex h-full flex-col">
             <Button
               className="m-1 self-end"
               isIconOnly
@@ -146,7 +159,18 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
               <X className="size-6" />
             </Button>
 
-            <h2 className="text-center text-lg font-semibold">{t('title')}</h2>
+            <div className="flex items-center justify-center gap-3 px-4">
+              <h2 className="text-center text-lg font-semibold">
+                {t('title')}
+              </h2>
+              {hasActiveFilters && (
+                <button
+                  onClick={handleReset}
+                  className="text-tiff-700 hover:text-tiff-gray-900 dark:text-tiff-gray-400 dark:hover:text-tiff-gray-100 text-sm underline underline-offset-2 transition-colors">
+                  {t('reset-filters')}
+                </button>
+              )}
+            </div>
 
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 text-lg">
               <RadioGroup
@@ -192,7 +216,7 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
                 className="px-4 pb-2">
                 <div className="flex items-center justify-between">
                   <Label className="text-base">{t('price-range')}</Label>
-                  <Slider.Output className="text-brand-primary text-sm font-medium">
+                  <Slider.Output className="dark:text-brand-primary text-tiff-700 text-sm font-medium">
                     {({ state }) => {
                       const min = state.getThumbValueLabel(0);
                       const max =
@@ -206,12 +230,12 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
                 <Slider.Track>
                   {({ state }) => (
                     <>
-                      <Slider.Fill className="bg-brand-primary" />
+                      <Slider.Fill className="dark:bg-brand-primary bg-tiff-700" />
                       {state.values.map((_, i) => (
                         <Slider.Thumb
                           key={i}
                           index={i}
-                          className="border-brand-primary bg-background"
+                          className="dark:border-brand-primary border-tiff-700 bg-background"
                         />
                       ))}
                     </>
@@ -243,11 +267,11 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
                             <span className="text-base">
                               {getFilterLabel(filter.id)}
                             </span>
-                            <span className="text-brand-primary h-5 text-base font-normal">
+                            <span className="text-tiff-700 dark:text-brand-primary h-5 text-base font-normal">
                               {hasSelection && summary}
                             </span>
                           </div>
-                          <Accordion.Indicator className="dark:text-muted/50 text-white/90" />
+                          <Accordion.Indicator className="text-tiff-gray-500 dark:text-tiff-gray-400" />
                         </Accordion.Trigger>
                       </Accordion.Heading>
                       <Accordion.Panel>
@@ -308,9 +332,9 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
               </Accordion>
             </div>
 
-            <div className="border-t border-white/10 p-4">
+            <div className="border-tiff-gray-200 border-t p-4 dark:border-white/10">
               <Button
-                className="bg-brand-primary w-full text-base font-semibold text-white"
+                className="bg-tiff-700 dark:bg-brand-primary w-full text-base font-semibold text-white"
                 onPress={handleSearch}>
                 <Search className="size-5" />
                 {t('search-button')}
