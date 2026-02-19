@@ -43,6 +43,8 @@
     "rent-description": "Immobilien zur Miete",
     "selected-count": "{count} ausgewählt",
     "search-button": "Suchen",
+    "price-range": "Preisspanne",
+    "price-no-limit": "Ohne Limit",
     "filters": {
       "category": {
         "label": "Kategorie",

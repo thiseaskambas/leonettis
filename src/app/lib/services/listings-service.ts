@@ -12,6 +12,8 @@ export interface ListingSearchParams {
   features?: string[];
   amenities?: string[];
   suitableFor?: string[];
+  minPrice?: number;
+  maxPrice?: number;
   page?: number;
   limit?: number;
 }
@@ -46,6 +48,8 @@ export function parseSearchParams(
     features: toArray(raw.features),
     amenities: toArray(raw.amenities),
     suitableFor: toArray(raw.suitableFor),
+    minPrice: raw.minPrice ? Number(raw.minPrice) : undefined,
+    maxPrice: raw.maxPrice ? Number(raw.maxPrice) : undefined,
     page: raw.page ? Number(raw.page) : undefined,
     limit: raw.limit ? Number(raw.limit) : undefined,
   };
@@ -112,6 +116,14 @@ export async function searchListings(
     results = results.filter((l) =>
       l.suitableFor?.some((s) => params.suitableFor!.includes(s))
     );
+  }
+
+  if (params.minPrice != null) {
+    results = results.filter((l) => l.price >= params.minPrice!);
+  }
+
+  if (params.maxPrice != null) {
+    results = results.filter((l) => l.price <= params.maxPrice!);
   }
 
   const page = params.page ?? DEFAULT_PAGE;

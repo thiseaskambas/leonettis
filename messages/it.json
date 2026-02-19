@@ -43,6 +43,8 @@
     "rent-description": "Immobili in affitto",
     "selected-count": "{count} selezionati",
     "search-button": "Cerca",
+    "price-range": "Fascia di prezzo",
+    "price-no-limit": "Senza limite",
     "filters": {
       "category": {
         "label": "Categoria",
