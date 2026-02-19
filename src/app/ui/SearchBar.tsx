@@ -114,40 +114,46 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
           className="bg-glass-no-border fixed inset-y-0 left-0 z-150 w-full shadow-2xl md:w-[400px]">
           <div className="flex h-full flex-col">
             <Button
-              className="self-end"
+              className="m-1 self-end"
               isIconOnly
               variant="ghost"
               onPress={onClose}
               aria-label={t('close')}>
-              <X className="size-5" />
+              <X className="size-6" />
             </Button>
 
             <h2 className="text-center text-lg font-semibold">{t('title')}</h2>
 
-            <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+            <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 text-lg">
               <RadioGroup
                 defaultValue="buy"
                 name="listing-type"
-                orientation="vertical">
-                <Label>{t('listing-type-label')}</Label>
-                <Radio value="buy">
-                  <Radio.Control>
-                    <Radio.Indicator />
-                  </Radio.Control>
-                  <Radio.Content>
-                    <Label>{t('buy-label')}</Label>
-                    <Description>{t('buy-description')}</Description>
-                  </Radio.Content>
-                </Radio>
-                <Radio value="rent">
-                  <Radio.Control>
-                    <Radio.Indicator />
-                  </Radio.Control>
-                  <Radio.Content>
-                    <Label>{t('rent-label')}</Label>
-                    <Description>{t('rent-description')}</Description>
-                  </Radio.Content>
-                </Radio>
+                className="p-4">
+                <Label className="text-base">{t('listing-type-label')}</Label>
+                <div className="flex gap-4">
+                  <Radio value="buy">
+                    <Radio.Control>
+                      <Radio.Indicator />
+                    </Radio.Control>
+                    <Radio.Content>
+                      <Label className="text-base">{t('buy-label')}</Label>
+                      <Description className="dark:text-muted/50 text-white/90">
+                        {t('buy-description')}
+                      </Description>
+                    </Radio.Content>
+                  </Radio>
+                  <Radio value="rent">
+                    <Radio.Control>
+                      <Radio.Indicator />
+                    </Radio.Control>
+                    <Radio.Content>
+                      <Label className="text-base">{t('rent-label')}</Label>
+                      <Description className="dark:text-muted/50 text-white/90">
+                        {t('rent-description')}
+                      </Description>
+                    </Radio.Content>
+                  </Radio>
+                </div>
               </RadioGroup>
 
               <Accordion allowsMultipleExpanded>
@@ -167,14 +173,16 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
                       <Accordion.Heading>
                         <Accordion.Trigger>
                           <div className="flex flex-col items-start">
-                            <span>{getFilterLabel(filter.id)}</span>
+                            <span className="text-base">
+                              {getFilterLabel(filter.id)}
+                            </span>
                             {hasSelection && (
-                              <span className="text-brand-primary text-sm font-normal">
+                              <span className="text-brand-primary text-base font-normal">
                                 {summary}
                               </span>
                             )}
                           </div>
-                          <Accordion.Indicator />
+                          <Accordion.Indicator className="dark:text-muted/50 text-white/90" />
                         </Accordion.Trigger>
                       </Accordion.Heading>
                       <Accordion.Panel>
@@ -194,7 +202,7 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
                                     <Radio.Indicator />
                                   </Radio.Control>
                                   <Radio.Content>
-                                    <Label>
+                                    <Label className="text-base">
                                       {getOptionLabel(filter.id, option.id)}
                                     </Label>
                                   </Radio.Content>
