@@ -43,6 +43,8 @@
     "rent-description": "Ακίνητα προς ενοικίαση",
     "selected-count": "{count} επιλεγμένα",
     "search-button": "Αναζήτηση",
+    "price-range": "Εύρος Τιμής",
+    "price-no-limit": "Χωρίς όριο",
     "filters": {
       "category": {
         "label": "Κατηγορία",

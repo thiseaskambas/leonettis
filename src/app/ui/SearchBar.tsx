@@ -10,6 +10,7 @@ import {
   Label,
   Radio,
   RadioGroup,
+  Slider,
 } from '@heroui/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Search, X } from 'lucide-react';
@@ -28,6 +29,9 @@ import {
   selectionsToParams,
 } from '../lib/definitions/search-filters';
 
+const PRICE_MAX = 2_000_000;
+const PRICE_STEP = 10_000;
+
 interface SearchBarProps {
   isOpen: boolean;
   onClose: () => void;
@@ -40,6 +44,7 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
   const [selections, setSelections] = useState<Record<string, Selection>>({});
   const [expandedKeys, setExpandedKeys] = useState<Set<Key>>(new Set());
   const [listingType, setListingType] = useState<'buy' | 'rent'>('buy');
+  const [priceRange, setPriceRange] = useState<number[]>([0, PRICE_MAX]);
 
   const getFilterLabel = useCallback(
     (filterId: string) =>
@@ -98,10 +103,16 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
 
   const handleSearch = useCallback(() => {
     const params = selectionsToParams(listingType, selections);
+    if (priceRange[0] > 0) {
+      params.set('minPrice', String(priceRange[0]));
+    }
+    if (priceRange[1] < PRICE_MAX) {
+      params.set('maxPrice', String(priceRange[1]));
+    }
     const route = listingType === 'rent' ? '/rent' : '/buy';
     onClose();
     router.push(`${route}?${params.toString()}`);
-  }, [listingType, selections, onClose, router]);
+  }, [listingType, selections, priceRange, onClose, router]);
 
   if (!mounted) return null;
 
@@ -169,6 +180,47 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
                   </Radio>
                 </div>
               </RadioGroup>
+
+              <Slider
+                value={priceRange}
+                onChange={(v) => setPriceRange(v as number[])}
+                minValue={0}
+                maxValue={PRICE_MAX}
+                step={PRICE_STEP}
+                formatOptions={{
+                  style: 'currency',
+                  currency: 'EUR',
+                  maximumFractionDigits: 0,
+                }}
+                className="px-4 pb-2">
+                <div className="flex items-center justify-between">
+                  <Label className="text-base">{t('price-range')}</Label>
+                  <Slider.Output className="text-brand-primary text-sm font-medium">
+                    {({ state }) => {
+                      const min = state.getThumbValueLabel(0);
+                      const max =
+                        priceRange[1] >= PRICE_MAX
+                          ? t('price-no-limit')
+                          : state.getThumbValueLabel(1);
+                      return `${min} – ${max}`;
+                    }}
+                  </Slider.Output>
+                </div>
+                <Slider.Track>
+                  {({ state }) => (
+                    <>
+                      <Slider.Fill className="bg-brand-primary" />
+                      {state.values.map((_, i) => (
+                        <Slider.Thumb
+                          key={i}
+                          index={i}
+                          className="border-brand-primary bg-background"
+                        />
+                      ))}
+                    </>
+                  )}
+                </Slider.Track>
+              </Slider>
 
               <Accordion
                 allowsMultipleExpanded
