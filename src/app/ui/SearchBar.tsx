@@ -176,11 +176,9 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
                             <span className="text-base">
                               {getFilterLabel(filter.id)}
                             </span>
-                            {hasSelection && (
-                              <span className="text-brand-primary text-base font-normal">
-                                {summary}
-                              </span>
-                            )}
+                            <span className="text-brand-primary h-5 text-base font-normal">
+                              {hasSelection && summary}
+                            </span>
                           </div>
                           <Accordion.Indicator className="dark:text-muted/50 text-white/90" />
                         </Accordion.Trigger>
@@ -227,7 +225,7 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
                                     <Checkbox.Indicator className="checkbox-indicator-brand" />
                                   </Checkbox.Control>
                                   <Checkbox.Content>
-                                    <Label>
+                                    <Label className="text-base">
                                       {getOptionLabel(filter.id, option.id)}
                                     </Label>
                                   </Checkbox.Content>
