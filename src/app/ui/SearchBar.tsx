@@ -128,7 +128,7 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
               <RadioGroup
                 defaultValue="buy"
                 name="listing-type"
-                orientation="horizontal">
+                orientation="vertical">
                 <Label>{t('listing-type-label')}</Label>
                 <Radio value="buy">
                   <Radio.Control>
