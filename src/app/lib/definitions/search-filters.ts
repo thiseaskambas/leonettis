@@ -416,3 +416,25 @@ export function getButtonLabel(
   if (labels.length <= 2) return labels.join(', ');
   return `${labels.length} selected`;
 }
+
+/***
+ * Convert search filter to URL params for GET requests APIs
+ *
+ */
+export function selectionsToParams(
+  listingType: string,
+  selections: Record<string, Selection>
+): URLSearchParams {
+  const params = new URLSearchParams();
+  params.set('listingType', listingType);
+
+  for (const filter of FILTERS) {
+    const ids = getSelectedIds(selections[filter.id]);
+    if (ids.length > 0) {
+      // multi-value params: ?propertyType=apartment&propertyType=house
+      ids.forEach((id) => params.append(filter.id, id));
+    }
+  }
+
+  return params;
+}
