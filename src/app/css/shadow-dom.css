@@ -9,6 +9,11 @@
   }
 
   .group[data-selected='true'] .radio-indicator-brand {
+    border-color: var(--color-tiff-600);
+    background-color: var(--color-tiff-700);
+  }
+
+  :is(.dark) .group[data-selected='true'] .radio-indicator-brand {
     border-color: var(--color-brand-primary-muted);
     background-color: var(--color-brand-primary);
   }
@@ -35,10 +40,19 @@
   }
 
   .listing-type-card:hover {
-    border-color: var(--color-brand-primary-muted);
+    border-color: var(--color-tiff-600);
   }
 
   .listing-type-card[data-selected='true'] {
+    border-color: var(--color-tiff-700);
+    background-color: color-mix(
+      in oklab,
+      var(--color-tiff-700) 20%,
+      transparent
+    );
+  }
+
+  :is(.dark) .listing-type-card[data-selected='true'] {
     border-color: var(--color-brand-primary);
     background-color: color-mix(
       in oklab,
@@ -52,7 +66,7 @@
   }
 
   .checkbox-control-brand {
-    border: 1px solid var(--color-tiff-gray-400);
+    border: 1px solid var(--color-tiff-700);
   }
 
   :is(.dark) .checkbox-control-brand {
@@ -61,13 +75,23 @@
 
   /* Must target ::before (HeroUI's background layer) and override border */
   .checkbox.group[data-selected='true'] .checkbox-control-brand {
+    border-color: var(--color-tiff-600);
+  }
+
+  :is(.dark) .checkbox.group[data-selected='true'] .checkbox-control-brand {
     border-color: var(--color-brand-primary-muted);
   }
 
   .checkbox.group[data-selected='true'] .checkbox-control-brand::before {
-    background-color: var(--color-brand-primary);
+    background-color: var(--color-tiff-700);
     opacity: 1;
     scale: 1;
+  }
+
+  :is(.dark)
+    .checkbox.group[data-selected='true']
+    .checkbox-control-brand::before {
+    background-color: var(--color-brand-primary);
   }
 
   .checkbox-indicator-brand {

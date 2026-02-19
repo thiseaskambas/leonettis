@@ -166,7 +166,7 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
               {hasActiveFilters && (
                 <button
                   onClick={handleReset}
-                  className="text-tiff-gray-600 hover:text-tiff-gray-900 dark:text-tiff-gray-400 dark:hover:text-tiff-gray-100 text-sm underline underline-offset-2 transition-colors">
+                  className="text-tiff-700 hover:text-tiff-gray-900 dark:text-tiff-gray-400 dark:hover:text-tiff-gray-100 text-sm underline underline-offset-2 transition-colors">
                   {t('reset-filters')}
                 </button>
               )}
@@ -216,7 +216,7 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
                 className="px-4 pb-2">
                 <div className="flex items-center justify-between">
                   <Label className="text-base">{t('price-range')}</Label>
-                  <Slider.Output className="text-brand-primary text-sm font-medium">
+                  <Slider.Output className="dark:text-brand-primary text-tiff-700 text-sm font-medium">
                     {({ state }) => {
                       const min = state.getThumbValueLabel(0);
                       const max =
@@ -230,12 +230,12 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
                 <Slider.Track>
                   {({ state }) => (
                     <>
-                      <Slider.Fill className="bg-brand-primary" />
+                      <Slider.Fill className="dark:bg-brand-primary bg-tiff-700" />
                       {state.values.map((_, i) => (
                         <Slider.Thumb
                           key={i}
                           index={i}
-                          className="border-brand-primary bg-background"
+                          className="dark:border-brand-primary border-tiff-700 bg-background"
                         />
                       ))}
                     </>
@@ -267,7 +267,7 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
                             <span className="text-base">
                               {getFilterLabel(filter.id)}
                             </span>
-                            <span className="text-brand-primary h-5 text-base font-normal">
+                            <span className="text-tiff-700 dark:text-brand-primary h-5 text-base font-normal">
                               {hasSelection && summary}
                             </span>
                           </div>
@@ -334,7 +334,7 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
 
             <div className="border-tiff-gray-200 border-t p-4 dark:border-white/10">
               <Button
-                className="bg-brand-primary w-full text-base font-semibold text-white"
+                className="bg-tiff-700 dark:bg-brand-primary w-full text-base font-semibold text-white"
                 onPress={handleSearch}>
                 <Search className="size-5" />
                 {t('search-button')}
