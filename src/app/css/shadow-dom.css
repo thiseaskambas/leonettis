@@ -1,7 +1,11 @@
 @layer utilities {
   .radio-indicator-brand {
     border-radius: 9999px;
-    border: 1px solid rgb(255 255 255 / 0.5);
+    border: 1px solid var(--color-tiff-gray-400);
+  }
+
+  :is(.dark) .radio-indicator-brand {
+    border-color: rgb(255 255 255 / 0.5);
   }
 
   .group[data-selected='true'] .radio-indicator-brand {
@@ -16,7 +20,7 @@
   .listing-type-card {
     cursor: pointer;
     border-radius: 1rem;
-    border: 2px solid rgb(255 255 255 / 0.15);
+    border: 2px solid var(--color-tiff-gray-300);
     padding: 1rem;
     display: flex;
     align-items: flex-start;
@@ -24,6 +28,10 @@
     transition:
       border-color 0.2s ease,
       background-color 0.2s ease;
+  }
+
+  :is(.dark) .listing-type-card {
+    border-color: rgb(255 255 255 / 0.15);
   }
 
   .listing-type-card:hover {
@@ -40,15 +48,15 @@
   }
 
   .listing-type-card[data-selected='true'] .description {
-    color: white;
-  }
-
-  :is(.dark) .listing-type-card[data-selected='true'] .description {
-    color: unset;
+    opacity: 1;
   }
 
   .checkbox-control-brand {
-    border: 1px solid rgb(255 255 255 / 0.5);
+    border: 1px solid var(--color-tiff-gray-400);
+  }
+
+  :is(.dark) .checkbox-control-brand {
+    border-color: rgb(255 255 255 / 0.5);
   }
 
   /* Must target ::before (HeroUI's background layer) and override border */
@@ -64,5 +72,9 @@
 
   .checkbox-indicator-brand {
     color: white;
+  }
+
+  .no-scrollbar {
+    @apply [scrollbar-width:none] [&::-webkit-scrollbar]:hidden;
   }
 }
