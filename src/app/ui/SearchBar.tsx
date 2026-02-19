@@ -153,31 +153,28 @@ const SearchBar = ({ isOpen, onClose }: SearchBarProps) => {
                 value={listingType}
                 onChange={(value) => setListingType(value as 'buy' | 'rent')}
                 name="listing-type"
-                className="p-4">
+                orientation="horizontal"
+                className="listing-type-radio-group px-4">
                 <Label className="text-base">{t('listing-type-label')}</Label>
-                <div className="flex gap-4">
-                  <Radio value="buy" className="group">
-                    <Radio.Control>
-                      <Radio.Indicator className="radio-indicator-brand" />
-                    </Radio.Control>
-                    <Radio.Content>
-                      <Label className="text-base">{t('buy-label')}</Label>
-                      <Description className="dark:text-muted/50 text-white/90">
-                        {t('buy-description')}
-                      </Description>
-                    </Radio.Content>
-                  </Radio>
-                  <Radio value="rent" className="group">
-                    <Radio.Control>
-                      <Radio.Indicator className="radio-indicator-brand" />
-                    </Radio.Control>
-                    <Radio.Content>
-                      <Label className="text-base">{t('rent-label')}</Label>
-                      <Description className="dark:text-muted/50 text-white/90">
-                        {t('rent-description')}
-                      </Description>
-                    </Radio.Content>
-                  </Radio>
+                <div className="flex gap-3">
+                  {(['buy', 'rent'] as const).map((type) => (
+                    <Radio
+                      key={type}
+                      value={type}
+                      className="listing-type-card group flex-1">
+                      <Radio.Content className="flex-1">
+                        <Label className="text-base font-medium">
+                          {t(`${type}-label`)}
+                        </Label>
+                        <Description className="text-xs opacity-70">
+                          {t(`${type}-description`)}
+                        </Description>
+                      </Radio.Content>
+                      <Radio.Control>
+                        <Radio.Indicator className="radio-indicator-brand" />
+                      </Radio.Control>
+                    </Radio>
+                  ))}
                 </div>
               </RadioGroup>
 
