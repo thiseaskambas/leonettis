@@ -6,7 +6,10 @@
     "rent": "RENT",
     "list-a-property": "LIST A PROPERTY",
     "blog": "BLOG",
-    "contact": "CONTACT"
+    "contact": "CONTACT",
+    "settings": "Settings",
+    "language": "Language",
+    "theme": "Theme"
   },
   "buy": {
     "cta": "Buy",

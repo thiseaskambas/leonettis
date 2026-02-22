@@ -6,7 +6,10 @@
     "rent": "MIETEN",
     "list-a-property": "IMMOBILIE INSERIEREN",
     "blog": "BLOG",
-    "contact": "KONTAKT"
+    "contact": "KONTAKT",
+    "settings": "Einstellungen",
+    "language": "Sprache",
+    "theme": "Design"
   },
   "buy": {
     "cta": "Kaufen",

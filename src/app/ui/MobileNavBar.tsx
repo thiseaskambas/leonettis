@@ -55,7 +55,7 @@ export function MobileNavBar({
   const closedBar = (
     <div
       className={`flex w-full items-center justify-between pt-4 md:hidden ${CONTAINER_CLASS}`}>
-      <div className="bg-glass-no-border flex flex-1 items-center justify-between rounded-2xl px-4 py-3 shadow-lg">
+      <div className="bg-glass-no-border flex flex-1 items-center justify-between rounded-2xl px-4 py-0 shadow-lg">
         <NavigationLink
           underline={false}
           href="/"
@@ -95,7 +95,7 @@ export function MobileNavBar({
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
               className="bg-glass-no-border fixed inset-x-4 top-auto bottom-0 z-50 flex h-[92dvh] flex-col overflow-hidden rounded-t-2xl shadow-2xl md:hidden">
               {/* Navbar row at top - merged with panel */}
-              <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-4 py-3 dark:border-black/20">
+              <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-4 pt-0 pb-3 dark:border-black/20">
                 <NavigationLink
                   underline={false}
                   href="/"
@@ -112,8 +112,8 @@ export function MobileNavBar({
               </div>
 
               {/* Menu content */}
-              <div className="flex min-h-0 flex-1 flex-col overflow-y-auto py-6">
-                <nav className="text-leon-blue-950 dark:text-leon-blue-50 flex flex-col gap-1 px-6">
+              <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-6 py-6">
+                <nav className="text-leon-blue-950 dark:text-leon-blue-50 flex flex-col gap-1">
                   {navItems.map((item) => (
                     <Link
                       key={item.href}
@@ -125,8 +125,8 @@ export function MobileNavBar({
                   ))}
                 </nav>
 
-                {/* Language and theme selectors at bottom */}
-                <div className="flex shrink-0 items-center justify-center gap-4 border-t border-white/10 px-6 py-4 dark:border-black/20">
+                {/* Language and theme selectors - part of scroll content */}
+                <div className="border-t border-white/10 pt-6 dark:border-black/20">
                   {children}
                 </div>
               </div>

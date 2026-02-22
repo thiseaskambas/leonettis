@@ -17,7 +17,7 @@ export default function NavigationLink({
   const classes = twMerge(
     'font-brand-primary relative px-1 py-1',
     underline &&
-      'after:bg-brand-primary after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-full after:origin-right after:scale-x-0 after:transition-transform after:duration-300 after:ease-in-out hover:after:origin-left hover:after:scale-x-100',
+      'after:bg-brand-primary after:absolute after:bottom-[-10px] after:left-0 after:h-[2px] after:w-full after:origin-right after:scale-x-0 after:transition-transform after:duration-300 after:ease-in-out hover:after:origin-left hover:after:scale-x-100',
     className
   );
 

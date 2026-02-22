@@ -6,7 +6,10 @@
     "rent": "ΕΝΟΙΚΙΑΣΗ",
     "list-a-property": "ΚΑΤΑΧΩΡΗΣΗ ΑΚΙΝΗΤΟΥ",
     "blog": "BLOG",
-    "contact": "ΕΠΙΚΟΙΝΩΝΙΑ"
+    "contact": "ΕΠΙΚΟΙΝΩΝΙΑ",
+    "settings": "Ρυθμίσεις",
+    "language": "Γλώσσα",
+    "theme": "Θέμα"
   },
   "buy": {
     "cta": "Αγορά",

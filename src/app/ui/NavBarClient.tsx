@@ -2,12 +2,11 @@
 
 import { useState } from 'react';
 
-import { LocaleDropDown } from './LocaleDropDown';
 import { MobileNavBar } from './MobileNavBar';
+import { MobileSettingsSection } from './MobileSettingsSection';
 import NavigationLink from './NavigationLink';
-import NavLinkButton from './NavLinkButton';
+import { SettingsMenu } from './SettingsMenu';
 import { ThemeLogo } from './ThemeLogo';
-import ThemeSwitch from './ThemeSwitcher';
 
 interface NavLink {
   href: string;
@@ -28,7 +27,7 @@ export function NavBarClient({ navLinks }: NavBarClientProps) {
     <div className="fixed top-0 right-0 left-0 z-50 w-full">
       {/* Desktop: contained navbar - Logo left, Nav center, Contact + utilities right */}
       <div
-        className={`hidden items-center justify-between ${CONTAINER_CLASS} py-3 md:flex ${!isOpen ? 'bg-glass-no-border rounded-2xl shadow-lg md:mt-4' : ''}`}>
+        className={`hidden items-center justify-between ${CONTAINER_CLASS} py-0 md:flex ${!isOpen ? 'bg-glass-no-border rounded-2xl shadow-lg md:mt-4' : ''}`}>
         <div className="relative flex shrink-0 items-center">
           <div className="absolute inset-0 rounded-full bg-white/50 blur-xl dark:bg-black/30" />
           <NavigationLink
@@ -39,15 +38,15 @@ export function NavBarClient({ navLinks }: NavBarClientProps) {
           </NavigationLink>
         </div>
 
-        <nav className="text-leon-blue-950 dark:text-leon-blue-50 flex flex-1 items-center justify-center gap-8 font-light md:gap-10">
+        <nav className="text-leon-blue-950 dark:text-leon-blue-50 flex flex-1 items-center justify-center gap-8 text-[14px] font-medium md:gap-10">
           {navLinks.map((link) =>
             link.href === '/contact' ? (
-              <NavLinkButton
-                className="font-medium"
+              <NavigationLink
                 key={link.href}
-                href={link.href}>
+                href={link.href}
+                className="text-leon-600 dark:text-leon-300 font-bold">
                 {link.label}
-              </NavLinkButton>
+              </NavigationLink>
             ) : (
               <NavigationLink key={link.href} href={link.href}>
                 {link.label}
@@ -56,16 +55,14 @@ export function NavBarClient({ navLinks }: NavBarClientProps) {
           )}
         </nav>
 
-        <div className="flex shrink-0 items-center justify-end gap-2">
-          <LocaleDropDown />
-          <ThemeSwitch />
+        <div className="flex shrink-0 items-center justify-end">
+          <SettingsMenu />
         </div>
       </div>
 
       {/* Mobile: contained bar + bottom-sheet menu */}
       <MobileNavBar isOpen={isOpen} setIsOpen={setIsOpen} navItems={navLinks}>
-        <LocaleDropDown />
-        <ThemeSwitch />
+        <MobileSettingsSection />
       </MobileNavBar>
     </div>
   );

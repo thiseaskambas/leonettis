@@ -16,7 +16,9 @@ export function ThemeLogo() {
 
   // Show a placeholder or the default logo during SSR/hydration to prevent layout shift
   if (!mounted) {
-    return <div style={{ width: 200, height: 80.63 }} />;
+    return (
+      <div className="h-12 w-[120px] md:h-[80.3px] md:w-[200px]" aria-hidden />
+    );
   }
 
   return (
@@ -24,7 +26,7 @@ export function ThemeLogo() {
       alt="Leonetti logo"
       src={resolvedTheme === 'dark' ? '/logo-lg-dark.png' : '/logo-lg.png'}
       width={200}
-      className="min-h-[80.3px] min-w-[200px] object-contain"
+      className="min-h-12 w-[120px] min-w-[120px] object-contain md:h-[80.3px] md:min-h-[80.3px] md:w-[200px] md:min-w-[200px]"
       height={80.3}
       priority
     />

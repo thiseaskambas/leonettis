@@ -6,7 +6,10 @@
     "rent": "AFFITTA",
     "list-a-property": "INSERISCI UN ANNOCIO",
     "blog": "BLOG",
-    "contact": "CONTATTI"
+    "contact": "CONTATTI",
+    "settings": "Impostazioni",
+    "language": "Lingua",
+    "theme": "Tema"
   },
   "buy": {
     "cta": "Compra",
