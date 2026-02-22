@@ -30,6 +30,7 @@ export function MobileSettingsSection() {
   const handleLocaleChange = (localeValue: string) => {
     const locale = Object.values(locales).find((l) => l.value === localeValue);
     if (locale) {
+      sessionStorage.setItem('keepMobileMenuOpen', 'true');
       router.replace(pathname, { locale: locale.value });
     }
   };
@@ -73,12 +74,12 @@ export function MobileSettingsSection() {
                       }`}>
                       <span className="flex items-center gap-3">
                         <Flag className="size-6 shrink-0 rounded-full" />
-                        <span className="text-lg font-medium tracking-wide">
+                        <span className="text-base font-normal tracking-wide">
                           {locale.label}
                         </span>
                       </span>
                       {isSelected && (
-                        <Check className="text-brand-primary size-5 shrink-0" />
+                        <Check className="dark:text-brand-primary text-leon-700 size-5 shrink-0" />
                       )}
                     </button>
                   );

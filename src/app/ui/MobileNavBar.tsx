@@ -18,6 +18,7 @@ interface MobileNavBarProps {
   navItems: NavItem[];
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
+  skipEnterAnimation?: boolean;
   children?: React.ReactNode;
 }
 
@@ -32,12 +33,14 @@ export function MobileNavBar({
   children,
   isOpen,
   setIsOpen,
+  skipEnterAnimation = false,
 }: MobileNavBarProps) {
   // Keep the container expanded (bottom-0) until the exit animation fully
   // completes — otherwise the panel's flex-1 height collapses to zero mid-slide
   // and y:'100%' becomes a no-op, leaving the panel stuck on screen.
   // Set to true via onAnimationStart (panel enter), false via onExitComplete.
-  const [containerExpanded, setContainerExpanded] = useState(false);
+  const [containerExpanded, setContainerExpanded] =
+    useState(skipEnterAnimation);
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : 'unset';
@@ -56,7 +59,7 @@ export function MobileNavBar({
         {isOpen && (
           <motion.div
             key="mobile-backdrop"
-            initial={{ opacity: 0 }}
+            initial={skipEnterAnimation ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={closeMenu}
@@ -121,7 +124,7 @@ export function MobileNavBar({
         {isOpen && (
           <motion.div
             key="mobile-panel"
-            initial={{ y: '100%' }}
+            initial={skipEnterAnimation ? false : { y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             onAnimationStart={() => setContainerExpanded(true)}
