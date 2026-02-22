@@ -20,15 +20,37 @@ interface NavBarClientProps {
 const CONTAINER_CLASS =
   'mx-auto w-full max-w-7xl px-4 md:mx-4 md:px-6 lg:mx-auto lg:px-8';
 
+const KEEP_MENU_OPEN_KEY = 'keepMobileMenuOpen';
+
 export function NavBarClient({ navLinks }: NavBarClientProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [state, setState] = useState<{
+    isOpen: boolean;
+    skipEnterAnimation: boolean;
+  }>(() => {
+    if (typeof window === 'undefined')
+      return { isOpen: false, skipEnterAnimation: false };
+    const shouldKeepOpen =
+      sessionStorage.getItem(KEEP_MENU_OPEN_KEY) === 'true';
+    if (shouldKeepOpen) sessionStorage.removeItem(KEEP_MENU_OPEN_KEY);
+    return {
+      isOpen: shouldKeepOpen,
+      skipEnterAnimation: shouldKeepOpen,
+    };
+  });
+
+  const setIsOpen = (value: boolean | ((prev: boolean) => boolean)) => {
+    setState((prev) => ({
+      isOpen: typeof value === 'function' ? value(prev.isOpen) : value,
+      skipEnterAnimation: false,
+    }));
+  };
 
   return (
     <div className="fixed top-0 right-0 left-0 z-50 w-full">
       {/* Desktop: contained navbar - Logo left, Nav center, Contact + utilities right */}
       <div
-        className={`hidden items-center justify-between ${CONTAINER_CLASS} py-0 md:flex ${!isOpen ? 'bg-glass-no-border rounded-2xl shadow-lg md:mt-4' : ''}`}>
-        <div className="relative flex shrink-0 items-center">
+        className={`hidden grid-cols-[1fr_auto_1fr] items-center ${CONTAINER_CLASS} py-0 md:grid ${!state.isOpen ? 'bg-glass-no-border rounded-2xl shadow-lg md:mt-4' : ''}`}>
+        <div className="relative flex items-center justify-start">
           <div className="absolute inset-0 rounded-full bg-white/50 blur-xl dark:bg-black/30" />
           <NavigationLink
             underline={false}
@@ -38,7 +60,7 @@ export function NavBarClient({ navLinks }: NavBarClientProps) {
           </NavigationLink>
         </div>
 
-        <nav className="text-leon-blue-950 dark:text-leon-blue-50 flex flex-1 items-center justify-center gap-8 text-[14px] font-medium md:gap-10">
+        <nav className="text-leon-blue-950 dark:text-leon-blue-50 flex items-center justify-center gap-8 text-[14px] font-medium md:gap-10">
           {navLinks.map((link) =>
             link.href === '/contact' ? (
               <NavigationLink
@@ -55,13 +77,17 @@ export function NavBarClient({ navLinks }: NavBarClientProps) {
           )}
         </nav>
 
-        <div className="flex shrink-0 items-center justify-end">
+        <div className="flex items-center justify-end">
           <SettingsMenu />
         </div>
       </div>
 
       {/* Mobile: contained bar + bottom-sheet menu */}
-      <MobileNavBar isOpen={isOpen} setIsOpen={setIsOpen} navItems={navLinks}>
+      <MobileNavBar
+        isOpen={state.isOpen}
+        setIsOpen={setIsOpen}
+        navItems={navLinks}
+        skipEnterAnimation={state.skipEnterAnimation}>
         <MobileSettingsSection />
       </MobileNavBar>
     </div>

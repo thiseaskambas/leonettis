@@ -48,7 +48,7 @@ export default function HeroSearchOverlayDesktop() {
   }, [activeTab, selectedPropertyType, router]);
 
   return (
-    <div className="pointer-events-auto -mt-52">
+    <div className="pointer-events-auto">
       <div className="bg-glass-no-border flex h-16 items-center gap-6 rounded-2xl px-5 py-3 shadow-lg">
         {/* Pill-style segmented control */}
         <div className="relative flex rounded-full bg-white/20 p-1 dark:bg-black/20">
