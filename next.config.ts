@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'du6v48geka0ok.cloudfront.net',
+        hostname: 'blogfeed-ar0uj.sevalla.storage',
         pathname: '/images/**',
       },
       {
