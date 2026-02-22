@@ -1,12 +1,15 @@
 {
   "nav": {
-    "home": "Startseite",
-    "about": "Über uns",
-    "buy": "Kaufen",
-    "rent": "Mieten",
-    "list-a-property": "Immobilie inserieren",
-    "blog": "Blog",
-    "contact": "Kontakt"
+    "home": "STARTSEITE",
+    "about": "ÜBER UNS",
+    "buy": "KAUFEN",
+    "rent": "MIETEN",
+    "list-a-property": "IMMOBILIE INSERIEREN",
+    "blog": "BLOG",
+    "contact": "KONTAKT",
+    "settings": "Einstellungen",
+    "language": "Sprache",
+    "theme": "Design"
   },
   "buy": {
     "cta": "Kaufen",
