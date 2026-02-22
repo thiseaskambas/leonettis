@@ -117,8 +117,8 @@ export interface Listing {
   amenities?: Amenities[];
   suitableFor?: SuitableFor[];
   view?: ViewType[];
-  publishedAt: Date;
-  updatedAt: Date;
+  publishedAt: string;
+  updatedAt: string;
   isFeatured?: boolean;
   isActive?: boolean;
   isSold?: boolean;
@@ -131,8 +131,8 @@ export interface Listing {
   energyRating?: EnergyRating;
   yearRenovated?: number;
   availableNow?: boolean;
-  availableFrom?: Date;
-  availableTo?: Date;
+  availableFrom?: string;
+  availableTo?: string;
   leaseDuration?: number;
   leaseDurationUnit?: 'month' | 'year';
   leaseDurationType?: 'fixed' | 'flexible';
