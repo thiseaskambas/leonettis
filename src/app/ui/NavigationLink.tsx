@@ -8,13 +8,16 @@ import { Link, usePathname } from '@/i18n/navigation';
 export default function NavigationLink({
   href,
   className,
+  underline = true,
   ...rest
-}: ComponentProps<typeof Link>) {
+}: ComponentProps<typeof Link> & { underline?: boolean }) {
   const pathname = usePathname();
   const isActive = pathname === href;
 
   const classes = twMerge(
-    'after:bg-brand-primary font-brand-primary relative px-1 py-1 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-right after:scale-x-0 after:transition-transform after:duration-300 after:ease-in-out hover:after:origin-left hover:after:scale-x-100',
+    'font-brand-primary relative px-1 py-1',
+    underline &&
+      'after:bg-brand-primary after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-full after:origin-right after:scale-x-0 after:transition-transform after:duration-300 after:ease-in-out hover:after:origin-left hover:after:scale-x-100',
     className
   );
 

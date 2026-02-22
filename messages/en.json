@@ -1,12 +1,12 @@
 {
   "nav": {
-    "home": "Home",
-    "about": "About",
-    "buy": "Buy",
-    "rent": "Rent",
-    "list-a-property": "List a Property",
-    "blog": "Blog",
-    "contact": "Contact"
+    "home": "HOME",
+    "about": "ABOUT",
+    "buy": "BUY",
+    "rent": "RENT",
+    "list-a-property": "LIST A PROPERTY",
+    "blog": "BLOG",
+    "contact": "CONTACT"
   },
   "buy": {
     "cta": "Buy",

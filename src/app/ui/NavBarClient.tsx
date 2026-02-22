@@ -18,31 +18,28 @@ interface NavBarClientProps {
   navLinks: NavLink[];
 }
 
+const CONTAINER_CLASS =
+  'mx-auto w-full max-w-7xl px-4 md:mx-4 md:px-6 lg:mx-auto lg:px-8';
+
 export function NavBarClient({ navLinks }: NavBarClientProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    // NavBarClient.tsx line 25
-    <div
-      className={`fixed top-0 left-0 z-50 w-full ${isOpen ? '' : 'bg-glass-no-border'}`}>
-      <div className="hidden w-full items-center px-5 md:flex md:px-14">
-        <div className="flex-1" aria-hidden />
-        <div className="relative flex items-center justify-center">
+    <div className="fixed top-0 right-0 left-0 z-50 w-full">
+      {/* Desktop: contained navbar - Logo left, Nav center, Contact + utilities right */}
+      <div
+        className={`hidden items-center justify-between ${CONTAINER_CLASS} py-3 md:flex ${!isOpen ? 'bg-glass-no-border rounded-2xl shadow-lg md:mt-4' : ''}`}>
+        <div className="relative flex shrink-0 items-center">
           <div className="absolute inset-0 rounded-full bg-white/50 blur-xl dark:bg-black/30" />
           <NavigationLink
-            className="hidden self-center drop-shadow-md md:block"
+            underline={false}
+            className="relative z-10 drop-shadow-md"
             href="/">
             <ThemeLogo />
           </NavigationLink>
         </div>
-        <div className="flex flex-1 items-center justify-end gap-2 md:flex">
-          <LocaleDropDown />
-          <ThemeSwitch />
-        </div>
-      </div>
 
-      <nav className="text-leon-blue-950 dark:text-leon-blue-50 flex w-full items-end justify-around gap-10 font-light shadow-xs md:px-2 md:pb-3 dark:shadow-none">
-        <div className="hidden items-end gap-10 md:flex">
+        <nav className="text-leon-blue-950 dark:text-leon-blue-50 flex flex-1 items-center justify-center gap-8 font-light md:gap-10">
           {navLinks.map((link) =>
             link.href === '/contact' ? (
               <NavLinkButton
@@ -57,14 +54,19 @@ export function NavBarClient({ navLinks }: NavBarClientProps) {
               </NavigationLink>
             )
           )}
-        </div>
+        </nav>
 
-        {/* MobileNavBar handles its own visibility trigger */}
-        <MobileNavBar isOpen={isOpen} setIsOpen={setIsOpen} navItems={navLinks}>
+        <div className="flex shrink-0 items-center justify-end gap-2">
           <LocaleDropDown />
           <ThemeSwitch />
-        </MobileNavBar>
-      </nav>
+        </div>
+      </div>
+
+      {/* Mobile: contained bar + bottom-sheet menu */}
+      <MobileNavBar isOpen={isOpen} setIsOpen={setIsOpen} navItems={navLinks}>
+        <LocaleDropDown />
+        <ThemeSwitch />
+      </MobileNavBar>
     </div>
   );
 }

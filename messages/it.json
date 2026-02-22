@@ -1,12 +1,12 @@
 {
   "nav": {
-    "home": "Home",
-    "about": "Chi siamo",
-    "buy": "Compra",
-    "rent": "Affitta",
-    "list-a-property": "Inserisci un annuncio",
-    "blog": "Blog",
-    "contact": "Contatti"
+    "home": "HOME",
+    "about": "CHI SIAMO",
+    "buy": "COMPRA",
+    "rent": "AFFITTA",
+    "list-a-property": "INSERISCI UN ANNOCIO",
+    "blog": "BLOG",
+    "contact": "CONTATTI"
   },
   "buy": {
     "cta": "Compra",

@@ -19,7 +19,7 @@
   .bg-glass-no-border {
     /* Inherit the adaptive logic */
     /* Same as .glass-adaptive-no-border, inlined */
-    --glass-bg: color-mix(in oklab, var(--bg, transparent) 40%, transparent);
+    --glass-bg: color-mix(in oklab, var(--bg, transparent) 60%, transparent);
     background: var(--glass-bg);
     border: none;
 
@@ -36,7 +36,7 @@
   }
 
   .bg-glass {
-    --glass-bg: color-mix(in oklab, var(--bg, transparent) 40%, transparent);
+    --glass-bg: color-mix(in oklab, var(--bg, transparent) 60%, transparent);
     background: var(--glass-bg);
     /* border: 1px solid color-mix(in oklab, var(--glass-bg) 70%, white); */
     @apply inset-ring inset-ring-gray-950/8 dark:inset-ring-white/15;
