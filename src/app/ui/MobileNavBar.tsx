@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
-import { Dispatch, SetStateAction, useEffect } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 import { Link } from '@/i18n/navigation';
 
@@ -33,6 +33,12 @@ export function MobileNavBar({
   isOpen,
   setIsOpen,
 }: MobileNavBarProps) {
+  // Keep the container expanded (bottom-0) until the exit animation fully
+  // completes — otherwise the panel's flex-1 height collapses to zero mid-slide
+  // and y:'100%' becomes a no-op, leaving the panel stuck on screen.
+  // Set to true via onAnimationStart (panel enter), false via onExitComplete.
+  const [containerExpanded, setContainerExpanded] = useState(false);
+
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : 'unset';
     return () => {
@@ -43,13 +49,8 @@ export function MobileNavBar({
   const closeMenu = () => setIsOpen(false);
 
   return (
-    /*
-     * Fixed container that expands to full height when open.
-     * Bar + panel are flex-col siblings so they always connect flush —
-     * no measurement or top-offset needed.
-     */
     <div
-      className={`fixed top-0 right-0 left-0 z-50 flex flex-col md:hidden ${isOpen ? 'bottom-0' : ''}`}>
+      className={`fixed top-0 right-0 left-0 z-50 flex flex-col md:hidden ${containerExpanded ? 'bottom-0' : ''}`}>
       {/* Dimmed backdrop sits behind bar + panel via negative z */}
       <AnimatePresence>
         {isOpen && (
@@ -116,13 +117,14 @@ export function MobileNavBar({
       </motion.div>
 
       {/* Panel — flex-1 sibling of bar, slides up from below */}
-      <AnimatePresence>
+      <AnimatePresence onExitComplete={() => setContainerExpanded(false)}>
         {isOpen && (
           <motion.div
             key="mobile-panel"
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
+            onAnimationStart={() => setContainerExpanded(true)}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             className="bg-glass-no-border relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden">
             <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-6 py-6">
