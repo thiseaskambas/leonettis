@@ -2,7 +2,6 @@
 
 import type { Key } from '@heroui/react';
 import {
-  Autocomplete,
   Button,
   FieldError,
   Input,
@@ -49,8 +48,6 @@ const countryItems = COUNTRY_CODES.map((c) => ({
   textValue: `${c.name} ${c.dialCode}`,
 }));
 
-type CountryItem = (typeof countryItems)[number];
-
 export default function ContactForm() {
   const t = useTranslations('contact');
 
@@ -67,6 +64,7 @@ export default function ContactForm() {
 
   const [status, setStatus] = useState<FormStatus>('idle');
   const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
+  const [countrySearchQuery, setCountrySearchQuery] = useState('');
 
   function setField<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -246,64 +244,80 @@ export default function ContactForm() {
       {/* Conditional: Phone */}
       {form.contactPreference === 'phone' && (
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
-          {/* Country code autocomplete */}
+          {/* Country code: dropdown with search inside */}
           <div className="sm:w-56">
-            <Autocomplete
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              items={countryItems as any}
+            <Select
               value={form.countryCode}
               onChange={(key) => setField('countryCode', key as Key | null)}>
               <Label>{t('country-code-label')}</Label>
-              <Autocomplete.Trigger>
-                <Autocomplete.Value>
-                  {({ selectedItem, isPlaceholder }) => {
-                    if (isPlaceholder || !selectedItem) {
+              <Select.Trigger>
+                <Select.Value>
+                  {() => {
+                    const selected = countryItems.find(
+                      (c) => c.id === form.countryCode
+                    );
+                    if (!selected) {
                       return (
                         <span className="text-tiff-gray-400">
                           {t('country-code-placeholder')}
                         </span>
                       );
                     }
-                    const item = selectedItem as CountryItem;
                     return (
                       <span>
-                        {item.flag} {item.dialCode}
+                        {selected.flag} {selected.dialCode}
                       </span>
                     );
                   }}
-                </Autocomplete.Value>
-                <Autocomplete.ClearButton />
-                <Autocomplete.Indicator />
-              </Autocomplete.Trigger>
-              <Autocomplete.Popover className="bg-transparent backdrop-blur-md">
-                <Autocomplete.Filter>
-                  <SearchField>
-                    <SearchField.Group>
+                </Select.Value>
+                <Select.Indicator />
+              </Select.Trigger>
+              <Select.Popover className="bg-transparent p-1 backdrop-blur-md">
+                <div className="flex flex-col gap-1 p-1">
+                  <SearchField
+                    value={countrySearchQuery}
+                    onChange={setCountrySearchQuery}
+                    aria-label={t('country-code-label')}
+                    className="shrink-0">
+                    <SearchField.Group className="bg-glass">
                       <SearchField.SearchIcon />
                       <SearchField.Input
-                        autoFocus
                         placeholder={t('country-code-placeholder')}
                       />
                     </SearchField.Group>
                   </SearchField>
-                  <ListBox className="bg-glass">
-                    {(item: CountryItem) => (
-                      <ListBox.Item
-                        key={item.id}
-                        id={item.id}
-                        textValue={item.textValue}>
-                        <span className="mr-2">{item.flag}</span>
-                        <span className="font-mono text-sm">
-                          {item.dialCode}
-                        </span>
-                        <span className="ml-2 truncate">{item.name}</span>
-                        <ListBox.ItemIndicator />
-                      </ListBox.Item>
-                    )}
+                  <ListBox className="bg-glass max-h-[min(16rem,50vh)] overflow-auto">
+                    {countryItems
+                      .filter(
+                        (c) =>
+                          !countrySearchQuery.trim() ||
+                          c.name
+                            .toLowerCase()
+                            .includes(
+                              countrySearchQuery.trim().toLowerCase()
+                            ) ||
+                          c.dialCode.includes(countrySearchQuery.trim()) ||
+                          c.id
+                            .toLowerCase()
+                            .includes(countrySearchQuery.trim().toLowerCase())
+                      )
+                      .map((item) => (
+                        <ListBox.Item
+                          key={item.id}
+                          id={item.id}
+                          textValue={item.textValue}>
+                          <span className="mr-2">{item.flag}</span>
+                          <span className="font-mono text-sm">
+                            {item.dialCode}
+                          </span>
+                          <span className="ml-2 truncate">{item.name}</span>
+                          <ListBox.ItemIndicator />
+                        </ListBox.Item>
+                      ))}
                   </ListBox>
-                </Autocomplete.Filter>
-              </Autocomplete.Popover>
-            </Autocomplete>
+                </div>
+              </Select.Popover>
+            </Select>
           </div>
 
           {/* Phone number */}
