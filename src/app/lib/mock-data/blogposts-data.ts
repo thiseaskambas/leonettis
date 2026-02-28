@@ -62,7 +62,7 @@ export const blogpostsData: ArticleApiResponse[] = [
       images: {
         '6962e847d8cff9ce2b39a74f': {
           status: 'completed',
-          url: 'https://du6v48geka0ok.cloudfront.net/images/this-is-an-alt-text_1768089688069.png',
+          url: '',
           prompt: 'generate a snow man on a beach',
         },
       },
