@@ -53,7 +53,7 @@ export default function PropertyHero({
     ...(videos?.map((src) => ({ type: 'video' as const, src })) ?? []),
   ];
 
-  const InfoOverlay = () => (
+  const infoOverlay = (
     <div className="flex flex-col gap-3">
       <div>
         <h1 className="text-xl font-semibold tracking-wide text-gray-900 md:text-2xl lg:text-3xl dark:text-white">
@@ -150,7 +150,7 @@ export default function PropertyHero({
 
         {/* Desktop overlay — bottom-left glass card */}
         <div className="bg-glass-no-border absolute bottom-6 left-6 z-20 hidden max-w-lg rounded-2xl border border-white/20 p-5 shadow-xl md:block">
-          <InfoOverlay />
+          {infoOverlay}
         </div>
 
         {/* Gradient fade at bottom for desktop overlay readability */}
@@ -159,7 +159,7 @@ export default function PropertyHero({
 
       {/* Mobile info block — below the slideshow */}
       <div className="from-tiff-gray-50 to-tiff-gray-100 dark:from-tiff-gray-950 dark:to-tiff-gray-900 bg-linear-to-b px-5 py-6 md:hidden">
-        <InfoOverlay />
+        {infoOverlay}
       </div>
     </div>
   );

@@ -63,14 +63,14 @@
 
 /* Pagination: color and size */
 .mySwiper .swiper-pagination-bullet {
-  background: var(--color-brand-primary);
+  background: var(--color-text-secondary);
   opacity: 0.6;
   width: 8px;
   height: 8px;
 }
 .mySwiper .swiper-pagination-bullet-active {
   opacity: 1;
-  background: var(--color-brand-primary);
+  background: var(--color-text-secondary);
 }
 
 /* Hide by default */
