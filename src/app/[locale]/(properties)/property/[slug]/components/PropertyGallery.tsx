@@ -85,7 +85,7 @@ function LightboxDialog({
         {images.map((image, index) => (
           <SwiperSlide
             key={index}
-            className="!flex !h-full flex-col items-center justify-center">
+            className="flex! h-full! flex-col items-center justify-center">
             <Image
               src={getMediaUrl(image.url)}
               alt={image.name || `${title} — ${index + 1}`}
