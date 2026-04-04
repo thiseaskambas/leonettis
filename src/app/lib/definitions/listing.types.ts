@@ -109,7 +109,7 @@ export interface Listing {
   category: ListingCategory;
   propertyType: PropertyType;
   id: string;
-  price: number;
+  price?: number;
   bedrooms?: number;
   bathrooms?: number;
   squareMetersInterior?: number;

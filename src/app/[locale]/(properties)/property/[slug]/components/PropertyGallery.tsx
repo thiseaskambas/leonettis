@@ -1,9 +1,9 @@
 'use client';
 
-import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import Image from 'next/image';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { Swiper as SwiperType } from 'swiper';
 import { Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
@@ -24,32 +24,10 @@ export default function PropertyGallery({
   closeLabel,
 }: PropertyGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const [direction, setDirection] = useState(0);
+  const swiperRef = useRef<SwiperType | null>(null);
 
   const openLightbox = (index: number) => setSelectedIndex(index);
   const closeLightbox = () => setSelectedIndex(null);
-
-  const goToPrev = useCallback(() => {
-    setSelectedIndex((prev) =>
-      prev === null ? null : (prev - 1 + images.length) % images.length
-    );
-  }, [images.length]);
-
-  const goToNext = useCallback(() => {
-    setSelectedIndex((prev) =>
-      prev === null ? null : (prev + 1) % images.length
-    );
-  }, [images.length]);
-
-  const handlePrev = useCallback(() => {
-    setDirection(-1);
-    goToPrev();
-  }, [goToPrev]);
-
-  const handleNext = useCallback(() => {
-    setDirection(1);
-    goToNext();
-  }, [goToNext]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -57,13 +35,13 @@ export default function PropertyGallery({
 
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeLightbox();
-      if (e.key === 'ArrowLeft') handlePrev();
-      if (e.key === 'ArrowRight') handleNext();
+      if (e.key === 'ArrowLeft') swiperRef.current?.slidePrev();
+      if (e.key === 'ArrowRight') swiperRef.current?.slideNext();
     };
 
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [selectedIndex, handlePrev, handleNext]);
+  }, [selectedIndex]);
 
   // Prevent body scroll when lightbox is open
   useEffect(() => {
@@ -157,7 +135,7 @@ export default function PropertyGallery({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              handlePrev();
+              swiperRef.current?.slidePrev();
             }}
             aria-label="Previous image"
             className="absolute left-4 z-10 hidden h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/25 md:flex">
@@ -165,53 +143,46 @@ export default function PropertyGallery({
           </button>
 
           {/* Main image */}
-          <AnimatePresence initial={false} custom={direction}>
-            <motion.div
-              key={selectedIndex}
-              custom={direction}
-              variants={{
-                enter: (d: number) => ({ x: d >= 0 ? '100%' : '-100%' }),
-                center: { x: 0 },
-                exit: (d: number) => ({ x: d >= 0 ? '-100%' : '100%' }),
-              }}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              drag="x"
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.15}
-              onDragEnd={(_, { offset, velocity }) => {
-                if (offset.x < -50 || velocity.x < -500) handleNext();
-                else if (offset.x > 50 || velocity.x > 500) handlePrev();
-              }}
-              className="relative shrink-0 cursor-grab active:cursor-grabbing"
-              onClick={(e) => e.stopPropagation()}
-              style={{ touchAction: 'none' }}>
-              <Image
-                src={getMediaUrl(images[selectedIndex].url)}
-                alt={
-                  images[selectedIndex].name ||
-                  `${title} — ${selectedIndex + 1}`
-                }
-                width={1600}
-                height={1200}
-                className="max-h-[90vh] w-auto max-w-[90vw] rounded-xl object-contain shadow-2xl"
-                priority
-              />
-              {images[selectedIndex].description?.trim() ? (
-                <p className="mt-4 max-w-[90vw] text-center text-sm text-white/90">
-                  {images[selectedIndex].description}
-                </p>
-              ) : null}
-            </motion.div>
-          </AnimatePresence>
+          <Swiper
+            onSwiper={(s) => {
+              swiperRef.current = s;
+            }}
+            initialSlide={selectedIndex}
+            onSlideChange={(s) => setSelectedIndex(s.realIndex)}
+            slidesPerView={1}
+            spaceBetween={0}
+            grabCursor
+            loop={images.length > 1}
+            modules={[]}
+            className="h-full w-full"
+            onClick={(_, e) => e.stopPropagation()}>
+            {images.map((image, index) => (
+              <SwiperSlide
+                key={index}
+                className="flex flex-col items-center justify-center"
+                onClick={(e) => e.stopPropagation()}>
+                <Image
+                  src={getMediaUrl(image.url)}
+                  alt={image.name || `${title} — ${index + 1}`}
+                  width={1600}
+                  height={1200}
+                  className="max-h-[90vh] w-auto max-w-[90vw] rounded-xl object-contain shadow-2xl"
+                  priority={index === selectedIndex}
+                />
+                {image.description?.trim() ? (
+                  <p className="mt-4 max-w-[90vw] text-center text-sm text-white/90">
+                    {image.description}
+                  </p>
+                ) : null}
+              </SwiperSlide>
+            ))}
+          </Swiper>
 
           {/* Next button */}
           <button
             onClick={(e) => {
               e.stopPropagation();
-              handleNext();
+              swiperRef.current?.slideNext();
             }}
             aria-label="Next image"
             className="absolute right-4 z-10 hidden h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/25 md:flex">

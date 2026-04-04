@@ -119,11 +119,15 @@ export async function searchListings(
   }
 
   if (params.minPrice != null) {
-    results = results.filter((l) => l.price >= params.minPrice!);
+    results = results.filter(
+      (l) => l.price != null && l.price >= params.minPrice!
+    );
   }
 
   if (params.maxPrice != null) {
-    results = results.filter((l) => l.price <= params.maxPrice!);
+    results = results.filter(
+      (l) => l.price != null && l.price <= params.maxPrice!
+    );
   }
 
   const page = params.page ?? DEFAULT_PAGE;

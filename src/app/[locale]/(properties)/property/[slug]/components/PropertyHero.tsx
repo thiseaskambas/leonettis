@@ -5,7 +5,10 @@ import Image from 'next/image';
 import { Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-import type { Address, ListingImage } from '@/app/lib/definitions/listing.types';
+import type {
+  Address,
+  ListingImage,
+} from '@/app/lib/definitions/listing.types';
 import { getMediaUrl } from '@/app/lib/helpers/media-helpers';
 
 type HeroSlide =
@@ -17,13 +20,14 @@ interface PropertyHeroProps {
   videos?: string[];
   title: string;
   address: Address;
-  price: number;
+  price?: number;
   bedrooms?: number;
   bathrooms?: number;
   squareMetersTotal?: number;
   listingType: 'buy' | 'rent';
   translations: {
     pricePerMonth: string;
+    priceUponRequest: string;
     bedrooms: string;
     bathrooms: string;
     area: string;
@@ -42,11 +46,14 @@ export default function PropertyHero({
   listingType,
   translations,
 }: PropertyHeroProps) {
-  const formattedPrice = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'EUR',
-    maximumFractionDigits: 0,
-  }).format(price);
+  const priceDisplay =
+    price != null
+      ? new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'EUR',
+          maximumFractionDigits: 0,
+        }).format(price)
+      : translations.priceUponRequest;
 
   const displayAddress =
     address.displayAddress ??
@@ -78,8 +85,8 @@ export default function PropertyHero({
 
       <div className="flex flex-wrap items-center gap-4 border-t border-gray-200/30 pt-3 text-sm font-medium text-gray-800 dark:text-gray-200">
         <span className="text-lg font-bold text-gray-900 dark:text-white">
-          {formattedPrice}
-          {listingType === 'rent' && (
+          {priceDisplay}
+          {listingType === 'rent' && price != null && (
             <span className="ml-0.5 text-sm font-normal text-gray-600 dark:text-gray-400">
               {translations.pricePerMonth}
             </span>

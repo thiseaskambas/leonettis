@@ -27,6 +27,7 @@ interface PropertyDetailsTranslations {
   availableNow: string;
   availableFrom: string;
   availableUponRequest: string;
+  priceUponRequest: string;
 }
 
 interface PropertyDetailsProps {
@@ -95,11 +96,14 @@ export default function PropertyDetails({
     availableUponRequest,
   } = listing;
 
-  const formattedPrice = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'EUR',
-    maximumFractionDigits: 0,
-  }).format(price);
+  const priceDisplay =
+    price != null
+      ? new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'EUR',
+          maximumFractionDigits: 0,
+        }).format(price)
+      : translations.priceUponRequest;
 
   const displayAddress =
     address.displayAddress ??
@@ -122,8 +126,8 @@ export default function PropertyDetails({
       {/* Price */}
       <div className="flex flex-wrap items-end gap-4">
         <p className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
-          {formattedPrice}
-          {listingType === 'rent' && (
+          {priceDisplay}
+          {listingType === 'rent' && price != null && (
             <span className="ml-1 text-xl font-normal text-gray-500 dark:text-gray-400">
               {translations.pricePerMonth}
             </span>

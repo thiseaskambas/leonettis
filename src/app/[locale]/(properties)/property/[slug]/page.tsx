@@ -130,6 +130,7 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
 
   const heroTranslations = {
     pricePerMonth: t('pricePerMonth'),
+    priceUponRequest: t('priceUponRequest'),
     bedrooms: t('bedrooms'),
     bathrooms: t('bathrooms'),
     area: t('area'),
@@ -159,6 +160,7 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
     availableNow: t('availableNow'),
     availableFrom: t('availableFrom'),
     availableUponRequest: t('availableUponRequest'),
+    priceUponRequest: t('priceUponRequest'),
   };
 
   const breadcrumbTranslations = {

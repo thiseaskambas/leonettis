@@ -224,6 +224,7 @@
     "availableNow": "Available Now",
     "availableFrom": "Available From",
     "availableUponRequest": "Available Upon Request",
+    "priceUponRequest": "Price Upon Request",
     "contact": "Contact Us",
     "breadcrumb": {
       "home": "Home",
