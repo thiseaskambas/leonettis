@@ -18,3 +18,9 @@ export const routing = defineRouting({
   defaultLocale: locales.en.value,
   localePrefix: 'always',
 });
+
+export function isValidLocale(
+  locale: unknown
+): locale is (typeof routing.locales)[number] {
+  return routing.locales.includes(locale as (typeof routing.locales)[number]);
+}

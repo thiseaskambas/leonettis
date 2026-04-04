@@ -1,9 +1,18 @@
 {
+  "metadata": {
+    "title": {
+      "default": "Immobilier Leonetti's",
+      "template": "%s | Leonetti's"
+    }
+  },
   "nav": {
     "home": "ACCUEIL",
     "about": "À PROPOS",
     "buy": "ACHETER",
     "rent": "LOUER",
+    "brand-home": "Immobilier Leonetti's, accueil",
+    "buy-aria": "Parcourir les biens à vendre",
+    "rent-aria": "Parcourir les biens à louer",
     "list-a-property": "DÉPOSER UNE ANNONCE",
     "blog": "BLOG",
     "contact": "CONTACT",
@@ -20,6 +29,11 @@
     "cta": "Louer",
     "title": "PROPRIÉTÉS À LOUER",
     "description": "Trouvez la propriété idéale à louer chez Leonettis"
+  },
+  "hero": {
+    "search-section": "Recherche de biens",
+    "search-mode-buy": "Rechercher des biens à acheter",
+    "search-mode-rent": "Rechercher des biens à louer"
   },
   "list-a-property": {
     "title": "DÉPOSER UNE NOUVELLE ANNONCE",

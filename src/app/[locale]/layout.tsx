@@ -1,12 +1,17 @@
 import '../globals.css';
 
+import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import {
+  getMessages,
+  getTranslations,
+  setRequestLocale,
+} from 'next-intl/server';
 import { ThemeProvider } from 'next-themes';
 
-import { routing } from '@/i18n/routing';
+import { isValidLocale } from '@/i18n/routing';
 
 import GlassSVG from '../ui/GlassSVG';
 import { NavBar } from '../ui/NavBar';
@@ -17,10 +22,26 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
-function isValidLocale(
-  locale: unknown
-): locale is (typeof routing.locales)[number] {
-  return routing.locales.includes(locale as (typeof routing.locales)[number]);
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+
+  if (!isValidLocale(locale)) {
+    return {};
+  }
+
+  setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: 'metadata' });
+
+  return {
+    title: {
+      default: t('title.default'),
+      template: t('title.template'),
+    },
+  };
 }
 
 export default async function LocaleLayout({

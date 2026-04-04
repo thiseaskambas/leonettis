@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 import { Link } from '@/i18n/navigation';
@@ -12,6 +13,7 @@ import { ThemeLogo } from './ThemeLogo';
 interface NavItem {
   label: string;
   href: string;
+  ariaLabel?: string;
 }
 
 interface MobileNavBarProps {
@@ -35,6 +37,7 @@ export function MobileNavBar({
   setIsOpen,
   skipEnterAnimation = false,
 }: MobileNavBarProps) {
+  const tNav = useTranslations('nav');
   // Keep the container expanded (bottom-0) until the exit animation fully
   // completes — otherwise the panel's flex-1 height collapses to zero mid-slide
   // and y:'100%' becomes a no-op, leaving the panel stuck on screen.
@@ -84,6 +87,7 @@ export function MobileNavBar({
           className="bg-glass-no-border flex items-center justify-between px-4 py-0 shadow-lg">
           <NavigationLink
             underline={false}
+            aria-label={tNav('brand-home')}
             href="/"
             className="relative z-10 drop-shadow-md">
             <ThemeLogo />
@@ -137,6 +141,7 @@ export function MobileNavBar({
                     key={item.href}
                     href={item.href}
                     onClick={closeMenu}
+                    aria-label={item.ariaLabel}
                     className="hover:text-brand-primary border-b border-white/10 py-4 text-left text-lg font-medium tracking-wide transition-colors last:border-b-0 dark:border-black/20">
                     {item.label}
                   </Link>

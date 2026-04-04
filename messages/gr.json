@@ -1,9 +1,18 @@
 {
+  "metadata": {
+    "title": {
+      "default": "Leonetti's Real Estate",
+      "template": "%s | Leonetti's"
+    }
+  },
   "nav": {
     "home": "ΑΡΧΙΚΗ",
     "about": "ΣΧΕΤΙΚΑ ΜΕ ΕΜΑΣ",
     "buy": "ΑΓΟΡΑ",
     "rent": "ΕΝΟΙΚΙΑΣΗ",
+    "brand-home": "Leonetti's Real Estate, αρχική",
+    "buy-aria": "Περιήγηση σε ακίνητα προς πώληση",
+    "rent-aria": "Περιήγηση σε ακίνητα προς ενοικίαση",
     "list-a-property": "ΚΑΤΑΧΩΡΗΣΗ ΑΚΙΝΗΤΟΥ",
     "blog": "BLOG",
     "contact": "ΕΠΙΚΟΙΝΩΝΙΑ",
@@ -20,6 +29,11 @@
     "cta": "Ενοικίαση",
     "title": "ΑΚΙΝΗΤΑ ΠΡΟΣ ΕΝΟΙΚΙΑΣΗ",
     "description": "Βρείτε το ιδανικό ακίνητο προς ενοικίαση στην Leonettis"
+  },
+  "hero": {
+    "search-section": "Αναζήτηση ακινήτων",
+    "search-mode-buy": "Αναζήτηση ακινήτων προς αγορά",
+    "search-mode-rent": "Αναζήτηση ακινήτων προς ενοικίαση"
   },
   "list-a-property": {
     "title": "ΚΑΤΑΧΩΡΗΣΗ ΝΕΟΥ ΑΚΙΝΗΤΟΥ",

@@ -1,4 +1,4 @@
-import { Button, Label, ListBox, Select } from '@heroui/react';
+import { Button, ListBox, Select } from '@heroui/react';
 import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -22,6 +22,8 @@ const PROPERTY_TYPES: PropertyType[] = [
 
 export default function HeroSearchOverlayDesktop() {
   const t = useTranslations('property-type');
+  const tFilters = useTranslations('search-bar.filters');
+  const tHero = useTranslations('hero');
   const router = useRouter();
   const listingTypes = PROPERTY_TYPES.map((key) => ({
     name: t(key),
@@ -30,6 +32,7 @@ export default function HeroSearchOverlayDesktop() {
 
   const tBuy = useTranslations('buy');
   const tRent = useTranslations('rent');
+  const propertyTypeLabel = tFilters('propertyType.label');
 
   const [selectedPropertyType, setSelectedPropertyType] = useState<Key | null>(
     'house'
@@ -48,12 +51,17 @@ export default function HeroSearchOverlayDesktop() {
   }, [activeTab, selectedPropertyType, router]);
 
   return (
-    <div className="pointer-events-auto">
+    <section
+      className="pointer-events-auto"
+      aria-label={tHero('search-section')}>
       <div className="bg-glass-no-border flex h-16 items-center gap-6 rounded-2xl px-5 py-3 shadow-lg">
         {/* Pill-style segmented control */}
         <div className="relative flex rounded-full bg-white/20 p-1 dark:bg-black/20">
           <button
+            type="button"
             onClick={() => setActiveTab('buy')}
+            aria-pressed={activeTab === 'buy'}
+            aria-label={tHero('search-mode-buy')}
             className={`text-leon-blue-950 dark:text-leon-blue-50 relative z-10 rounded-full px-4 py-2 text-sm font-medium transition-colors ${activeTab === 'buy' ? 'text-leon-blue-900 dark:text-leon-blue-100' : 'hover:bg-white/10 dark:hover:bg-black/10'}`}>
             {activeTab === 'buy' && (
               <motion.div
@@ -65,7 +73,10 @@ export default function HeroSearchOverlayDesktop() {
             <span className="relative z-10">{tBuy('cta')}</span>
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab('rent')}
+            aria-pressed={activeTab === 'rent'}
+            aria-label={tHero('search-mode-rent')}
             className={`text-leon-blue-950 dark:text-leon-blue-50 relative z-10 rounded-full px-4 py-2 text-sm font-medium transition-colors ${activeTab === 'rent' ? 'text-leon-blue-900 dark:text-leon-blue-100' : 'hover:bg-white/10 dark:hover:bg-black/10'}`}>
             {activeTab === 'rent' && (
               <motion.div
@@ -80,10 +91,10 @@ export default function HeroSearchOverlayDesktop() {
 
         {/* Property type Select */}
         <Select
+          aria-label={propertyTypeLabel}
           className="h-10 w-[200px] min-w-0 shrink bg-transparent"
           value={selectedPropertyType}
           onChange={(value) => setSelectedPropertyType(value)}>
-          <Label className="hidden">Property Type</Label>
           <Select.Trigger className="h-10 min-h-10 bg-white/10 dark:bg-black/10">
             <Select.Value />
             <Select.Indicator />
@@ -121,6 +132,6 @@ export default function HeroSearchOverlayDesktop() {
           </Button>
         </motion.div>
       </div>
-    </div>
+    </section>
   );
 }

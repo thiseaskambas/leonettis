@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import { MobileNavBar } from './MobileNavBar';
@@ -11,6 +12,7 @@ import { ThemeLogo } from './ThemeLogo';
 interface NavLink {
   href: string;
   label: string;
+  ariaLabel?: string;
 }
 
 interface NavBarClientProps {
@@ -23,6 +25,7 @@ const CONTAINER_CLASS =
 const KEEP_MENU_OPEN_KEY = 'keepMobileMenuOpen';
 
 export function NavBarClient({ navLinks }: NavBarClientProps) {
+  const tNav = useTranslations('nav');
   const [state, setState] = useState<{
     isOpen: boolean;
     skipEnterAnimation: boolean;
@@ -54,6 +57,7 @@ export function NavBarClient({ navLinks }: NavBarClientProps) {
           <div className="absolute inset-0 rounded-full bg-white/50 blur-xl dark:bg-black/30" />
           <NavigationLink
             underline={false}
+            aria-label={tNav('brand-home')}
             className="relative z-10 drop-shadow-md"
             href="/">
             <ThemeLogo />
@@ -70,7 +74,10 @@ export function NavBarClient({ navLinks }: NavBarClientProps) {
                 {link.label}
               </NavigationLink>
             ) : (
-              <NavigationLink key={link.href} href={link.href}>
+              <NavigationLink
+                key={link.href}
+                href={link.href}
+                aria-label={link.ariaLabel}>
                 {link.label}
               </NavigationLink>
             )

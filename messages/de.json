@@ -1,9 +1,18 @@
 {
+  "metadata": {
+    "title": {
+      "default": "Leonetti's Immobilien",
+      "template": "%s | Leonetti's"
+    }
+  },
   "nav": {
     "home": "STARTSEITE",
     "about": "ÜBER UNS",
     "buy": "KAUFEN",
     "rent": "MIETEN",
+    "brand-home": "Leonetti's Immobilien, Startseite",
+    "buy-aria": "Immobilien zum Kauf durchsuchen",
+    "rent-aria": "Immobilien zur Miete durchsuchen",
     "list-a-property": "IMMOBILIE INSERIEREN",
     "blog": "BLOG",
     "contact": "KONTAKT",
@@ -20,6 +29,11 @@
     "cta": "Mieten",
     "title": "IMMOBILIEN ZUR MIETE",
     "description": "Finden Sie die ideale Mietimmobilie bei Leonettis"
+  },
+  "hero": {
+    "search-section": "Immobiliensuche",
+    "search-mode-buy": "Nach Kaufimmobilien suchen",
+    "search-mode-rent": "Nach Mietimmobilien suchen"
   },
   "list-a-property": {
     "title": "NEUE IMMOBILIE INSERIEREN",
