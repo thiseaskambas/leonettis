@@ -328,7 +328,12 @@ export default function ContactForm() {
               value={form.phone}
               onChange={(v) => setField('phone', v)}>
               <Label>{t('phone-label')}</Label>
-              <Input placeholder={t('phone-placeholder')} />
+              <Input
+                placeholder={
+                  COUNTRY_CODES.find((c) => c.iso2 === form.countryCode)
+                    ?.phonePlaceholder ?? t('phone-placeholder')
+                }
+              />
               {serverErrors.phone && (
                 <FieldError>{serverErrors.phone}</FieldError>
               )}

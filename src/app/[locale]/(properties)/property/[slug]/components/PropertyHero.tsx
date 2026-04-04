@@ -5,8 +5,8 @@ import Image from 'next/image';
 import { Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { getMediaUrl } from '@/app/lib/helpers/media-helpers';
 import { Address } from '@/app/lib/definitions/listing.types';
+import { getMediaUrl } from '@/app/lib/helpers/media-helpers';
 
 interface PropertyHeroProps {
   images?: string[];
@@ -46,19 +46,17 @@ export default function PropertyHero({
 
   const displayAddress =
     address.displayAddress ??
-    [address.city, address.region, address.state]
-      .filter(Boolean)
-      .join(', ');
+    [address.city, address.region, address.state].filter(Boolean).join(', ');
 
   const slides = [
     ...(images?.map((src) => ({ type: 'image' as const, src })) ?? []),
     ...(videos?.map((src) => ({ type: 'video' as const, src })) ?? []),
   ];
 
-  const InfoOverlay = () => (
+  const infoOverlay = (
     <div className="flex flex-col gap-3">
       <div>
-        <h1 className="text-xl font-semibold tracking-wide text-gray-900 dark:text-white md:text-2xl lg:text-3xl">
+        <h1 className="text-xl font-semibold tracking-wide text-gray-900 md:text-2xl lg:text-3xl dark:text-white">
           {title}
         </h1>
         {displayAddress && (
@@ -112,7 +110,7 @@ export default function PropertyHero({
   return (
     <div className="relative w-full">
       {/* Swiper carousel */}
-      <div className="relative h-[55vw] min-h-[320px] w-full md:h-[65vh]">
+      <div className="relative h-[55vw] min-h-80 w-full md:h-[65vh]">
         <Swiper
           slidesPerView={1}
           spaceBetween={0}
@@ -152,16 +150,16 @@ export default function PropertyHero({
 
         {/* Desktop overlay — bottom-left glass card */}
         <div className="bg-glass-no-border absolute bottom-6 left-6 z-20 hidden max-w-lg rounded-2xl border border-white/20 p-5 shadow-xl md:block">
-          <InfoOverlay />
+          {infoOverlay}
         </div>
 
         {/* Gradient fade at bottom for desktop overlay readability */}
-        <div className="pointer-events-none absolute bottom-0 left-0 right-0 hidden h-48 bg-gradient-to-t from-black/40 to-transparent md:block" />
+        <div className="pointer-events-none absolute right-0 bottom-0 left-0 hidden h-48 bg-linear-to-t from-black/40 to-transparent md:block" />
       </div>
 
       {/* Mobile info block — below the slideshow */}
       <div className="from-tiff-gray-50 to-tiff-gray-100 dark:from-tiff-gray-950 dark:to-tiff-gray-900 bg-linear-to-b px-5 py-6 md:hidden">
-        <InfoOverlay />
+        {infoOverlay}
       </div>
     </div>
   );
