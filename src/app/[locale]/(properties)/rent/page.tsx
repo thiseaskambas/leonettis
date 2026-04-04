@@ -8,6 +8,7 @@ import {
   searchListings,
 } from '@/app/lib/services/listings-service';
 import ListingCard from '@/app/ui/ListingCard';
+import ListingsFilters from '@/app/ui/ListingsFilters';
 import { isValidLocale, Locale } from '@/i18n/routing';
 
 interface RentPageProps {
@@ -48,10 +49,13 @@ export default async function Rent({ searchParams }: RentPageProps) {
       <p className="text-center font-light text-gray-600 dark:text-gray-400">
         {t('description')}
       </p>
-      <div className="mt-10 grid min-w-0 grid-cols-1 gap-8 md:grid-cols-2">
-        {listings.map((listing, index) => (
-          <ListingCard key={index} listing={listing} />
-        ))}
+      <div className="mt-10 flex flex-col gap-6 md:flex-row md:items-start">
+        <ListingsFilters listingType="rent" initialSearchParams={raw} />
+        <div className="flex-1 grid min-w-0 grid-cols-1 gap-8 xl:grid-cols-2">
+          {listings.map((listing, index) => (
+            <ListingCard key={index} listing={listing} />
+          ))}
+        </div>
       </div>
     </main>
   );

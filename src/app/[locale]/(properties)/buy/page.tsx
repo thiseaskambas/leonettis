@@ -8,6 +8,7 @@ import {
   searchListings,
 } from '@/app/lib/services/listings-service';
 import ListingCard from '@/app/ui/ListingCard';
+import ListingsFilters from '@/app/ui/ListingsFilters';
 import { isValidLocale, Locale } from '@/i18n/routing';
 
 interface BuyPageProps {
@@ -43,18 +44,20 @@ export default async function Buy({ searchParams }: BuyPageProps) {
   );
 
   return (
-    <main className="from-tiff-gray-50 via-tiff-gray-100 to-leon-blue-50 dark:from-tiff-gray-950 dark:via-leon-blue-950 dark:to-tiff-gray-900 min-h-screen bg-linear-to-br p-5 pt-32 sm:px-10 md:px-32 md:pt-52">
+    <main className="from-tiff-gray-50 via-tiff-gray-100 to-leon-blue-50 dark:from-tiff-gray-950 dark:via-leon-blue-950 dark:to-tiff-gray-900 min-h-screen bg-linear-to-br p-5 pt-32 sm:px-10 md:pt-52">
       <h1 className="text-center text-2xl font-light tracking-wider">
         {t('title')}
       </h1>
       <p className="text-center font-light tracking-wide text-gray-600 dark:text-gray-400">
         {t('description')}
       </p>
-      <div className=""></div>
-      <div className="mt-10 grid min-w-0 grid-cols-1 gap-10 lg:grid-cols-2">
-        {listings.map((listing, index) => (
-          <ListingCard key={index} listing={listing} />
-        ))}
+      <div className="mt-10 flex flex-col gap-6 md:flex-row md:items-start">
+        <ListingsFilters listingType="buy" initialSearchParams={raw} />
+        <div className="flex-1 grid min-w-0 grid-cols-1 gap-10 xl:grid-cols-2">
+          {listings.map((listing, index) => (
+            <ListingCard key={index} listing={listing} />
+          ))}
+        </div>
       </div>
     </main>
   );

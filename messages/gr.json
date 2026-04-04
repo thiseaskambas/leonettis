@@ -61,6 +61,7 @@
     "selected-count": "{count} επιλεγμένα",
     "search-button": "Αναζήτηση",
     "reset-filters": "Καθαρισμός",
+    "filters-button": "Φίλτρα",
     "price-range": "Εύρος Τιμής",
     "price-no-limit": "Χωρίς όριο",
     "filters": {
