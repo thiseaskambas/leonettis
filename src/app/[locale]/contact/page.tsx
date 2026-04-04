@@ -14,7 +14,9 @@ export default async function ContactPage() {
         <p className="text-tiff-gray-700 dark:text-tiff-gray-300 mb-8">
           {t('subtitle')}
         </p>
-        <ContactForm />
+        <div className="bg-glass rounded-2xl border border-transparent p-6 md:p-8 dark:border-white/10">
+          <ContactForm />
+        </div>
       </div>
     </main>
   );
