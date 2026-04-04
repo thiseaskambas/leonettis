@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 const TO_EMAIL = process.env.CONTACT_EMAIL_TO ?? '';
 
 interface ContactPayload {
@@ -90,6 +89,24 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     .filter(Boolean)
     .join('\n');
 
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.error('RESEND_API_KEY is not configured');
+    return NextResponse.json(
+      { error: 'Email service not configured' },
+      { status: 503 }
+    );
+  }
+  if (!TO_EMAIL) {
+    console.error('CONTACT_EMAIL_TO is not configured');
+    return NextResponse.json(
+      { error: 'Email service not configured' },
+      { status: 503 }
+    );
+  }
+
+  const resend = new Resend(apiKey);
+
   try {
     const { error } = await resend.emails.send({
       from: 'Contact Form <onboarding@resend.dev>',
@@ -102,12 +119,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     if (error) {
       console.error('Resend error:', error);
-      return NextResponse.json({ error: 'Email delivery failed' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Email delivery failed' },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (err) {
     console.error('Unexpected error sending email:', err);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
