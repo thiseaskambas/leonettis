@@ -1,6 +1,6 @@
 'use client';
 
-import { Bath, Bed, MapPin, Maximize } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import Image from 'next/image';
 import { Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -20,18 +20,6 @@ interface PropertyHeroProps {
   videos?: string[];
   title: string;
   address: Address;
-  price?: number;
-  bedrooms?: number;
-  bathrooms?: number;
-  squareMetersTotal?: number;
-  listingType: 'buy' | 'rent';
-  translations: {
-    pricePerMonth: string;
-    priceUponRequest: string;
-    bedrooms: string;
-    bathrooms: string;
-    area: string;
-  };
 }
 
 export default function PropertyHero({
@@ -39,22 +27,7 @@ export default function PropertyHero({
   videos,
   title,
   address,
-  price,
-  bedrooms,
-  bathrooms,
-  squareMetersTotal,
-  listingType,
-  translations,
 }: PropertyHeroProps) {
-  const priceDisplay =
-    price != null
-      ? new Intl.NumberFormat('en-US', {
-          style: 'currency',
-          currency: 'EUR',
-          maximumFractionDigits: 0,
-        }).format(price)
-      : translations.priceUponRequest;
-
   const displayAddress =
     address.displayAddress ??
     [address.city, address.region, address.state].filter(Boolean).join(', ');
@@ -81,44 +54,6 @@ export default function PropertyHero({
             <span>{displayAddress}</span>
           </div>
         )}
-      </div>
-
-      <div className="flex flex-wrap items-center gap-4 border-t border-gray-200/30 pt-3 text-sm font-medium text-gray-800 md:hidden dark:text-gray-200">
-        <span className="text-lg font-bold text-gray-900 dark:text-white">
-          {priceDisplay}
-          {listingType === 'rent' && price != null && (
-            <span className="ml-0.5 text-sm font-normal text-gray-600 dark:text-gray-400">
-              {translations.pricePerMonth}
-            </span>
-          )}
-        </span>
-
-        <div className="flex items-center gap-4">
-          {!!bedrooms && (
-            <div className="flex items-center gap-1">
-              <Bed className="h-4 w-4" />
-              <span>
-                {bedrooms} {translations.bedrooms}
-              </span>
-            </div>
-          )}
-          {!!bathrooms && (
-            <div className="flex items-center gap-1">
-              <Bath className="h-4 w-4" />
-              <span>
-                {bathrooms} {translations.bathrooms}
-              </span>
-            </div>
-          )}
-          {!!squareMetersTotal && (
-            <div className="flex items-center gap-1">
-              <Maximize className="h-4 w-4" />
-              <span>
-                {squareMetersTotal}m² {translations.area}
-              </span>
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );
@@ -173,7 +108,7 @@ export default function PropertyHero({
         <div className="pointer-events-none absolute right-0 bottom-0 left-0 hidden h-48 bg-linear-to-t from-black/40 to-transparent md:block" />
       </div>
 
-      {/* Mobile info block — below the slideshow */}
+      {/* Mobile info block — below the slideshow (title + address only; price & specs in PropertyDetails) */}
       <div className="from-tiff-gray-50 to-tiff-gray-100 dark:from-tiff-gray-950 dark:to-tiff-gray-900 bg-linear-to-b px-5 py-6 md:hidden">
         {infoOverlay}
       </div>

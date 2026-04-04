@@ -151,19 +151,19 @@ export default function ListingCard({
 
         {/* Specs Row */}
         <div className="flex items-center gap-4 border-t border-gray-200/20 pt-2 text-xs font-medium text-gray-700 dark:text-gray-200">
-          {bedrooms && (
+          {!!bedrooms && (
             <div className="flex items-center gap-1">
               <Bed className="h-3.5 w-3.5" />
               <span>{bedrooms} Beds</span>
             </div>
           )}
-          {bathrooms && (
+          {!!bathrooms && (
             <div className="flex items-center gap-1">
               <Bath className="h-3.5 w-3.5" />
               <span>{bathrooms} Baths</span>
             </div>
           )}
-          {squareMetersTotal && (
+          {!!squareMetersTotal && (
             <div className="flex items-center gap-1">
               <Maximize className="h-3.5 w-3.5" />
               <span>{squareMetersTotal}m²</span>

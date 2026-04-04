@@ -128,14 +128,6 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
     },
   };
 
-  const heroTranslations = {
-    pricePerMonth: t('pricePerMonth'),
-    priceUponRequest: t('priceUponRequest'),
-    bedrooms: t('bedrooms'),
-    bathrooms: t('bathrooms'),
-    area: t('area'),
-  };
-
   const detailsTranslations = {
     bedrooms: t('bedrooms'),
     bathrooms: t('bathrooms'),
@@ -178,12 +170,6 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
           videos={listing.videos}
           title={listing.title}
           address={listing.address}
-          price={listing.price}
-          bedrooms={listing.bedrooms}
-          bathrooms={listing.bathrooms}
-          squareMetersTotal={listing.squareMetersTotal}
-          listingType={listing.listingType}
-          translations={heroTranslations}
         />
       </div>
 

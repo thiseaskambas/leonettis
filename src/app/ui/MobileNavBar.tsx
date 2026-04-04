@@ -89,6 +89,7 @@ export function MobileNavBar({
             underline={false}
             aria-label={tNav('brand-home')}
             href="/"
+            onClick={closeMenu}
             className="relative z-10 drop-shadow-md">
             <ThemeLogo />
           </NavigationLink>

@@ -123,12 +123,18 @@ export default function PropertyDetails({
 
   return (
     <div className="flex flex-col gap-10">
-      {/* Price */}
-      <div className="hidden flex-wrap items-end gap-4 md:flex">
-        <p className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
+      {/* Price + availability — same on mobile and desktop (hero shows title & address only) */}
+      <div
+        className={`flex flex-wrap gap-4 ${price != null ? 'items-end' : 'items-center'}`}>
+        <p
+          className={
+            price != null
+              ? 'text-2xl font-bold tracking-tight text-gray-900 dark:text-white'
+              : 'text-sm font-medium text-gray-500 dark:text-gray-400'
+          }>
           {priceDisplay}
           {listingType === 'rent' && price != null && (
-            <span className="ml-1 text-xl font-normal text-gray-500 dark:text-gray-400">
+            <span className="ml-1 text-sm font-normal text-gray-500 dark:text-gray-400">
               {translations.pricePerMonth}
             </span>
           )}
@@ -155,7 +161,7 @@ export default function PropertyDetails({
         !!bathrooms ||
         !!squareMetersTotal ||
         !!squareMetersInterior) && (
-        <div className="hidden flex-wrap gap-6 border-b border-gray-200/60 pb-8 md:flex dark:border-gray-700/60">
+        <div className="flex flex-wrap gap-6 border-b border-gray-200/60 pb-8 dark:border-gray-700/60">
           {!!bedrooms && (
             <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
               <Bed className="h-5 w-5 text-gray-400" />
@@ -242,7 +248,7 @@ export default function PropertyDetails({
         {energyRating && (
           <DetailRow label={translations.energyRating} value={energyRating} />
         )}
-        {yearBuilt && !!yearBuilt && (
+        {!!yearBuilt && (
           <DetailRow label={translations.yearBuilt} value={String(yearBuilt)} />
         )}
       </div>
