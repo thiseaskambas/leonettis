@@ -121,11 +121,21 @@ export default function PropertyDetails({
   // Normalize chip labels — replace spaces/underscores with hyphens for lookup
   const normalizeKey = (s: string) => s.replace(/ /g, '-');
 
+  const hasAvailabilityBadge =
+    !!availableNow ||
+    (!!availableUponRequest && !availableNow) ||
+    (!!availableFrom && !availableNow && !availableUponRequest);
+
   return (
     <div className="flex flex-col gap-10">
-      {/* Price */}
-      <div className="hidden flex-wrap items-end gap-4 md:flex">
-        <p className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
+      {/* Price (desktop) + availability (all breakpoints) — price is in PropertyHero on mobile */}
+      <div
+        className={
+          hasAvailabilityBadge
+            ? 'flex flex-wrap items-end gap-4'
+            : 'hidden flex-wrap items-end gap-4 md:flex'
+        }>
+        <p className="hidden text-4xl font-bold tracking-tight text-gray-900 md:block dark:text-white">
           {priceDisplay}
           {listingType === 'rent' && price != null && (
             <span className="ml-1 text-xl font-normal text-gray-500 dark:text-gray-400">
@@ -242,7 +252,7 @@ export default function PropertyDetails({
         {energyRating && (
           <DetailRow label={translations.energyRating} value={energyRating} />
         )}
-        {yearBuilt && !!yearBuilt && (
+        {!!yearBuilt && (
           <DetailRow label={translations.yearBuilt} value={String(yearBuilt)} />
         )}
       </div>
