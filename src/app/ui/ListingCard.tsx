@@ -1,6 +1,7 @@
 'use client';
 import { Bath, Bed, MapPin, Maximize } from 'lucide-react';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import type { Swiper as SwiperType } from 'swiper';
 import { Keyboard, Navigation, Pagination } from 'swiper/modules';
@@ -66,6 +67,7 @@ export default function ListingCard({
     bathrooms,
     squareMetersTotal,
   } = listing;
+  const t = useTranslations('property');
   const [loadedIndices, setLoadedIndices] = useState<number[]>([0, 1]);
 
   const handleSlideChange = (swiper: SwiperType) => {
@@ -79,17 +81,20 @@ export default function ListingCard({
     }
   };
 
-  const formattedPrice = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'EUR',
-    maximumFractionDigits: 0,
-  }).format(price);
+  const priceDisplay =
+    price != null
+      ? new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'EUR',
+          maximumFractionDigits: 0,
+        }).format(price)
+      : t('priceUponRequest');
 
   return (
     <div className="group relative w-full min-w-0 overflow-hidden rounded-2xl shadow-sm transition-all duration-500 hover:shadow-xl">
       {/* Price Tag (Top Right) */}
       <div className="bg-glass-no-border absolute top-3 right-3 z-20 rounded-full px-3 py-1 text-sm font-semibold text-gray-900 dark:text-white">
-        {formattedPrice}
+        {priceDisplay}
       </div>
 
       {/* Aspect Ratio Container */}
@@ -111,9 +116,9 @@ export default function ListingCard({
               className="h-full! w-full! overflow-hidden">
               <div className="relative h-full w-full transition-transform duration-700 group-hover:scale-105">
                 <ListingImage
-                  src={getMediaUrl(image)}
-                  blurSrc={getMediaBlurDataURL(image)}
-                  alt={title}
+                  src={getMediaUrl(image.url)}
+                  blurSrc={getMediaBlurDataURL(image.url)}
+                  alt={image.name || title}
                   priority={index === 0}
                   loading={
                     index === 0 || loadedIndices.includes(index)

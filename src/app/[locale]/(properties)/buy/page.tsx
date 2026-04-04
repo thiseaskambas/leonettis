@@ -1,4 +1,5 @@
-import { getLocale, getTranslations } from 'next-intl/server';
+import type { Metadata } from 'next';
+import { getLocale, getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { LocalizedListing } from '@/app/lib/definitions/listing.types';
 import { getLocalizedListing } from '@/app/lib/helpers/listing-helpers';
@@ -7,10 +8,26 @@ import {
   searchListings,
 } from '@/app/lib/services/listings-service';
 import ListingCard from '@/app/ui/ListingCard';
-import { Locale } from '@/i18n/routing';
+import { isValidLocale, Locale } from '@/i18n/routing';
 
 interface BuyPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+
+  if (!isValidLocale(locale)) {
+    return {};
+  }
+
+  setRequestLocale(locale);
+  const t = await getTranslations('buy');
+  return { title: t('title') };
 }
 
 export default async function Buy({ searchParams }: BuyPageProps) {

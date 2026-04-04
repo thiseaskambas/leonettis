@@ -1,11 +1,12 @@
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getLocale, getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations, setRequestLocale } from 'next-intl/server';
 
 import {
   getListingBySlug,
   getLocalizedListing,
 } from '@/app/lib/helpers/listing-helpers';
-import { Locale } from '@/i18n/routing';
+import { isValidLocale, Locale } from '@/i18n/routing';
 
 import PropertyBreadcrumb from './components/PropertyBreadcrumb';
 import PropertyDetails from './components/PropertyDetails';
@@ -14,6 +15,24 @@ import PropertyHero from './components/PropertyHero';
 
 interface PropertyPageProps {
   params: Promise<{ locale: string; slug: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: PropertyPageProps): Promise<Metadata> {
+  const { locale, slug } = await params;
+
+  if (!isValidLocale(locale)) {
+    return {};
+  }
+
+  setRequestLocale(locale);
+  const raw = getListingBySlug(slug);
+  if (!raw) {
+    return {};
+  }
+  const listing = getLocalizedListing(raw, locale as Locale);
+  return { title: listing.title };
 }
 
 export default async function PropertyPage({ params }: PropertyPageProps) {
@@ -111,6 +130,7 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
 
   const heroTranslations = {
     pricePerMonth: t('pricePerMonth'),
+    priceUponRequest: t('priceUponRequest'),
     bedrooms: t('bedrooms'),
     bathrooms: t('bathrooms'),
     area: t('area'),
@@ -139,6 +159,8 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
     contact: t('contact'),
     availableNow: t('availableNow'),
     availableFrom: t('availableFrom'),
+    availableUponRequest: t('availableUponRequest'),
+    priceUponRequest: t('priceUponRequest'),
   };
 
   const breadcrumbTranslations = {

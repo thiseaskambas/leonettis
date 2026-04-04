@@ -5,21 +5,29 @@ import Image from 'next/image';
 import { Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { Address } from '@/app/lib/definitions/listing.types';
+import type {
+  Address,
+  ListingImage,
+} from '@/app/lib/definitions/listing.types';
 import { getMediaUrl } from '@/app/lib/helpers/media-helpers';
 
+type HeroSlide =
+  | { type: 'image'; src: string; name: string; description?: string }
+  | { type: 'video'; src: string };
+
 interface PropertyHeroProps {
-  images?: string[];
+  images?: ListingImage[];
   videos?: string[];
   title: string;
   address: Address;
-  price: number;
+  price?: number;
   bedrooms?: number;
   bathrooms?: number;
   squareMetersTotal?: number;
   listingType: 'buy' | 'rent';
   translations: {
     pricePerMonth: string;
+    priceUponRequest: string;
     bedrooms: string;
     bathrooms: string;
     area: string;
@@ -38,18 +46,26 @@ export default function PropertyHero({
   listingType,
   translations,
 }: PropertyHeroProps) {
-  const formattedPrice = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'EUR',
-    maximumFractionDigits: 0,
-  }).format(price);
+  const priceDisplay =
+    price != null
+      ? new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'EUR',
+          maximumFractionDigits: 0,
+        }).format(price)
+      : translations.priceUponRequest;
 
   const displayAddress =
     address.displayAddress ??
     [address.city, address.region, address.state].filter(Boolean).join(', ');
 
-  const slides = [
-    ...(images?.map((src) => ({ type: 'image' as const, src })) ?? []),
+  const slides: HeroSlide[] = [
+    ...(images?.map((img) => ({
+      type: 'image' as const,
+      src: img.url,
+      name: img.name,
+      description: img.description,
+    })) ?? []),
     ...(videos?.map((src) => ({ type: 'video' as const, src })) ?? []),
   ];
 
@@ -67,10 +83,10 @@ export default function PropertyHero({
         )}
       </div>
 
-      <div className="flex flex-wrap items-center gap-4 border-t border-gray-200/30 pt-3 text-sm font-medium text-gray-800 dark:text-gray-200">
+      <div className="flex flex-wrap items-center gap-4 border-t border-gray-200/30 pt-3 text-sm font-medium text-gray-800 md:hidden dark:text-gray-200">
         <span className="text-lg font-bold text-gray-900 dark:text-white">
-          {formattedPrice}
-          {listingType === 'rent' && (
+          {priceDisplay}
+          {listingType === 'rent' && price != null && (
             <span className="ml-0.5 text-sm font-normal text-gray-600 dark:text-gray-400">
               {translations.pricePerMonth}
             </span>
@@ -135,7 +151,7 @@ export default function PropertyHero({
                 ) : (
                   <Image
                     src={getMediaUrl(slide.src)}
-                    alt={title}
+                    alt={slide.name}
                     fill
                     className="object-cover"
                     sizes="100vw"

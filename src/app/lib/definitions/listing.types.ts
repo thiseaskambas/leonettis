@@ -94,6 +94,12 @@ type Condition =
   | 'renovation needed'
   | 'other';
 
+export interface ListingImage {
+  url: string;
+  name: string;
+  description?: string;
+}
+
 export interface Listing {
   title: Record<Locale, string>;
   description?: Record<Locale, string>;
@@ -103,13 +109,13 @@ export interface Listing {
   category: ListingCategory;
   propertyType: PropertyType;
   id: string;
-  price: number;
+  price?: number;
   bedrooms?: number;
   bathrooms?: number;
   squareMetersInterior?: number;
   squareMetersOutdoor?: number;
   squareMetersTotal?: number;
-  images?: string[];
+  images?: ListingImage[];
   mainImage?: string;
   videos?: string[];
   features?: Features[];
@@ -131,6 +137,7 @@ export interface Listing {
   energyRating?: EnergyRating;
   yearRenovated?: number;
   availableNow?: boolean;
+  availableUponRequest?: boolean;
   availableFrom?: string;
   availableTo?: string;
   leaseDuration?: number;

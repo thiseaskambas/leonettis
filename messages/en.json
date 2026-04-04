@@ -1,9 +1,18 @@
 {
+  "metadata": {
+    "title": {
+      "default": "Leonetti's Real Estate",
+      "template": "%s | Leonetti's"
+    }
+  },
   "nav": {
     "home": "HOME",
     "about": "ABOUT",
     "buy": "BUY",
     "rent": "RENT",
+    "brand-home": "Leonetti's Real Estate, home",
+    "buy-aria": "Browse properties for sale",
+    "rent-aria": "Browse properties for rent",
     "list-a-property": "LIST A PROPERTY",
     "blog": "BLOG",
     "contact": "CONTACT",
@@ -20,6 +29,11 @@
     "cta": "Rent",
     "title": "PROPERTIES FOR RENT",
     "description": "Find the ideal property for rent at Leonettis"
+  },
+  "hero": {
+    "search-section": "Property search",
+    "search-mode-buy": "Search for properties to buy",
+    "search-mode-rent": "Search for properties to rent"
   },
   "list-a-property": {
     "title": "LIST A NEW PROPERTY",
@@ -209,6 +223,8 @@
     "close": "Close",
     "availableNow": "Available Now",
     "availableFrom": "Available From",
+    "availableUponRequest": "Available Upon Request",
+    "priceUponRequest": "Price Upon Request",
     "contact": "Contact Us",
     "breadcrumb": {
       "home": "Home",

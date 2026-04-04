@@ -1,9 +1,18 @@
 {
+  "metadata": {
+    "title": {
+      "default": "Leonetti's Immobiliare",
+      "template": "%s | Leonetti's"
+    }
+  },
   "nav": {
     "home": "HOME",
     "about": "CHI SIAMO",
     "buy": "COMPRA",
     "rent": "AFFITTA",
+    "brand-home": "Leonetti's Immobiliare, home",
+    "buy-aria": "Sfoglia gli immobili in vendita",
+    "rent-aria": "Sfoglia gli immobili in affitto",
     "list-a-property": "INSERISCI UN ANNOCIO",
     "blog": "BLOG",
     "contact": "CONTATTI",
@@ -20,6 +29,11 @@
     "cta": "Affitta",
     "title": "IMMOBILI IN AFFITTO",
     "description": "Trova l'immobile ideale in affitto su Leonettis"
+  },
+  "hero": {
+    "search-section": "Ricerca immobili",
+    "search-mode-buy": "Cerca immobili in vendita",
+    "search-mode-rent": "Cerca immobili in affitto"
   },
   "list-a-property": {
     "title": "INSERISCI UN NUOVO IMMOBILE",
@@ -209,6 +223,8 @@
     "close": "Chiudi",
     "availableNow": "Disponibile ora",
     "availableFrom": "Disponibile dal",
+    "availableUponRequest": "Disponibile su richiesta",
+    "priceUponRequest": "Prezzo su richiesta",
     "contact": "Contattaci",
     "breadcrumb": {
       "home": "Home",

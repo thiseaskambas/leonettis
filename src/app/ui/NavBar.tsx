@@ -6,9 +6,9 @@ export async function NavBar() {
   const t = await getTranslations('nav');
 
   const navLinks = [
-    { href: '/buy', label: t('buy') },
-    { href: '/rent', label: t('rent') },
-    { href: '/list-a-property', label: t('list-a-property') },
+    { href: '/buy', label: t('buy'), ariaLabel: t('buy-aria') },
+    { href: '/rent', label: t('rent'), ariaLabel: t('rent-aria') },
+    { href: '/contact', label: t('list-a-property') },
     { href: '/blog', label: t('blog') },
     { href: '/about', label: t('about') },
     { href: '/contact', label: t('contact') },
