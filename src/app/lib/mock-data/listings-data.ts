@@ -58,6 +58,7 @@ export const listingsData: Listing[] = [
     isFeatured: true,
     isActive: true,
     tags: ['tag1', 'tag2', 'tag3'],
+    availableUponRequest: true,
     images: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => gb(n)),
     description: {
       en: 'Description 1',
@@ -195,6 +196,7 @@ export const listingsData: Listing[] = [
     condition: 'renovated',
     yearBuilt: 0, // Unknown
     energyRating: 'A', // Schema placeholder
-    availableNow: true,
+    availableNow: false,
+    availableUponRequest: true,
   },
 ];

@@ -1,5 +1,6 @@
 'use client';
 
+import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
@@ -23,6 +24,7 @@ export default function PropertyGallery({
   closeLabel,
 }: PropertyGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [direction, setDirection] = useState(0);
 
   const openLightbox = (index: number) => setSelectedIndex(index);
   const closeLightbox = () => setSelectedIndex(null);
@@ -39,19 +41,29 @@ export default function PropertyGallery({
     );
   }, [images.length]);
 
+  const handlePrev = useCallback(() => {
+    setDirection(-1);
+    goToPrev();
+  }, [goToPrev]);
+
+  const handleNext = useCallback(() => {
+    setDirection(1);
+    goToNext();
+  }, [goToNext]);
+
   // Keyboard navigation
   useEffect(() => {
     if (selectedIndex === null) return;
 
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeLightbox();
-      if (e.key === 'ArrowLeft') goToPrev();
-      if (e.key === 'ArrowRight') goToNext();
+      if (e.key === 'ArrowLeft') handlePrev();
+      if (e.key === 'ArrowRight') handleNext();
     };
 
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [selectedIndex, goToPrev, goToNext]);
+  }, [selectedIndex, handlePrev, handleNext]);
 
   // Prevent body scroll when lightbox is open
   useEffect(() => {
@@ -105,7 +117,10 @@ export default function PropertyGallery({
           className="mySwiper pb-8!">
           {images.map((image, index) => (
             <SwiperSlide key={index} className="h-auto!">
-              <div className="relative aspect-4/3 w-full overflow-hidden rounded-xl">
+              <button
+                type="button"
+                onClick={() => openLightbox(index)}
+                className="group relative aspect-4/3 w-full cursor-pointer overflow-hidden rounded-xl focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:outline-none dark:focus-visible:ring-white">
                 <Image
                   src={getMediaUrl(image.url)}
                   alt={image.name || `${title} — ${index + 1}`}
@@ -114,16 +129,16 @@ export default function PropertyGallery({
                   sizes="80vw"
                   loading={index < 3 ? 'eager' : 'lazy'}
                 />
-              </div>
+              </button>
             </SwiperSlide>
           ))}
         </Swiper>
       </div>
 
-      {/* Lightbox (desktop only) */}
+      {/* Lightbox */}
       {selectedIndex !== null && (
         <div
-          className="fixed inset-0 z-50 hidden items-center justify-center bg-black/92 md:flex"
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/92"
           onClick={closeLightbox}>
           {/* Close button */}
           <button
@@ -142,44 +157,64 @@ export default function PropertyGallery({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              goToPrev();
+              handlePrev();
             }}
             aria-label="Previous image"
-            className="absolute left-4 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/25">
+            className="absolute left-4 z-10 hidden h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/25 md:flex">
             <ChevronLeft className="h-6 w-6" />
           </button>
 
           {/* Main image */}
-          <div
-            className="relative max-h-[90vh] max-w-[90vw] flex-shrink-0"
-            style={{ aspectRatio: 'auto' }}
-            onClick={(e) => e.stopPropagation()}>
-            <Image
-              src={getMediaUrl(images[selectedIndex].url)}
-              alt={
-                images[selectedIndex].name ||
-                `${title} — ${selectedIndex + 1}`
-              }
-              width={1600}
-              height={1200}
-              className="max-h-[90vh] w-auto max-w-[90vw] rounded-xl object-contain shadow-2xl"
-              priority
-            />
-            {images[selectedIndex].description?.trim() ? (
-              <p className="mt-4 max-w-[90vw] text-center text-sm text-white/90">
-                {images[selectedIndex].description}
-              </p>
-            ) : null}
-          </div>
+          <AnimatePresence initial={false} custom={direction}>
+            <motion.div
+              key={selectedIndex}
+              custom={direction}
+              variants={{
+                enter: (d: number) => ({ x: d >= 0 ? '100%' : '-100%' }),
+                center: { x: 0 },
+                exit: (d: number) => ({ x: d >= 0 ? '-100%' : '100%' }),
+              }}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.15}
+              onDragEnd={(_, { offset, velocity }) => {
+                if (offset.x < -50 || velocity.x < -500) handleNext();
+                else if (offset.x > 50 || velocity.x > 500) handlePrev();
+              }}
+              className="relative shrink-0 cursor-grab active:cursor-grabbing"
+              onClick={(e) => e.stopPropagation()}
+              style={{ touchAction: 'none' }}>
+              <Image
+                src={getMediaUrl(images[selectedIndex].url)}
+                alt={
+                  images[selectedIndex].name ||
+                  `${title} — ${selectedIndex + 1}`
+                }
+                width={1600}
+                height={1200}
+                className="max-h-[90vh] w-auto max-w-[90vw] rounded-xl object-contain shadow-2xl"
+                priority
+              />
+              {images[selectedIndex].description?.trim() ? (
+                <p className="mt-4 max-w-[90vw] text-center text-sm text-white/90">
+                  {images[selectedIndex].description}
+                </p>
+              ) : null}
+            </motion.div>
+          </AnimatePresence>
 
           {/* Next button */}
           <button
             onClick={(e) => {
               e.stopPropagation();
-              goToNext();
+              handleNext();
             }}
             aria-label="Next image"
-            className="absolute right-4 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/25">
+            className="absolute right-4 z-10 hidden h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/25 md:flex">
             <ChevronRight className="h-6 w-6" />
           </button>
         </div>

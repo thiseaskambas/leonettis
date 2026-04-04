@@ -137,6 +137,7 @@ export interface Listing {
   energyRating?: EnergyRating;
   yearRenovated?: number;
   availableNow?: boolean;
+  availableUponRequest?: boolean;
   availableFrom?: string;
   availableTo?: string;
   leaseDuration?: number;

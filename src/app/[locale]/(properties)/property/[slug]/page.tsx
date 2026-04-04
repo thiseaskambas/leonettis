@@ -158,6 +158,7 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
     contact: t('contact'),
     availableNow: t('availableNow'),
     availableFrom: t('availableFrom'),
+    availableUponRequest: t('availableUponRequest'),
   };
 
   const breadcrumbTranslations = {

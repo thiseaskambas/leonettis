@@ -223,6 +223,7 @@
     "close": "Close",
     "availableNow": "Available Now",
     "availableFrom": "Available From",
+    "availableUponRequest": "Available Upon Request",
     "contact": "Contact Us",
     "breadcrumb": {
       "home": "Home",

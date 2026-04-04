@@ -26,6 +26,7 @@ interface PropertyDetailsTranslations {
   contact: string;
   availableNow: string;
   availableFrom: string;
+  availableUponRequest: string;
 }
 
 interface PropertyDetailsProps {
@@ -91,6 +92,7 @@ export default function PropertyDetails({
     address,
     availableNow,
     availableFrom,
+    availableUponRequest,
   } = listing;
 
   const formattedPrice = new Intl.NumberFormat('en-US', {
@@ -132,7 +134,12 @@ export default function PropertyDetails({
             {translations.availableNow}
           </span>
         )}
-        {availableFrom && !availableNow && (
+        {availableUponRequest && !availableNow && (
+          <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-semibold text-orange-800 dark:bg-orange-900/30 dark:text-orange-400">
+            {translations.availableUponRequest}
+          </span>
+        )}
+        {availableFrom && !availableNow && !availableUponRequest && (
           <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
             {translations.availableFrom}: {availableFrom}
           </span>
