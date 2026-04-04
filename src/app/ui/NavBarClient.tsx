@@ -66,16 +66,16 @@ export function NavBarClient({ navLinks }: NavBarClientProps) {
 
         <nav className="text-leon-blue-950 dark:text-leon-blue-50 flex items-center justify-center gap-8 text-[14px] font-medium md:gap-10">
           {navLinks.map((link) =>
-            link.href === '/contact' ? (
+            link.href === '/contact' && link.label === tNav('contact') ? (
               <NavigationLink
-                key={link.href}
+                key={link.label}
                 href={link.href}
                 className="text-leon-600 dark:text-leon-300 font-bold">
                 {link.label}
               </NavigationLink>
             ) : (
               <NavigationLink
-                key={link.href}
+                key={link.label}
                 href={link.href}
                 aria-label={link.ariaLabel}>
                 {link.label}

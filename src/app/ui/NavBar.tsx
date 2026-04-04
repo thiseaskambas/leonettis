@@ -8,7 +8,7 @@ export async function NavBar() {
   const navLinks = [
     { href: '/buy', label: t('buy'), ariaLabel: t('buy-aria') },
     { href: '/rent', label: t('rent'), ariaLabel: t('rent-aria') },
-    { href: '/list-a-property', label: t('list-a-property') },
+    { href: '/contact', label: t('list-a-property') },
     { href: '/blog', label: t('blog') },
     { href: '/about', label: t('about') },
     { href: '/contact', label: t('contact') },

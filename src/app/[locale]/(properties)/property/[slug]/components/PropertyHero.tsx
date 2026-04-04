@@ -83,7 +83,7 @@ export default function PropertyHero({
         )}
       </div>
 
-      <div className="flex flex-wrap items-center gap-4 border-t border-gray-200/30 pt-3 text-sm font-medium text-gray-800 dark:text-gray-200">
+      <div className="flex flex-wrap items-center gap-4 border-t border-gray-200/30 pt-3 text-sm font-medium text-gray-800 md:hidden dark:text-gray-200">
         <span className="text-lg font-bold text-gray-900 dark:text-white">
           {priceDisplay}
           {listingType === 'rent' && price != null && (

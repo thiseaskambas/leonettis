@@ -138,7 +138,7 @@ export function MobileNavBar({
               <nav className="text-leon-blue-950 dark:text-leon-blue-50 flex flex-col gap-1">
                 {navItems.map((item) => (
                   <Link
-                    key={item.href}
+                    key={item.label}
                     href={item.href}
                     onClick={closeMenu}
                     aria-label={item.ariaLabel}

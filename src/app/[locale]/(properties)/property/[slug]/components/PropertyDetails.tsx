@@ -124,7 +124,7 @@ export default function PropertyDetails({
   return (
     <div className="flex flex-col gap-10">
       {/* Price */}
-      <div className="flex flex-wrap items-end gap-4">
+      <div className="hidden flex-wrap items-end gap-4 md:flex">
         <p className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
           {priceDisplay}
           {listingType === 'rent' && price != null && (
@@ -155,7 +155,7 @@ export default function PropertyDetails({
         !!bathrooms ||
         !!squareMetersTotal ||
         !!squareMetersInterior) && (
-        <div className="flex flex-wrap gap-6 border-b border-gray-200/60 pb-8 dark:border-gray-700/60">
+        <div className="hidden flex-wrap gap-6 border-b border-gray-200/60 pb-8 md:flex dark:border-gray-700/60">
           {!!bedrooms && (
             <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
               <Bed className="h-5 w-5 text-gray-400" />
