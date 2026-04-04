@@ -1,5 +1,23 @@
 import { Listing } from '../definitions/listing.types';
 
+const gb = (n: number) => ({
+  url: `images/leonettis/golden-beach-field-1/golden_beach_field_A_${n}.webp`,
+  name: `Golden Beach Field ${n}`,
+  description: '',
+});
+
+const py = (n: number, fileNum: number) => ({
+  url: `images/leonettis/pyrgaki-field-2/pyrgaki-field-2-${fileNum}.webp`,
+  name: `Pyrgaki Field ${n}`,
+  description: '',
+});
+
+const mm = (n: number) => ({
+  url: `images/leonettis/marpissa-marios/marpissa-marios-${n}.jpg`,
+  name: `Marpissa Marios ${n}`,
+  description: '',
+});
+
 export const listingsData: Listing[] = [
   {
     id: '1',
@@ -40,18 +58,7 @@ export const listingsData: Listing[] = [
     isFeatured: true,
     isActive: true,
     tags: ['tag1', 'tag2', 'tag3'],
-    images: [
-      'images/leonettis/golden-beach-field-1/golden_beach_field_A_1.webp',
-      'images/leonettis/golden-beach-field-1/golden_beach_field_A_2.webp',
-      'images/leonettis/golden-beach-field-1/golden_beach_field_A_3.webp',
-      'images/leonettis/golden-beach-field-1/golden_beach_field_A_4.webp',
-      'images/leonettis/golden-beach-field-1/golden_beach_field_A_5.webp',
-      'images/leonettis/golden-beach-field-1/golden_beach_field_A_6.webp',
-      'images/leonettis/golden-beach-field-1/golden_beach_field_A_7.webp',
-      'images/leonettis/golden-beach-field-1/golden_beach_field_A_8.webp',
-      'images/leonettis/golden-beach-field-1/golden_beach_field_A_9.webp',
-      'images/leonettis/golden-beach-field-1/golden_beach_field_A_10.webp',
-    ],
+    images: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => gb(n)),
     description: {
       en: 'Description 1',
       fr: 'Description 1',
@@ -100,20 +107,20 @@ export const listingsData: Listing[] = [
     isActive: true,
     tags: ['tag1', 'tag2', 'tag3'],
     images: [
-      'images/leonettis/pyrgaki-field-2/pyrgaki-field-2-1.webp',
-      'images/leonettis/pyrgaki-field-2/pyrgaki-field-2-2.webp',
-      'images/leonettis/pyrgaki-field-2/pyrgaki-field-2-3.webp',
-      'images/leonettis/pyrgaki-field-2/pyrgaki-field-2-4.webp',
-      'images/leonettis/pyrgaki-field-2/pyrgaki-field-2-5.webp',
-      'images/leonettis/pyrgaki-field-2/pyrgaki-field-2-6.webp',
-      'images/leonettis/pyrgaki-field-2/pyrgaki-field-2-7.webp',
-      'images/leonettis/pyrgaki-field-2/pyrgaki-field-2-8.webp',
-      'images/leonettis/pyrgaki-field-2/pyrgaki-field-2-10.webp',
-      'images/leonettis/pyrgaki-field-2/pyrgaki-field-2-11.webp',
-      'images/leonettis/pyrgaki-field-2/pyrgaki-field-2-12.webp',
-      'images/leonettis/pyrgaki-field-2/pyrgaki-field-2-13.webp',
-      'images/leonettis/pyrgaki-field-2/pyrgaki-field-2-14.webp',
-      'images/leonettis/pyrgaki-field-2/pyrgaki-field-2-15.webp',
+      py(1, 1),
+      py(2, 2),
+      py(3, 3),
+      py(4, 4),
+      py(5, 5),
+      py(6, 6),
+      py(7, 7),
+      py(8, 8),
+      py(9, 10),
+      py(10, 11),
+      py(11, 12),
+      py(12, 13),
+      py(13, 14),
+      py(14, 15),
     ],
     videos: ['images/leonettis/pyrgaki-field-2/pyrgaki-field-2-9.mp4'],
     description: {
@@ -164,39 +171,7 @@ export const listingsData: Listing[] = [
     squareMetersInterior: 0, // Unknown
     squareMetersOutdoor: 0, // Unknown
     squareMetersTotal: 0, // Unknown
-    images: [
-      'images/leonettis/marpissa-marios/marpissa-marios-1.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-2.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-3.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-4.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-5.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-6.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-7.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-8.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-9.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-10.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-11.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-12.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-13.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-14.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-15.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-16.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-17.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-18.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-19.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-20.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-21.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-22.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-23.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-24.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-25.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-26.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-27.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-28.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-29.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-30.jpg',
-      'images/leonettis/marpissa-marios/marpissa-marios-31.jpg',
-    ],
+    images: Array.from({ length: 31 }, (_, i) => mm(i + 1)),
     mainImage: '',
     videos: [],
     features: [

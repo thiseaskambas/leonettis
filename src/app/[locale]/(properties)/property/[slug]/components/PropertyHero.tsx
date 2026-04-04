@@ -5,11 +5,15 @@ import Image from 'next/image';
 import { Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { Address } from '@/app/lib/definitions/listing.types';
+import type { Address, ListingImage } from '@/app/lib/definitions/listing.types';
 import { getMediaUrl } from '@/app/lib/helpers/media-helpers';
 
+type HeroSlide =
+  | { type: 'image'; src: string; name: string; description?: string }
+  | { type: 'video'; src: string };
+
 interface PropertyHeroProps {
-  images?: string[];
+  images?: ListingImage[];
   videos?: string[];
   title: string;
   address: Address;
@@ -48,8 +52,13 @@ export default function PropertyHero({
     address.displayAddress ??
     [address.city, address.region, address.state].filter(Boolean).join(', ');
 
-  const slides = [
-    ...(images?.map((src) => ({ type: 'image' as const, src })) ?? []),
+  const slides: HeroSlide[] = [
+    ...(images?.map((img) => ({
+      type: 'image' as const,
+      src: img.url,
+      name: img.name,
+      description: img.description,
+    })) ?? []),
     ...(videos?.map((src) => ({ type: 'video' as const, src })) ?? []),
   ];
 
@@ -135,7 +144,7 @@ export default function PropertyHero({
                 ) : (
                   <Image
                     src={getMediaUrl(slide.src)}
-                    alt={title}
+                    alt={slide.name}
                     fill
                     className="object-cover"
                     sizes="100vw"

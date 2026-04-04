@@ -111,9 +111,9 @@ export default function ListingCard({
               className="h-full! w-full! overflow-hidden">
               <div className="relative h-full w-full transition-transform duration-700 group-hover:scale-105">
                 <ListingImage
-                  src={getMediaUrl(image)}
-                  blurSrc={getMediaBlurDataURL(image)}
-                  alt={title}
+                  src={getMediaUrl(image.url)}
+                  blurSrc={getMediaBlurDataURL(image.url)}
+                  alt={image.name || title}
                   priority={index === 0}
                   loading={
                     index === 0 || loadedIndices.includes(index)

@@ -6,10 +6,11 @@ import { useCallback, useEffect, useState } from 'react';
 import { Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
+import type { ListingImage } from '@/app/lib/definitions/listing.types';
 import { getMediaUrl } from '@/app/lib/helpers/media-helpers';
 
 interface PropertyGalleryProps {
-  images: string[];
+  images: ListingImage[];
   title: string;
   galleryLabel: string;
   closeLabel: string;
@@ -80,8 +81,8 @@ export default function PropertyGallery({
             onClick={() => openLightbox(index)}
             className="group relative aspect-4/3 w-full cursor-pointer overflow-hidden rounded-xl focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:outline-none dark:focus-visible:ring-white">
             <Image
-              src={getMediaUrl(image)}
-              alt={`${title} — ${index + 1}`}
+              src={getMediaUrl(image.url)}
+              alt={image.name || `${title} — ${index + 1}`}
               fill
               className="object-cover transition-transform duration-500 group-hover:scale-105"
               sizes="(max-width: 1280px) 33vw, 400px"
@@ -106,8 +107,8 @@ export default function PropertyGallery({
             <SwiperSlide key={index} className="h-auto!">
               <div className="relative aspect-4/3 w-full overflow-hidden rounded-xl">
                 <Image
-                  src={getMediaUrl(image)}
-                  alt={`${title} — ${index + 1}`}
+                  src={getMediaUrl(image.url)}
+                  alt={image.name || `${title} — ${index + 1}`}
                   fill
                   className="object-cover"
                   sizes="80vw"
@@ -154,13 +155,21 @@ export default function PropertyGallery({
             style={{ aspectRatio: 'auto' }}
             onClick={(e) => e.stopPropagation()}>
             <Image
-              src={getMediaUrl(images[selectedIndex])}
-              alt={`${title} — ${selectedIndex + 1}`}
+              src={getMediaUrl(images[selectedIndex].url)}
+              alt={
+                images[selectedIndex].name ||
+                `${title} — ${selectedIndex + 1}`
+              }
               width={1600}
               height={1200}
               className="max-h-[90vh] w-auto max-w-[90vw] rounded-xl object-contain shadow-2xl"
               priority
             />
+            {images[selectedIndex].description?.trim() ? (
+              <p className="mt-4 max-w-[90vw] text-center text-sm text-white/90">
+                {images[selectedIndex].description}
+              </p>
+            ) : null}
           </div>
 
           {/* Next button */}

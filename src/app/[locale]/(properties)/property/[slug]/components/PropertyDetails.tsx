@@ -54,7 +54,7 @@ function Chip({ label }: { label: string }) {
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-col gap-0.5">
-      <dt className="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+      <dt className="text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-400">
         {label}
       </dt>
       <dd className="text-sm font-medium text-gray-900 dark:text-white">
@@ -140,7 +140,10 @@ export default function PropertyDetails({
       </div>
 
       {/* Key specs */}
-      {(!!bedrooms || !!bathrooms || !!squareMetersTotal || !!squareMetersInterior) && (
+      {(!!bedrooms ||
+        !!bathrooms ||
+        !!squareMetersTotal ||
+        !!squareMetersInterior) && (
         <div className="flex flex-wrap gap-6 border-b border-gray-200/60 pb-8 dark:border-gray-700/60">
           {!!bedrooms && (
             <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
@@ -159,21 +162,27 @@ export default function PropertyDetails({
           {!!squareMetersTotal && (
             <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
               <Maximize className="h-5 w-5 text-gray-400" />
-              <span className="text-lg font-semibold">{squareMetersTotal}m²</span>
+              <span className="text-lg font-semibold">
+                {squareMetersTotal}m²
+              </span>
               <span className="text-sm">{translations.total}</span>
             </div>
           )}
           {!!squareMetersInterior && (
             <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
               <Maximize className="h-5 w-5 text-gray-400" />
-              <span className="text-lg font-semibold">{squareMetersInterior}m²</span>
+              <span className="text-lg font-semibold">
+                {squareMetersInterior}m²
+              </span>
               <span className="text-sm">{translations.interior}</span>
             </div>
           )}
           {!!squareMetersOutdoor && (
             <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
               <Maximize className="h-5 w-5 text-gray-400" />
-              <span className="text-lg font-semibold">{squareMetersOutdoor}m²</span>
+              <span className="text-lg font-semibold">
+                {squareMetersOutdoor}m²
+              </span>
               <span className="text-sm">{translations.outdoor}</span>
             </div>
           )}
@@ -183,7 +192,7 @@ export default function PropertyDetails({
       {/* Description */}
       {description && (
         <div className="flex flex-col gap-2">
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+          <h2 className="text-xs font-semibold tracking-widest text-gray-400 uppercase dark:text-gray-500">
             {translations.description}
           </h2>
           <p className="text-base leading-relaxed text-gray-700 dark:text-gray-300">
@@ -193,7 +202,7 @@ export default function PropertyDetails({
       )}
 
       {/* Property details grid */}
-      <div className="grid grid-cols-2 gap-6 rounded-2xl border border-gray-200/60 bg-white/40 p-6 dark:border-gray-700/40 dark:bg-white/5 md:grid-cols-3">
+      <div className="grid grid-cols-2 gap-6 rounded-2xl border border-gray-200/60 bg-white/40 p-6 md:grid-cols-3 dark:border-gray-700/40 dark:bg-white/5">
         <DetailRow
           label={translations.propertyType}
           value={filterTranslations.propertyType[propertyType] ?? propertyType}
@@ -220,23 +229,17 @@ export default function PropertyDetails({
           />
         )}
         {energyRating && (
-          <DetailRow
-            label={translations.energyRating}
-            value={energyRating}
-          />
+          <DetailRow label={translations.energyRating} value={energyRating} />
         )}
         {yearBuilt && !!yearBuilt && (
-          <DetailRow
-            label={translations.yearBuilt}
-            value={String(yearBuilt)}
-          />
+          <DetailRow label={translations.yearBuilt} value={String(yearBuilt)} />
         )}
       </div>
 
       {/* Chips sections */}
       {features && features.length > 0 && (
         <div className="flex flex-col gap-3">
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+          <h2 className="text-xs font-semibold tracking-widest text-gray-400 uppercase dark:text-gray-500">
             {translations.features}
           </h2>
           <div className="flex flex-wrap gap-2">
@@ -252,7 +255,7 @@ export default function PropertyDetails({
 
       {amenities && amenities.length > 0 && (
         <div className="flex flex-col gap-3">
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+          <h2 className="text-xs font-semibold tracking-widest text-gray-400 uppercase dark:text-gray-500">
             {translations.amenities}
           </h2>
           <div className="flex flex-wrap gap-2">
@@ -268,15 +271,12 @@ export default function PropertyDetails({
 
       {view && view.length > 0 && (
         <div className="flex flex-col gap-3">
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+          <h2 className="text-xs font-semibold tracking-widest text-gray-400 uppercase dark:text-gray-500">
             {translations.views}
           </h2>
           <div className="flex flex-wrap gap-2">
             {view.map((v) => (
-              <Chip
-                key={v}
-                label={filterTranslations.viewType[v] ?? v}
-              />
+              <Chip key={v} label={filterTranslations.viewType[v] ?? v} />
             ))}
           </div>
         </div>
@@ -284,16 +284,14 @@ export default function PropertyDetails({
 
       {suitableFor && suitableFor.length > 0 && (
         <div className="flex flex-col gap-3">
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+          <h2 className="text-xs font-semibold tracking-widest text-gray-400 uppercase dark:text-gray-500">
             {translations.suitableFor}
           </h2>
           <div className="flex flex-wrap gap-2">
             {suitableFor.map((s) => (
               <Chip
                 key={s}
-                label={
-                  filterTranslations.suitableFor[normalizeKey(s)] ?? s
-                }
+                label={filterTranslations.suitableFor[normalizeKey(s)] ?? s}
               />
             ))}
           </div>
@@ -303,7 +301,7 @@ export default function PropertyDetails({
       {/* Location */}
       {displayAddress && (
         <div className="flex flex-col gap-2">
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+          <h2 className="text-xs font-semibold tracking-widest text-gray-400 uppercase dark:text-gray-500">
             {translations.address}
           </h2>
           <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
