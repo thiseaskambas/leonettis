@@ -18,7 +18,8 @@
     background-color: var(--color-brand-primary);
   }
 
-  .listing-type-radio-group .radio-group {
+  .listing-type-radio-group .radio-group,
+  .contact-preference-radio-group .radio-group {
     gap: 0;
   }
 
@@ -33,6 +34,47 @@
     transition:
       border-color 0.2s ease,
       background-color 0.2s ease;
+  }
+
+  /* Compact variant (e.g. contact email / phone) */
+  .contact-preference-card.listing-type-card {
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    gap: 0.5rem;
+    border-width: 1px;
+    align-items: center;
+  }
+
+  .contact-preference-card.listing-type-card:not([data-selected='true']) {
+    border-color: var(--color-tiff-gray-400);
+  }
+
+  :is(.dark) .contact-preference-card.listing-type-card:not([data-selected='true']) {
+    border-color: rgb(255 255 255 / 0.28);
+  }
+
+  .contact-preference-card .radio__control {
+    margin-top: 0;
+    @apply size-4 shrink-0 border-2;
+  }
+
+  .contact-preference-card:not([data-selected='true']) .radio__control {
+    border-color: var(--color-tiff-gray-600);
+    @apply bg-white;
+  }
+
+  :is(.dark) .contact-preference-card:not([data-selected='true']) .radio__control {
+    border-color: rgb(255 255 255 / 0.55);
+    background-color: rgb(255 255 255 / 0.08);
+  }
+
+  .contact-preference-card:not([data-selected='true']) .radio-indicator-brand {
+    border-width: 2px;
+    border-color: var(--color-tiff-gray-500);
+  }
+
+  :is(.dark) .contact-preference-card:not([data-selected='true']) .radio-indicator-brand {
+    border-color: rgb(255 255 255 / 0.5);
   }
 
   :is(.dark) .listing-type-card {
