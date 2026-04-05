@@ -57,12 +57,11 @@ export function NavBarClient({ navLinks }: NavBarClientProps) {
   const shouldShow = navVisible || state.isOpen;
 
   return (
-    <motion.div
-      className="fixed top-0 right-0 left-0 z-50 w-full"
-      animate={{ y: shouldShow ? '0%' : '-110%' }}
-      transition={NAV_TRANSITION}>
+    <div className="fixed top-0 right-0 left-0 z-50 w-full">
       {/* Desktop: contained navbar - Logo left, Nav center, Contact + utilities right */}
-      <div
+      <motion.div
+        animate={{ y: shouldShow ? '0%' : '-110%' }}
+        transition={NAV_TRANSITION}
         className={`hidden grid-cols-[1fr_auto_1fr] items-center ${CONTAINER_CLASS} py-0 md:grid ${!state.isOpen ? 'bg-glass-no-border rounded-2xl shadow-lg md:mt-4' : ''}`}>
         <div className="relative flex items-center justify-start">
           <div className="absolute inset-0 rounded-full bg-white/50 blur-xl dark:bg-black/30" />
@@ -98,7 +97,7 @@ export function NavBarClient({ navLinks }: NavBarClientProps) {
         <div className="flex items-center justify-end">
           <SettingsMenu />
         </div>
-      </div>
+      </motion.div>
 
       {/* Mobile: contained bar + bottom-sheet menu */}
       <MobileNavBar
@@ -108,6 +107,6 @@ export function NavBarClient({ navLinks }: NavBarClientProps) {
         skipEnterAnimation={state.skipEnterAnimation}>
         <MobileSettingsSection />
       </MobileNavBar>
-    </motion.div>
+    </div>
   );
 }

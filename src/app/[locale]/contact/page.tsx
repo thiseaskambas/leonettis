@@ -6,7 +6,7 @@ export default async function ContactPage() {
   const t = await getTranslations('contact');
 
   return (
-    <main className="dark:bg-tiff-gray-950 mt-40 min-h-screen p-5 md:p-10">
+    <main className="from-tiff-gray-50 via-tiff-gray-100 to-leon-blue-50 dark:from-tiff-gray-950 dark:via-leon-blue-950 dark:to-tiff-gray-900 min-h-screen bg-linear-to-br p-5 pt-32 sm:px-10 md:pt-52">
       <div className="mx-auto max-w-2xl">
         <h1 className="text-leon-blue-950 dark:text-tiff-gray-50 mb-2 text-3xl font-bold tracking-tight">
           {t('title')}

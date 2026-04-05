@@ -3,7 +3,7 @@ import { ArticleRenderer } from '@/app/ui/ArticlesRenderer';
 
 export default function Blog() {
   return (
-    <main className="dark:bg-tiff-gray-950 mt-40 min-h-screen p-5 md:p-10">
+    <main className="dark:bg-tiff-gray-950 min-h-screen p-5 pt-40 md:p-10 md:pt-40">
       <h1>Blog</h1>
       <ArticleRenderer
         title={blogpostsData[0].data.article.title}

@@ -53,7 +53,7 @@ export default async function Buy({ searchParams }: BuyPageProps) {
       </p>
       <div className="mt-10 flex flex-col gap-6 md:flex-row md:items-start">
         <ListingsFilters listingType="buy" initialSearchParams={raw} />
-        <div className="flex-1 grid min-w-0 grid-cols-1 gap-10 xl:grid-cols-2">
+        <div className="grid min-w-0 flex-1 grid-cols-1 gap-10 xl:grid-cols-2">
           {listings.map((listing, index) => (
             <ListingCard key={index} listing={listing} />
           ))}
