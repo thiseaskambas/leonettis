@@ -27,7 +27,7 @@ const CONTAINER_CLASS =
 
 const KEEP_MENU_OPEN_KEY = 'keepMobileMenuOpen';
 
-const NAV_TRANSITION = { type: 'spring', stiffness: 300, damping: 30 };
+const NAV_TRANSITION = { type: 'spring', stiffness: 300, damping: 30 } as const;
 
 export function NavBarClient({ navLinks }: NavBarClientProps) {
   const tNav = useTranslations('nav');
@@ -60,8 +60,7 @@ export function NavBarClient({ navLinks }: NavBarClientProps) {
     <motion.div
       className="fixed top-0 right-0 left-0 z-50 w-full"
       animate={{ y: shouldShow ? '0%' : '-110%' }}
-      transition={NAV_TRANSITION}
-    >
+      transition={NAV_TRANSITION}>
       {/* Desktop: contained navbar - Logo left, Nav center, Contact + utilities right */}
       <div
         className={`hidden grid-cols-[1fr_auto_1fr] items-center ${CONTAINER_CLASS} py-0 md:grid ${!state.isOpen ? 'bg-glass-no-border rounded-2xl shadow-lg md:mt-4' : ''}`}>
