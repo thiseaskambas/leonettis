@@ -48,6 +48,12 @@ const countryItems = COUNTRY_CODES.map((c) => ({
   textValue: `${c.name} ${c.dialCode}`,
 }));
 
+/** Light + dark field surfaces for contrast on glass backgrounds */
+const fieldClassName =
+  'bg-white/95 border-tiff-gray-300 text-tiff-gray-900 placeholder:text-tiff-gray-700 dark:bg-tiff-gray-900 dark:border-white/20 dark:text-tiff-gray-100 dark:placeholder:text-tiff-gray-300';
+
+const labelClassName = 'text-tiff-gray-900 dark:text-tiff-gray-100';
+
 export default function ContactForm() {
   const t = useTranslations('contact');
 
@@ -152,10 +158,8 @@ export default function ContactForm() {
       <Select
         value={form.salutation}
         onChange={(key) => setField('salutation', key)}>
-        <Label className="dark:text-tiff-gray-100">
-          {t('salutation-label')}
-        </Label>
-        <Select.Trigger className="dark:bg-tiff-gray-900 dark:border-white/20">
+        <Label className={labelClassName}>{t('salutation-label')}</Label>
+        <Select.Trigger className={fieldClassName}>
           <Select.Value>
             {({ isPlaceholder }) =>
               isPlaceholder ? (
@@ -185,11 +189,9 @@ export default function ContactForm() {
           isRequired
           value={form.firstName}
           onChange={(v) => setField('firstName', v)}>
-          <Label className="dark:text-tiff-gray-100">
-            {t('first-name-label')}
-          </Label>
+          <Label className={labelClassName}>{t('first-name-label')}</Label>
           <Input
-            className="dark:bg-tiff-gray-900 dark:border-white/20"
+            className={fieldClassName}
             placeholder={t('first-name-placeholder')}
           />
           {serverErrors.firstName && (
@@ -201,11 +203,9 @@ export default function ContactForm() {
           isRequired
           value={form.lastName}
           onChange={(v) => setField('lastName', v)}>
-          <Label className="dark:text-tiff-gray-100">
-            {t('last-name-label')}
-          </Label>
+          <Label className={labelClassName}>{t('last-name-label')}</Label>
           <Input
-            className="dark:bg-tiff-gray-900 dark:border-white/20"
+            className={fieldClassName}
             placeholder={t('last-name-placeholder')}
           />
           {serverErrors.lastName && (
@@ -218,19 +218,19 @@ export default function ContactForm() {
       <RadioGroup
         value={form.contactPreference}
         onChange={(v) => setField('contactPreference', v as ContactPreference)}
-        orientation="horizontal"
-        className="listing-type-radio-group px-0">
-        <Label className="dark:text-tiff-gray-100 text-base">
+        orientation="vertical"
+        className="contact-preference-radio-group px-0">
+        <Label className={`${labelClassName} text-base font-medium`}>
           {t('contact-preference-label')}
         </Label>
-        <div className="flex gap-3">
+        <div className="mt-3 flex gap-2 *:mt-0">
           {(['email', 'phone'] as const).map((pref) => (
             <Radio
               key={pref}
               value={pref}
-              className="listing-type-card group flex-1">
-              <Radio.Content className="flex-1">
-                <Label className="dark:text-tiff-gray-100 text-base font-medium">
+              className="contact-preference-card listing-type-card group flex-1 items-center gap-2">
+              <Radio.Content className="min-w-0 flex-1">
+                <Label className={`${labelClassName} text-sm font-medium`}>
                   {t(`contact-preference-${pref}`)}
                 </Label>
               </Radio.Content>
@@ -249,9 +249,9 @@ export default function ContactForm() {
           type="email"
           value={form.email}
           onChange={(v) => setField('email', v)}>
-          <Label className="dark:text-tiff-gray-100">{t('email-label')}</Label>
+          <Label className={labelClassName}>{t('email-label')}</Label>
           <Input
-            className="dark:bg-tiff-gray-900 dark:border-white/20"
+            className={fieldClassName}
             placeholder={t('email-placeholder')}
           />
           {serverErrors.email && <FieldError>{serverErrors.email}</FieldError>}
@@ -266,10 +266,10 @@ export default function ContactForm() {
             <Select
               value={form.countryCode}
               onChange={(key) => setField('countryCode', key as Key | null)}>
-              <Label className="dark:text-tiff-gray-100">
+              <Label className={labelClassName}>
                 {t('country-code-label')}
               </Label>
-              <Select.Trigger className="dark:bg-tiff-gray-900 dark:border-white/20">
+              <Select.Trigger className={fieldClassName}>
                 <Select.Value>
                   {() => {
                     const selected = countryItems.find(
@@ -277,7 +277,7 @@ export default function ContactForm() {
                     );
                     if (!selected) {
                       return (
-                        <span className="text-tiff-gray-400">
+                        <span className="text-tiff-gray-700 dark:text-tiff-gray-300">
                           {t('country-code-placeholder')}
                         </span>
                       );
@@ -301,6 +301,7 @@ export default function ContactForm() {
                     <SearchField.Group className="bg-glass">
                       <SearchField.SearchIcon />
                       <SearchField.Input
+                        className="placeholder:text-tiff-gray-700 dark:placeholder:text-tiff-gray-300"
                         placeholder={t('country-code-placeholder')}
                       />
                     </SearchField.Group>
@@ -346,11 +347,9 @@ export default function ContactForm() {
               type="tel"
               value={form.phone}
               onChange={(v) => setField('phone', v)}>
-              <Label className="dark:text-tiff-gray-100">
-                {t('phone-label')}
-              </Label>
+              <Label className={labelClassName}>{t('phone-label')}</Label>
               <Input
-                className="dark:bg-tiff-gray-900 dark:border-white/20"
+                className={fieldClassName}
                 placeholder={
                   COUNTRY_CODES.find((c) => c.iso2 === form.countryCode)
                     ?.phonePlaceholder ?? t('phone-placeholder')
@@ -366,9 +365,9 @@ export default function ContactForm() {
 
       {/* Message (optional) */}
       <TextField value={form.message} onChange={(v) => setField('message', v)}>
-        <Label className="dark:text-tiff-gray-100">{t('message-label')}</Label>
+        <Label className={labelClassName}>{t('message-label')}</Label>
         <TextArea
-          className="dark:bg-tiff-gray-900 dark:border-white/20"
+          className={fieldClassName}
           placeholder={t('message-placeholder')}
           rows={5}
         />

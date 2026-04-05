@@ -61,6 +61,7 @@
     "selected-count": "{count} selected",
     "search-button": "Search",
     "reset-filters": "Reset all",
+    "filters-button": "Filters",
     "price-range": "Price Range",
     "price-no-limit": "No limit",
     "filters": {

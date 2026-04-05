@@ -1,5 +1,5 @@
 'use client';
-import { Bath, Bed, MapPin, Maximize } from 'lucide-react';
+import { Bath, Bed, ChevronRight, MapPin, Maximize } from 'lucide-react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
@@ -135,7 +135,7 @@ export default function ListingCard({
       {/* Glass Overlay Link */}
       <Link
         href={`/property/${listing.slug}`}
-        className="bg-glass-no-border absolute right-0 bottom-0 left-0 z-10 m-3 flex flex-col gap-2 rounded-xl border border-white/20 p-4 shadow-lg transition-all duration-300 hover:bg-white/40 dark:hover:bg-black/40">
+        className="group/link bg-glass-no-border absolute right-0 bottom-0 left-0 z-10 m-3 flex cursor-pointer flex-col gap-2 rounded-xl border border-white/20 p-4 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-white/40 dark:hover:bg-black/40">
         {/* Title & Location */}
         <div>
           <h3 className="truncate text-lg font-medium tracking-wide text-gray-900 dark:text-white">
@@ -169,6 +169,10 @@ export default function ListingCard({
               <span>{squareMetersTotal}m²</span>
             </div>
           )}
+          <ChevronRight
+            aria-hidden
+            className="ml-auto h-4 w-4 shrink-0 text-gray-600 transition-transform duration-300 group-hover/link:translate-x-1 dark:text-gray-300"
+          />
         </div>
       </Link>
     </div>

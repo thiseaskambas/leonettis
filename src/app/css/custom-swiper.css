@@ -113,22 +113,22 @@
 }
 
 .mySwiper .swiper-pagination-progressbar {
-  background: rgba(255, 255, 255, 0.2); /* Subtle semi-transparent track */
-  height: 3px !important; /* Sleek and thin */
+  /* Dark track reads on bright skies / walls; taller than default for visibility */
+  background: rgba(0, 0, 0, 0.42);
+  height: 5px !important;
   top: 0 !important;
   bottom: auto !important;
   position: absolute;
   width: 100%;
   z-index: 20;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset;
 }
 
 .mySwiper .swiper-pagination-progressbar-fill {
-  /* Option 1: Brand Color (Matches your buttons) */
   background: var(--color-brand-primary) !important;
-
-  /* Option 2: Pure White (Cleaner, higher contrast) */
-  /* background: white !important; */
-
-  border-radius: 0 4px 4px 0; /* Soften the leading edge */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 0 3px 3px 0;
+  /* Light outline + drop shadow so the fill reads on any photo */
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.55),
+    0 1px 4px rgba(0, 0, 0, 0.35);
 }
