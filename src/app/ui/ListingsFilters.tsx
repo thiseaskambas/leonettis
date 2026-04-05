@@ -12,7 +12,7 @@ import {
   Slider,
 } from '@heroui/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Search, SlidersHorizontal, X } from 'lucide-react';
+import { ChevronDown, Search, SlidersHorizontal, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -148,7 +148,9 @@ const ListingsFilters = ({
     setSelections({});
     setPriceRange([0, PRICE_MAX]);
     setExpandedKeys(new Set());
-  }, []);
+    setIsDrawerOpen(false);
+    router.replace(`/${listingType}`);
+  }, [listingType, router]);
 
   const handleSearch = useCallback(() => {
     const params = selectionsToParams(listingType, selections);
@@ -227,7 +229,9 @@ const ListingsFilters = ({
                       {hasSelection && summary}
                     </span>
                   </div>
-                  <Accordion.Indicator className="text-tiff-gray-500 dark:text-tiff-gray-400" />
+                  <ChevronDown
+                    className={`text-tiff-gray-500 dark:text-tiff-gray-400 size-5 shrink-0 transition-transform duration-200 ${expandedKeys.has(filter.id) ? 'rotate-180' : ''}`}
+                  />
                 </Accordion.Trigger>
               </Accordion.Heading>
               <Accordion.Panel>
@@ -287,7 +291,7 @@ const ListingsFilters = ({
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="bg-glass-no-border text-tiff-gray-900 dark:text-tiff-gray-50 hidden max-h-[calc(100vh-6rem)] w-72 shrink-0 flex-col overflow-hidden rounded-xl md:sticky md:top-24 md:flex">
+      <aside className="bg-glass-no-border text-tiff-gray-900 dark:text-tiff-gray-50 hidden w-72 shrink-0 flex-col rounded-xl md:flex">
         <div className="flex items-center justify-between px-4 py-3">
           <h2 className="text-lg font-semibold">{t('title')}</h2>
           {hasActiveFilters && (
@@ -298,7 +302,7 @@ const ListingsFilters = ({
             </button>
           )}
         </div>
-        <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+        <div className="flex flex-1 flex-col gap-4 p-4">
           {filterContent}
         </div>
         <div className="border-tiff-gray-200 border-t p-4 dark:border-white/10">
