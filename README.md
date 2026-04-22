@@ -41,6 +41,11 @@ https://v3.heroui.com/
 Internationalization with :
 https://next-intl.dev
 
+## Project Notes
+
+- Listings use `category` as a multi-value array in the listing model (`ListingCategory[]`), for example `['residential']` or `['residential', 'commercial']`.
+- Category filtering matches listings when any listing category overlaps with selected category filters.
+
 Color palette link :
 https://www.tints.dev/palette/v1:dGlmZnw4MUQ4RDB8MzAwfHB8MHwwfDB8MTAwfGF-dGlmZi1zYXR8MDBBREEyfDQwMHxwfDB8MHwwfDEwMHxhfnRpZmYtZ3JheXxFOEYzRjF8NTAwfHB8MHwwfDB8MTAwfG1-dGlmZi1waW5rfEYwNTVCMXw0MDB8cHwwfDB8MHwxMDB8YX5sZW9ufDdFRDhFMHwyMDB8cHwwfDB8MHwxMDB8YX5sZW9uLXBpbmt8Zjc2NmEwfDQwMHxwfDB8MHwwfDEwMHxhfmxlb24tc2F0fDU4ZTRlMHwyMDB8cHwwfDB8MHwxMDB8YX5sZW9uLWJsdWV8Mjk0ZWEwfDgwMHxwfDB8MHwwfDEwMHxh
 

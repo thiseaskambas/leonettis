@@ -67,7 +67,9 @@ export async function searchListings(
   );
 
   if (params.category?.length) {
-    results = results.filter((l) => params.category!.includes(l.category));
+    results = results.filter((l) =>
+      l.category.some((c) => params.category!.includes(c))
+    );
   }
 
   if (params.propertyType?.length) {

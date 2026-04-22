@@ -18,9 +18,15 @@ const mm = (n: number) => ({
   description: '',
 });
 
+const mH3 = (n: number) => ({
+  url: `images/leonettis/marpissa-house-3/marpissa-house-3-${n}.webp`,
+  name: `Marpissa House 3 ${n}`,
+  description: '',
+});
+
 export const listingsData: Listing[] = [
   {
-    id: '1',
+    id: 'mock-1',
     title: {
       en: 'Golden Beach Plot',
       fr: 'Parcelle à Golden Beach',
@@ -42,7 +48,7 @@ export const listingsData: Listing[] = [
       },
     },
     listingType: 'buy',
-    category: 'residential',
+    category: ['residential'],
     propertyType: 'field',
     price: 100000,
     bedrooms: 0,
@@ -69,7 +75,7 @@ export const listingsData: Listing[] = [
     },
   },
   {
-    id: '2',
+    id: 'mock-2',
     title: {
       en: 'Plot in Pyrgaki',
       fr: 'Parcelle à Pyrgaki',
@@ -91,7 +97,7 @@ export const listingsData: Listing[] = [
       },
     },
     listingType: 'buy',
-    category: 'residential',
+    category: ['residential'],
     propertyType: 'land',
     price: 100000,
     bedrooms: 0,
@@ -133,7 +139,7 @@ export const listingsData: Listing[] = [
     },
   },
   {
-    id: '3', // Unknown
+    id: 'real-3', // Unknown
     title: {
       en: 'Two-Bedroom House with Roof Garden in Marpissa',
       fr: 'Maison de deux chambres avec jardin sur le toit à Marpissa',
@@ -164,7 +170,7 @@ export const listingsData: Listing[] = [
       displayAddress: 'Marpissa, Paros, Greece',
     },
     listingType: 'rent',
-    category: 'residential',
+    category: ['residential'],
     propertyType: 'house',
     bedrooms: 2,
     bathrooms: 2, // Mentioned a large bathroom upstairs and a WC downstairs
@@ -199,7 +205,7 @@ export const listingsData: Listing[] = [
     availableUponRequest: true,
   },
   {
-    id: '4',
+    id: 'mock-4',
     title: {
       en: 'Off-Market Estate, Paros',
       fr: 'Propriété hors marché, Paros',
@@ -223,7 +229,7 @@ export const listingsData: Listing[] = [
       displayAddress: 'Paros, Cyclades, Greece',
     },
     listingType: 'buy',
-    category: 'residential',
+    category: ['residential'],
     propertyType: 'house',
     bedrooms: 5,
     bathrooms: 4,
@@ -246,5 +252,62 @@ export const listingsData: Listing[] = [
       de: 'Luxuriöse Off-Market-Immobilie; Preis auf Anfrage.',
       it: 'Proprietà di lusso fuori mercato; prezzo su richiesta.',
     },
+  },
+  {
+    id: 'real-5',
+    title: {
+      en: 'Two-Floor Building for Renovation in Marpissa Square, Paros',
+      gr: 'Διώροφο κτίριο προς ανακαίνιση στην πλατεία Μάρπησσας, Πάρος',
+      fr: 'Bâtiment à deux étages à rénover sur la place de Marpissa, Paros',
+      de: 'Zweistöckiges Renovierungsgebäude am Platz von Marpissa, Paros',
+      it: 'Edificio a due piani da ristrutturare in piazza Marpissa, Paros',
+    },
+    description: {
+      en: 'A rare opportunity: a two-floor building located directly on the square (platia) of Marpissa, Paros. The property requires full renovation and offers exceptional versatility - it can be used as a residential home or converted into a commercial space such as a shop or restaurant (food service / hygionomiko). The plot measures 154.13 m², is buildable within settlement limits, and is 1,280 m from the sea.',
+      gr: 'Σπάνια ευκαιρία: διώροφο κτίριο στην πλατεία Μάρπησσας, Πάρου. Χρειάζεται ανακαίνιση και προσφέρει εξαιρετική ευελιξία - κατοικία ή μετατροπή σε κατάστημα / χώρο εστίασης (υγειονομικού ενδιαφέροντος). Το οικόπεδο έχει εμβαδόν 154,13 τ.μ., βρίσκεται εντός ορίων οικισμού, 1.280 μ. από τη θάλασσα.',
+      fr: 'Opportunité rare : bâtiment de deux étages situé directement sur la place (platia) de Marpissa, Paros. La propriété nécessite une rénovation complète et offre une polyvalence exceptionnelle - habitation ou conversion en espace commercial (boutique, restaurant). Le terrain mesure 154,13 m², constructible en zone de village, à 1 280 m de la mer.',
+      de: 'Eine seltene Gelegenheit: zweistöckiges Gebäude direkt am Platz (Platia) von Marpissa, Paros. Vollständige Renovierung erforderlich. Außergewöhnlich vielseitig nutzbar - als Wohnhaus oder als Geschäft / Gastronomie umrüstbar. Grundstück 154,13 m², bebaubar innerhalb der Siedlungsgrenzen, 1.280 m vom Meer.',
+      it: "Rara opportunità: edificio a due piani situato direttamente sulla piazza (platia) di Marpissa, Paros. L'immobile necessita di ristrutturazione completa e offre eccezionale versatilità - residenza o conversione in spazio commerciale (negozio, ristorante). Il terreno è di 154,13 m², edificabile entro i confini del villaggio, a 1.280 m dal mare.",
+    },
+    slug: 'marpissa-house-3',
+    address: {
+      streetName: '',
+      streetNumber: '',
+      city: 'Marpissa',
+      state: 'South Aegean',
+      region: 'Paros',
+      zipCode: '',
+      country: 'Greece',
+      coordinates: { lat: 0, lng: 0 },
+      displayAddress: 'Marpissa, Paros, Greece',
+    },
+    listingType: 'buy',
+    category: ['residential', 'commercial'],
+    propertyType: 'building',
+    squareMetersTotal: 154,
+    images: Array.from({ length: 23 }, (_, i) => mH3(i + 1)),
+    mainImage: '',
+    videos: [],
+    features: [],
+    amenities: [],
+    suitableFor: ['investment', 'business', 'family'],
+    view: [],
+    condition: 'renovation needed',
+    publishedAt: '2026-04-22T12:00:00Z',
+    updatedAt: '2026-04-22T12:00:00Z',
+    isFeatured: false,
+    isActive: true,
+    isSold: false,
+    isRented: false,
+    favorite: false,
+    urgent: false,
+    tags: [
+      'Marpissa',
+      'Paros',
+      'Platia',
+      'Renovation',
+      'Commercial',
+      'Investment',
+    ],
   },
 ];

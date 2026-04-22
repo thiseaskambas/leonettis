@@ -106,7 +106,7 @@ export interface Listing {
   slug: string;
   address: Address;
   listingType: 'buy' | 'rent';
-  category: ListingCategory;
+  category: ListingCategory[];
   propertyType: PropertyType;
   id: string;
   price?: number;
