@@ -226,7 +226,9 @@ export default function PropertyDetails({
         />
         <DetailRow
           label={translations.category}
-          value={filterTranslations.category[category] ?? category}
+          value={category
+            .map((c) => filterTranslations.category[c] ?? c)
+            .join(', ')}
         />
         {condition && (
           <DetailRow
