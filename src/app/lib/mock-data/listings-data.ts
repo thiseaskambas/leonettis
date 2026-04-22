@@ -24,6 +24,12 @@ const mH3 = (n: number) => ({
   description: '',
 });
 
+const pireas2 = (n: number) => ({
+  url: `images/leonettis/pireas-2/pireas-2-${n}.webp`,
+  name: `Pireas 2 ${n}`,
+  description: '',
+});
+
 export const listingsData: Listing[] = [
   {
     id: 'mock-1',
@@ -308,6 +314,56 @@ export const listingsData: Listing[] = [
       'Renovation',
       'Commercial',
       'Investment',
+    ],
+  },
+  {
+    id: 'piraeus-commercial-1',
+    title: {
+      en: 'Commercial Space in Piraeus – Warehouse, Shop & Office',
+      fr: 'Espace Commercial au Pirée – Entrepôt, Boutique & Bureau',
+      gr: 'Επαγγελματικός Χώρος στον Πειραιά',
+      de: 'Gewerbefläche in Piräus – Lager, Geschäft & Büro',
+      it: 'Spazio Commerciale al Pireo – Magazzino, Negozio & Ufficio',
+    },
+    description: {
+      en: 'A 300sqm commercial space in Piraeus comprising a 125sqm ground floor, 40sqm mezzanine, and 135sqm basement. Suitable for use as a warehouse, shop, or office. Renovation needed. Located 500m from the metro station. No common charges.',
+      fr: 'Espace commercial de 300m² au Pirée comprenant un rez-de-chaussée de 125m², une mezzanine de 40m² et un sous-sol de 135m². Convient à un usage entrepôt, boutique ou bureau. Rénovation nécessaire. Situé à 500m de la station de métro. Pas de charges communes.',
+      gr: 'Επαγγελματικός χώρος 300τμ στον Πειραιά, αποτελούμενος από ισόγειο 125τμ, πατάρι 40τμ και υπόγειο 135τμ. Κατάλληλος για αποθήκη, κατάστημα ή γραφείο. Χρειάζεται ανακαίνιση. Βρίσκεται 500μ από σταθμό μετρό. Χωρίς κοινόχρηστα.',
+      de: '300m² Gewerbefläche in Piräus bestehend aus 125m² Erdgeschoss, 40m² Zwischengeschoss und 135m² Untergeschoss. Geeignet als Lager, Geschäft oder Büro. Renovierung erforderlich. 500m zur nächsten U-Bahnstation. Keine Nebenkosten.',
+      it: 'Spazio commerciale di 300mq al Pireo composto da piano terra 125mq, soppalco 40mq e seminterrato 135mq. Adatto ad uso magazzino, negozio o ufficio. Necessita di ristrutturazione. A 500m dalla stazione della metropolitana. Nessuna spesa condominiale.',
+    },
+    slug: 'commercial-space-piraeus-buy',
+    address: {
+      city: 'Piraeus',
+      state: 'Attica',
+      country: 'Greece',
+      zipCode: '',
+      coordinates: { lat: 37.9428, lng: 23.6466 },
+      displayAddress: 'Piraeus, Attica, Greece',
+    },
+    listingType: 'buy',
+    category: ['commercial'],
+    propertyType: 'business',
+    price: 210000,
+    squareMetersInterior: 300,
+    squareMetersTotal: 300,
+    images: Array.from({ length: 8 }, (_, i) => pireas2(i + 1)),
+    mainImage: '',
+    condition: 'renovation needed',
+    publishedAt: '2026-04-22T00:00:00Z',
+    updatedAt: '2026-04-22T00:00:00Z',
+    isFeatured: false,
+    isActive: true,
+    isSold: false,
+    availableNow: true,
+    tags: [
+      'Piraeus',
+      'Commercial',
+      'Business',
+      'Warehouse',
+      'Shop',
+      'Office',
+      'Metro',
     ],
   },
 ];
