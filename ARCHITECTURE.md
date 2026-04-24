@@ -6,18 +6,18 @@ Real estate listing platform for properties in Paros, Greece. Supports browsing,
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Framework | Next.js 16 (App Router) |
-| Language | TypeScript |
-| UI | React 19, HeroUI v3 (RAC-based), Tailwind CSS 4, Framer Motion, Swiper |
-| Database | MongoDB (via `mongodb` driver) |
-| Object storage | Sevalla (S3-compatible), `@aws-sdk/client-s3` |
-| Auth | `jose` — HS256 JWT stored in httpOnly cookie |
-| i18n | next-intl 4, 5 locales (en / fr / gr / de / it) |
-| Email | Resend |
-| Testing | Vitest (Node environment) |
-| Icons | lucide-react |
+| Layer          | Technology                                                             |
+| -------------- | ---------------------------------------------------------------------- |
+| Framework      | Next.js 16 (App Router)                                                |
+| Language       | TypeScript                                                             |
+| UI             | React 19, HeroUI v3 (RAC-based), Tailwind CSS 4, Framer Motion, Swiper |
+| Database       | MongoDB (via `mongodb` driver)                                         |
+| Object storage | Sevalla (S3-compatible), `@aws-sdk/client-s3`                          |
+| Auth           | `jose` — HS256 JWT stored in httpOnly cookie                           |
+| i18n           | next-intl 4, 5 locales (en / fr / gr / de / it)                        |
+| Email          | Resend                                                                 |
+| Testing        | Vitest (Node environment)                                              |
+| Icons          | lucide-react                                                           |
 
 ---
 
@@ -80,40 +80,40 @@ Copy `.example.env` to `.env.local` and fill in all values before running locall
 
 ### MongoDB
 
-| Variable | Required | Description |
-|---|---|---|
-| `MONGODB_URI` | Yes | MongoDB Atlas connection string |
-| `MONGODB_DB_NAME` | No | Database name (default: `leonettis`) |
+| Variable          | Required | Description                          |
+| ----------------- | -------- | ------------------------------------ |
+| `MONGODB_URI`     | Yes      | MongoDB Atlas connection string      |
+| `MONGODB_DB_NAME` | No       | Database name (default: `leonettis`) |
 
 ### Admin authentication
 
-| Variable | Required | Description |
-|---|---|---|
-| `ADMIN_PASSWORD` | Yes | Plain-text password for admin login |
-| `ADMIN_JWT_SECRET` | Yes | Secret for signing JWTs — must be 32+ characters |
+| Variable           | Required | Description                                      |
+| ------------------ | -------- | ------------------------------------------------ |
+| `ADMIN_PASSWORD`   | Yes      | Plain-text password for admin login              |
+| `ADMIN_JWT_SECRET` | Yes      | Secret for signing JWTs — must be 32+ characters |
 
 ### Sevalla image storage
 
-| Variable | Required | Description |
-|---|---|---|
-| `SEVALLA_ENDPOINT` | Yes | S3-compatible API endpoint URL |
-| `SEVALLA_BUCKET` | Yes | Bucket name |
-| `SEVALLA_ACCESS_KEY` | Yes | S3 access key ID |
-| `SEVALLA_SECRET_KEY` | Yes | S3 secret access key |
-| `SEVALLA_PUBLIC_URL` | Yes | Public CDN/bucket base URL for serving images |
+| Variable             | Required | Description                                   |
+| -------------------- | -------- | --------------------------------------------- |
+| `SEVALLA_ENDPOINT`   | Yes      | S3-compatible API endpoint URL                |
+| `SEVALLA_BUCKET`     | Yes      | Bucket name                                   |
+| `SEVALLA_ACCESS_KEY` | Yes      | S3 access key ID                              |
+| `SEVALLA_SECRET_KEY` | Yes      | S3 secret access key                          |
+| `SEVALLA_PUBLIC_URL` | Yes      | Public CDN/bucket base URL for serving images |
 
 ### Email
 
-| Variable | Required | Description |
-|---|---|---|
-| `RESEND_API_KEY` | Yes (contact form) | Resend API key |
+| Variable           | Required           | Description                               |
+| ------------------ | ------------------ | ----------------------------------------- |
+| `RESEND_API_KEY`   | Yes (contact form) | Resend API key                            |
 | `CONTACT_EMAIL_TO` | Yes (contact form) | Recipient address for contact submissions |
 
 ### Media
 
-| Variable | Required | Description |
-|---|---|---|
-| `NEXT_PUBLIC_MEDIA_BASE_URL` | No | Optional CDN base URL used by `getMediaUrl()` in media-helpers |
+| Variable                     | Required | Description                                                    |
+| ---------------------------- | -------- | -------------------------------------------------------------- |
+| `NEXT_PUBLIC_MEDIA_BASE_URL` | No       | Optional CDN base URL used by `getMediaUrl()` in media-helpers |
 
 > The `SEVALLA_PUBLIC_URL` hostname is also added dynamically to `next.config.ts` `remotePatterns` so Next.js image optimization works with Sevalla-hosted images.
 
@@ -125,38 +125,39 @@ Copy `.example.env` to `.env.local` and fill in all values before running locall
 
 Locales are defined in [src/i18n/routing.ts](src/i18n/routing.ts):
 
-| Code | Language |
-|---|---|
+| Code | Language          |
+| ---- | ----------------- |
 | `en` | English (default) |
-| `fr` | Français |
-| `gr` | Ελληνικά |
-| `de` | Deutsch |
-| `it` | Italiano |
+| `fr` | Français          |
+| `gr` | Ελληνικά          |
+| `de` | Deutsch           |
+| `it` | Italiano          |
 
 `localePrefix: 'always'` means every public URL includes the locale segment, e.g. `/en/buy`, `/fr/rent`.
 
 Always use `Link`, `useRouter`, and `redirect` from [src/i18n/navigation.ts](src/i18n/navigation.ts) — these are locale-aware wrappers. Never import from `next/navigation` or `next/link` directly in public pages.
 
 **Translation pattern:**
+
 - Server components: `const t = await getTranslations('namespace')`
 - Client components: `const t = useTranslations('namespace')`
 
 **Translation namespaces:**
 
-| Namespace | Used in |
-|---|---|
-| `nav` | Navigation / header |
-| `buy` | Buy listings page |
-| `rent` | Rent listings page |
+| Namespace         | Used in              |
+| ----------------- | -------------------- |
+| `nav`             | Navigation / header  |
+| `buy`             | Buy listings page    |
+| `rent`            | Rent listings page   |
 | `list-a-property` | List a property page |
-| `property-type` | Property type labels |
-| `search-bar` | Search bar component |
-| `property` | Property detail page |
-| `contact` | Contact form |
+| `property-type`   | Property type labels |
+| `search-bar`      | Search bar component |
+| `property`        | Property detail page |
+| `contact`         | Contact form         |
 
 ### Buy and Rent Listing Pages
 
-Both [src/app/[locale]/(properties)/buy/page.tsx](src/app/[locale]/(properties)/buy/page.tsx) and [src/app/[locale]/(properties)/rent/page.tsx](src/app/[locale]/(properties)/rent/page.tsx) follow the same pattern:
+Both [src/app/[locale]/(properties)/buy/page.tsx](<src/app/[locale]/(properties)/buy/page.tsx>) and [src/app/[locale]/(properties)/rent/page.tsx](<src/app/[locale]/(properties)/rent/page.tsx>) follow the same pattern:
 
 - Server components with `export const dynamic = 'force-dynamic'`
 - Receive `searchParams` as a `Promise` (Next.js 16 async params)
@@ -189,7 +190,7 @@ getLocalizedListing(listing, locale) [listing-helpers.ts]
 
 ### Property Detail Page
 
-[src/app/[locale]/(properties)/property/[slug]/page.tsx](src/app/[locale]/(properties)/property/[slug]/page.tsx):
+[src/app/[locale]/(properties)/property/[slug]/page.tsx](<src/app/[locale]/(properties)/property/[slug]/page.tsx>):
 
 1. Calls `getListingBySlug(slug)` — returns `null` → `notFound()`
 2. Builds translation maps for all enum labels (features, amenities, conditions, etc.) server-side
@@ -225,32 +226,32 @@ Defined in [src/app/lib/definitions/listing.types.ts](src/app/lib/definitions/li
 
 **Required fields on `Listing`:**
 
-| Field | Type | Notes |
-|---|---|---|
-| `id` | `string` | UUID, generated on create |
-| `slug` | `string` | URL-safe, generated from `title.en` |
-| `title` | `Record<Locale, string>` | One string per locale |
-| `address` | `Address` | city, country, zipCode, coordinates required |
-| `listingType` | `'buy' \| 'rent'` | |
-| `category` | `ListingCategory[]` | Array — a listing can span multiple categories |
-| `propertyType` | `PropertyType` | Single value |
-| `publishedAt` | `string` | ISO 8601 |
-| `updatedAt` | `string` | ISO 8601 |
-| `tags` | `string[]` | Can be empty array |
+| Field          | Type                     | Notes                                          |
+| -------------- | ------------------------ | ---------------------------------------------- |
+| `id`           | `string`                 | UUID, generated on create                      |
+| `slug`         | `string`                 | URL-safe, generated from `title.en`            |
+| `title`        | `Record<Locale, string>` | One string per locale                          |
+| `address`      | `Address`                | city, country, zipCode, coordinates required   |
+| `listingType`  | `'buy' \| 'rent'`        |                                                |
+| `category`     | `ListingCategory[]`      | Array — a listing can span multiple categories |
+| `propertyType` | `PropertyType`           | Single value                                   |
+| `publishedAt`  | `string`                 | ISO 8601                                       |
+| `updatedAt`    | `string`                 | ISO 8601                                       |
+| `tags`         | `string[]`               | Can be empty array                             |
 
 **Key union types:**
 
-| Type | Values |
-|---|---|
-| `ListingCategory` | `commercial`, `residential`, `industrial`, `agricultural` |
-| `PropertyType` | `apartment`, `field`, `house`, `land`, `business`, `garage`, `building`, `office`, `warehouse` |
-| `ViewType` | `sea`, `mountain`, `city`, `countryside`, `lake`, `river`, `forest`, `park`, `beach`, `other` |
-| `Amenities` | `swimming pool`, `gym`, `jacuzzi`, `sauna`, `steam room`, `tennis court`, `golf course`, `parking`, `garage`, `terrace`, `other` |
-| `Features` | `air conditioning`, `heating`, `fireplace`, `stove`, `balcony`, `terrace`, `garden`, `parking`, `garage`, `other` |
-| `Furnishing` | `furnished`, `unfurnished`, `partially furnished`, `other` |
-| `SuitableFor` | `family`, `couple`, `single`, `business`, `students`, `investment`, `embassy`, `vacation home`, `other` |
-| `EnergyRating` | `A`–`G` |
-| `Condition` | `new`, `used`, `renovated`, `partially renovated`, `renovation needed`, `other` |
+| Type              | Values                                                                                                                           |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `ListingCategory` | `commercial`, `residential`, `industrial`, `agricultural`                                                                        |
+| `PropertyType`    | `apartment`, `field`, `house`, `land`, `business`, `garage`, `building`, `office`, `warehouse`                                   |
+| `ViewType`        | `sea`, `mountain`, `city`, `countryside`, `lake`, `river`, `forest`, `park`, `beach`, `other`                                    |
+| `Amenities`       | `swimming pool`, `gym`, `jacuzzi`, `sauna`, `steam room`, `tennis court`, `golf course`, `parking`, `garage`, `terrace`, `other` |
+| `Features`        | `air conditioning`, `heating`, `fireplace`, `stove`, `balcony`, `terrace`, `garden`, `parking`, `garage`, `other`                |
+| `Furnishing`      | `furnished`, `unfurnished`, `partially furnished`, `other`                                                                       |
+| `SuitableFor`     | `family`, `couple`, `single`, `business`, `students`, `investment`, `embassy`, `vacation home`, `other`                          |
+| `EnergyRating`    | `A`–`G`                                                                                                                          |
+| `Condition`       | `new`, `used`, `renovated`, `partially renovated`, `renovation needed`, `other`                                                  |
 
 **`LocalizedListing`** extends `Listing` but with `title: string` and `description?: string` instead of `Record<Locale, string>`. Use this type whenever a component receives a listing that's already been localized.
 
@@ -265,7 +266,7 @@ Builds a MongoDB filter from typed search params and returns a `PaginatedListing
 ```typescript
 interface PaginatedListings {
   listings: Listing[];
-  total: number;      // total matching documents
+  total: number; // total matching documents
   page: number;
   limit: number;
   totalPages: number;
@@ -353,33 +354,33 @@ All routes live under `/api/admin/`. The middleware protects all of them except 
 
 #### Auth routes
 
-| Method | Path | Body | Response |
-|---|---|---|---|
-| POST | `/api/admin/auth/login` | `{ password: string }` | `200 { ok: true }` + sets cookie |
-| POST | `/api/admin/auth/logout` | — | `200` + clears cookie |
+| Method | Path                     | Body                   | Response                         |
+| ------ | ------------------------ | ---------------------- | -------------------------------- |
+| POST   | `/api/admin/auth/login`  | `{ password: string }` | `200 { ok: true }` + sets cookie |
+| POST   | `/api/admin/auth/logout` | —                      | `200` + clears cookie            |
 
 #### Listing routes
 
-| Method | Path | Notes |
-|---|---|---|
-| GET | `/api/admin/listings` | All listings sorted by `publishedAt` desc. No pagination. |
-| POST | `/api/admin/listings` | Create. Required: `title.en`, `listingType`, `propertyType`. Generates `id` (UUID), `slug`, `publishedAt`, `updatedAt`. Defaults: `isActive: true`, `isFeatured/isSold/isRented/favorite/urgent: false`, arrays default to `[]`. Returns `201 { listing }`. |
-| GET | `/api/admin/listings/[id]` | Fetch single by custom `id` field (not MongoDB `_id`). Returns `404` if not found. |
-| PUT | `/api/admin/listings/[id]` | Partial update. Sanitizes input. If `title.en` changed, regenerates slug. Updates `updatedAt`. Uses `findOneAndUpdate` with `returnDocument: 'after'`. Returns updated listing. |
-| DELETE | `/api/admin/listings/[id]` | Hard delete. Returns `204`. |
+| Method | Path                       | Notes                                                                                                                                                                                                                                                       |
+| ------ | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/admin/listings`      | All listings sorted by `publishedAt` desc. No pagination.                                                                                                                                                                                                   |
+| POST   | `/api/admin/listings`      | Create. Required: `title.en`, `listingType`, `propertyType`. Generates `id` (UUID), `slug`, `publishedAt`, `updatedAt`. Defaults: `isActive: true`, `isFeatured/isSold/isRented/favorite/urgent: false`, arrays default to `[]`. Returns `201 { listing }`. |
+| GET    | `/api/admin/listings/[id]` | Fetch single by custom `id` field (not MongoDB `_id`). Returns `404` if not found.                                                                                                                                                                          |
+| PUT    | `/api/admin/listings/[id]` | Partial update. Sanitizes input. If `title.en` changed, regenerates slug. Updates `updatedAt`. Uses `findOneAndUpdate` with `returnDocument: 'after'`. Returns updated listing.                                                                             |
+| DELETE | `/api/admin/listings/[id]` | Hard delete. Returns `204`.                                                                                                                                                                                                                                 |
 
 #### Image routes
 
-| Method | Path | Notes |
-|---|---|---|
-| POST | `/api/admin/listings/[id]/images` | Accepts `multipart/form-data` with a `file` field. Sanitizes filename. Uploads to Sevalla. Pushes `{ url, name, key }` into `listing.images[]` in MongoDB. Returns the image object. |
-| DELETE | `/api/admin/listings/images` | Body: `{ listingId, imageUrl, imageKey }`. Deletes from Sevalla (by key), then removes from MongoDB images array (matched by URL). Returns `200`. |
+| Method | Path                              | Notes                                                                                                                                                                                |
+| ------ | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| POST   | `/api/admin/listings/[id]/images` | Accepts `multipart/form-data` with a `file` field. Sanitizes filename. Uploads to Sevalla. Pushes `{ url, name, key }` into `listing.images[]` in MongoDB. Returns the image object. |
+| DELETE | `/api/admin/listings/images`      | Body: `{ listingId, imageUrl, imageKey }`. Deletes from Sevalla (by key), then removes from MongoDB images array (matched by URL). Returns `200`.                                    |
 
 #### Seed route
 
-| Method | Path | Notes |
-|---|---|---|
-| POST | `/api/admin/seed` | One-time data import. Iterates `listingsData` mock array, skips existing listings (matched by `id`), inserts new ones. Returns `{ inserted, skipped }`. |
+| Method | Path              | Notes                                                                                                                                                   |
+| ------ | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| POST   | `/api/admin/seed` | One-time data import. Iterates `listingsData` mock array, skips existing listings (matched by `id`), inserts new ones. Returns `{ inserted, skipped }`. |
 
 ### Image Upload Flow
 
@@ -415,14 +416,15 @@ Response: the image object (including key — needed for future deletion)
 
 **Per-field sanitizers:**
 
-| Helper | Behaviour |
-|---|---|
+| Helper                    | Behaviour                                                                            |
+| ------------------------- | ------------------------------------------------------------------------------------ |
 | `sanitizeLocaleRecord(v)` | Accepts object, extracts a string for each locale. Missing keys become empty string. |
-| `sanitizeStringArray(v)` | Accepts array, trims strings, filters empty. Returns `undefined` for non-arrays. |
-| `sanitizeNumber(v)` | Rejects non-numbers and `NaN`. |
-| `sanitizeBoolean(v)` | Only passes through actual booleans. |
+| `sanitizeStringArray(v)`  | Accepts array, trims strings, filters empty. Returns `undefined` for non-arrays.     |
+| `sanitizeNumber(v)`       | Rejects non-numbers and `NaN`.                                                       |
+| `sanitizeBoolean(v)`      | Only passes through actual booleans.                                                 |
 
 **Key rules:**
+
 - Returns `Partial<Listing>` — undefined fields are omitted, making it safe to spread into a MongoDB `$set` for partial updates.
 - Empty arrays (`[]`) are preserved, which signals the intent to clear a field.
 - Image entries require both `url` and `name` as strings; entries failing this check are dropped. The `key` field is preserved from existing entries so S3 objects can still be deleted later.
@@ -435,17 +437,17 @@ Generates a URL-safe slug from `title.en` (lowercase, spaces to dashes, special 
 
 All pages are inside [src/app/admin/](src/app/admin/).
 
-| Path | Component type | Description |
-|---|---|---|
-| `/admin` | Server, `force-dynamic` | Listings dashboard — table of all listings sorted by `updatedAt` desc. Direct MongoDB query. |
-| `/admin/login` | Client | Password form. POSTs to `/api/admin/auth/login`. On success: `router.refresh()` + `router.push('/admin')`. |
-| `/admin/listings/new` | Server (shell) | Renders empty `<ListingForm>`. Submission POSTs to `/api/admin/listings`. |
-| `/admin/listings/[id]/edit` | Server, fetches listing | Renders pre-populated `<ListingForm>`. Submission PUTs to `/api/admin/listings/[id]`. |
+| Path                        | Component type          | Description                                                                                                |
+| --------------------------- | ----------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `/admin`                    | Server, `force-dynamic` | Listings dashboard — table of all listings sorted by `updatedAt` desc. Direct MongoDB query.               |
+| `/admin/login`              | Client                  | Password form. POSTs to `/api/admin/auth/login`. On success: `router.refresh()` + `router.push('/admin')`. |
+| `/admin/listings/new`       | Server (shell)          | Renders empty `<ListingForm>`. Submission POSTs to `/api/admin/listings`.                                  |
+| `/admin/listings/[id]/edit` | Server, fetches listing | Renders pre-populated `<ListingForm>`. Submission PUTs to `/api/admin/listings/[id]`.                      |
 
 **Shared components:**
 
-- **`ListingForm.tsx`** — large client component covering the full `Listing` schema: multi-locale text inputs, numeric fields, boolean toggles, array fields (entered as CSV), image upload/delete UI.
-- **`DeleteListingButton.tsx`** — confirms and calls `DELETE /api/admin/listings/[id]`, then redirects to `/admin`.
+- **`ListingForm.tsx`** — large client component covering the full `Listing` schema: multi-locale text inputs, numeric fields, enum selects, boolean toggles, checkbox groups for enum arrays, and image upload/delete UI.
+- **`DeleteListingButton.tsx`** — inline confirm UI that calls `DELETE /api/admin/listings/[id]` and refreshes the dashboard on success.
 - **`AdminLogoutButton.tsx`** — calls `POST /api/admin/auth/logout`, then redirects to `/admin/login`.
 
 ### Sevalla Storage Helper
@@ -472,16 +474,16 @@ All pages are inside [src/app/admin/](src/app/admin/).
 
 **Test coverage by file:**
 
-| File | What's tested |
-|---|---|
-| `admin-auth.test.ts` | `isValidAdminPassword` (correct/incorrect/missing env), JWT sign→verify round-trip |
-| `listing-admin-helpers.test.ts` | `buildListingSlug` (normal, empty, existing slug, UUID fallback), `sanitizeListingInput` (field types, array clearing, image key preservation) |
-| `listings-service.test.ts` | `searchListings` — query construction for each filter type, price range, pagination math |
-| `api/admin/listings/route.test.ts` | POST create — required fields validation, 201 response shape |
-| `api/admin/listings/[id]/route.test.ts` | GET one, PUT update (slug regeneration), DELETE |
-| `api/admin/listings/images/route.test.ts` | DELETE image — Sevalla + MongoDB cleanup |
-| `api/admin/auth/login/route.test.ts` | Login — correct/incorrect password, cookie set |
-| `api/admin/seed/route.test.ts` | Seed — insert/skip logic |
+| File                                      | What's tested                                                                                                                                  |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `admin-auth.test.ts`                      | `isValidAdminPassword` (correct/incorrect/missing env), JWT sign→verify round-trip                                                             |
+| `listing-admin-helpers.test.ts`           | `buildListingSlug` (normal, empty, existing slug, UUID fallback), `sanitizeListingInput` (field types, array clearing, image key preservation) |
+| `listings-service.test.ts`                | `searchListings` — query construction for each filter type, price range, pagination math                                                       |
+| `api/admin/listings/route.test.ts`        | POST create — required fields validation, 201 response shape                                                                                   |
+| `api/admin/listings/[id]/route.test.ts`   | GET one, PUT update (slug regeneration), DELETE                                                                                                |
+| `api/admin/listings/images/route.test.ts` | DELETE image — Sevalla + MongoDB cleanup                                                                                                       |
+| `api/admin/auth/login/route.test.ts`      | Login — correct/incorrect password, cookie set                                                                                                 |
+| `api/admin/seed/route.test.ts`            | Seed — insert/skip logic                                                                                                                       |
 
 Run tests:
 

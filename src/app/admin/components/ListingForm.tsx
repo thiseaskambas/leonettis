@@ -23,6 +23,91 @@ const PROPERTY_TYPES: Listing['propertyType'][] = [
   'warehouse',
 ];
 
+const CATEGORY_OPTIONS: Listing['category'] = [
+  'commercial',
+  'residential',
+  'industrial',
+  'agricultural',
+];
+
+const FEATURE_OPTIONS: NonNullable<Listing['features']> = [
+  'air conditioning',
+  'heating',
+  'fireplace',
+  'stove',
+  'balcony',
+  'terrace',
+  'garden',
+  'parking',
+  'garage',
+  'other',
+];
+
+const AMENITY_OPTIONS: NonNullable<Listing['amenities']> = [
+  'swimming pool',
+  'gym',
+  'jacuzzi',
+  'sauna',
+  'steam room',
+  'tennis court',
+  'golf course',
+  'parking',
+  'garage',
+  'terrace',
+  'other',
+];
+
+const VIEW_OPTIONS: NonNullable<Listing['view']> = [
+  'sea',
+  'mountain',
+  'city',
+  'countryside',
+  'lake',
+  'river',
+  'forest',
+  'park',
+  'beach',
+  'other',
+];
+
+const SUITABLE_FOR_OPTIONS: NonNullable<Listing['suitableFor']> = [
+  'family',
+  'couple',
+  'single',
+  'business',
+  'students',
+  'investment',
+  'embassy',
+  'vacation home',
+  'other',
+];
+
+const FURNISHING_OPTIONS: NonNullable<Listing['furnishing']>[] = [
+  'furnished',
+  'unfurnished',
+  'partially furnished',
+  'other',
+];
+
+const CONDITION_OPTIONS: NonNullable<Listing['condition']>[] = [
+  'new',
+  'used',
+  'renovated',
+  'partially renovated',
+  'renovation needed',
+  'other',
+];
+
+const ENERGY_RATING_OPTIONS: NonNullable<Listing['energyRating']>[] = [
+  'A',
+  'B',
+  'C',
+  'D',
+  'E',
+  'F',
+  'G',
+];
+
 type NumericListingField =
   | 'bedrooms'
   | 'bathrooms'
@@ -72,6 +157,19 @@ function fromCsv(value: string): string[] {
     .split(',')
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+function toggleArrayValue<T extends string>(
+  values: T[] | undefined,
+  value: T,
+  checked: boolean
+): T[] {
+  const current = values ?? [];
+  if (checked) {
+    return current.includes(value) ? current : [...current, value];
+  }
+
+  return current.filter((item) => item !== value);
 }
 
 function buildSlug(value: string): string {
@@ -169,15 +267,6 @@ export default function ListingForm({
   const [listing, setListing] = useState<Listing>(() =>
     getInitialListing(initialListing)
   );
-  const [categoryCsv, setCategoryCsv] = useState(() => toCsv(listing.category));
-  const [featuresCsv, setFeaturesCsv] = useState(() => toCsv(listing.features));
-  const [amenitiesCsv, setAmenitiesCsv] = useState(() =>
-    toCsv(listing.amenities)
-  );
-  const [viewCsv, setViewCsv] = useState(() => toCsv(listing.view));
-  const [suitableForCsv, setSuitableForCsv] = useState(() =>
-    toCsv(listing.suitableFor)
-  );
   const [tagsCsv, setTagsCsv] = useState(() => toCsv(listing.tags));
   const [videosCsv, setVideosCsv] = useState(() => toCsv(listing.videos));
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -192,25 +281,18 @@ export default function ListingForm({
     [listing.title.en, mode]
   );
 
-  const syncArrayFields = (): Listing => ({
-    ...listing,
-    category: fromCsv(categoryCsv) as Listing['category'],
-    features: fromCsv(featuresCsv) as Listing['features'],
-    amenities: fromCsv(amenitiesCsv) as Listing['amenities'],
-    view: fromCsv(viewCsv) as Listing['view'],
-    suitableFor: fromCsv(suitableForCsv) as Listing['suitableFor'],
-    tags: fromCsv(tagsCsv),
-    videos: fromCsv(videosCsv),
-  });
-
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
     setIsSubmitting(true);
 
-    const next = syncArrayFields();
-    const slug = buildSlug(next.title.en || next.slug);
-    const payload = { ...next, slug };
+    const slug = buildSlug(listing.title.en || listing.slug);
+    const payload: Listing = {
+      ...listing,
+      slug,
+      tags: fromCsv(tagsCsv),
+      videos: fromCsv(videosCsv),
+    };
 
     try {
       const endpoint =
@@ -306,7 +388,9 @@ export default function ListingForm({
       )}
 
       <section className="space-y-3 rounded border border-gray-200 p-4">
-        <h2 className="font-medium">Localized Content</h2>
+        <h2 className="mb-3 border-b border-gray-100 pb-2 text-base font-semibold text-gray-700">
+          Localized Content
+        </h2>
         <div className="flex flex-wrap gap-2">
           {LOCALES.map((locale) => (
             <button
@@ -375,7 +459,9 @@ export default function ListingForm({
       </section>
 
       <section className="space-y-3 rounded border border-gray-200 p-4">
-        <h2 className="font-medium">Core Fields</h2>
+        <h2 className="mb-3 border-b border-gray-100 pb-2 text-base font-semibold text-gray-700">
+          Core Fields
+        </h2>
         <div className="grid gap-3 md:grid-cols-3">
           <div>
             <label className="mb-1 block text-sm">Listing Type</label>
@@ -427,12 +513,133 @@ export default function ListingForm({
             />
           </div>
           <div className="md:col-span-3">
-            <label className="mb-1 block text-sm">
-              Category[] (comma separated)
-            </label>
+            <p className="mb-2 block text-sm">Category</p>
+            <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
+              {CATEGORY_OPTIONS.map((option) => (
+                <label
+                  key={option}
+                  className="flex items-center gap-2 rounded border border-gray-200 px-3 py-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={listing.category.includes(option)}
+                    onChange={(event) =>
+                      setListing((prev) => ({
+                        ...prev,
+                        category: toggleArrayValue(
+                          prev.category,
+                          option,
+                          event.target.checked
+                        ),
+                      }))
+                    }
+                  />
+                  <span className="capitalize">{option}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="space-y-3 rounded border border-gray-200 p-4">
+        <h2 className="mb-3 border-b border-gray-100 pb-2 text-base font-semibold text-gray-700">
+          Address
+        </h2>
+        <div className="grid gap-3 md:grid-cols-3">
+          <div>
+            <label className="mb-1 block text-sm">City</label>
             <input
-              value={categoryCsv}
-              onChange={(event) => setCategoryCsv(event.target.value)}
+              value={listing.address.city}
+              onChange={(event) =>
+                setListing((prev) => ({
+                  ...prev,
+                  address: { ...prev.address, city: event.target.value },
+                }))
+              }
+              className="w-full rounded border border-gray-300 px-3 py-2"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm">Zip code</label>
+            <input
+              value={listing.address.zipCode}
+              onChange={(event) =>
+                setListing((prev) => ({
+                  ...prev,
+                  address: { ...prev.address, zipCode: event.target.value },
+                }))
+              }
+              className="w-full rounded border border-gray-300 px-3 py-2"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm">Country</label>
+            <input
+              value={listing.address.country}
+              onChange={(event) =>
+                setListing((prev) => ({
+                  ...prev,
+                  address: { ...prev.address, country: event.target.value },
+                }))
+              }
+              className="w-full rounded border border-gray-300 px-3 py-2"
+            />
+          </div>
+          <div className="md:col-span-3">
+            <label className="mb-1 block text-sm">Display address</label>
+            <input
+              value={listing.address.displayAddress ?? ''}
+              onChange={(event) =>
+                setListing((prev) => ({
+                  ...prev,
+                  address: {
+                    ...prev.address,
+                    displayAddress: event.target.value,
+                  },
+                }))
+              }
+              className="w-full rounded border border-gray-300 px-3 py-2"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm">Latitude</label>
+            <input
+              type="number"
+              step="any"
+              value={listing.address.coordinates.lat}
+              onChange={(event) =>
+                setListing((prev) => ({
+                  ...prev,
+                  address: {
+                    ...prev.address,
+                    coordinates: {
+                      ...prev.address.coordinates,
+                      lat: Number(event.target.value || 0),
+                    },
+                  },
+                }))
+              }
+              className="w-full rounded border border-gray-300 px-3 py-2"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm">Longitude</label>
+            <input
+              type="number"
+              step="any"
+              value={listing.address.coordinates.lng}
+              onChange={(event) =>
+                setListing((prev) => ({
+                  ...prev,
+                  address: {
+                    ...prev.address,
+                    coordinates: {
+                      ...prev.address.coordinates,
+                      lng: Number(event.target.value || 0),
+                    },
+                  },
+                }))
+              }
               className="w-full rounded border border-gray-300 px-3 py-2"
             />
           </div>
@@ -440,98 +647,9 @@ export default function ListingForm({
       </section>
 
       <section className="space-y-3 rounded border border-gray-200 p-4">
-        <h2 className="font-medium">Address</h2>
-        <div className="grid gap-3 md:grid-cols-3">
-          <input
-            placeholder="City"
-            value={listing.address.city}
-            onChange={(event) =>
-              setListing((prev) => ({
-                ...prev,
-                address: { ...prev.address, city: event.target.value },
-              }))
-            }
-            className="rounded border border-gray-300 px-3 py-2"
-          />
-          <input
-            placeholder="Zip code"
-            value={listing.address.zipCode}
-            onChange={(event) =>
-              setListing((prev) => ({
-                ...prev,
-                address: { ...prev.address, zipCode: event.target.value },
-              }))
-            }
-            className="rounded border border-gray-300 px-3 py-2"
-          />
-          <input
-            placeholder="Country"
-            value={listing.address.country}
-            onChange={(event) =>
-              setListing((prev) => ({
-                ...prev,
-                address: { ...prev.address, country: event.target.value },
-              }))
-            }
-            className="rounded border border-gray-300 px-3 py-2"
-          />
-          <input
-            placeholder="Display address"
-            value={listing.address.displayAddress ?? ''}
-            onChange={(event) =>
-              setListing((prev) => ({
-                ...prev,
-                address: {
-                  ...prev.address,
-                  displayAddress: event.target.value,
-                },
-              }))
-            }
-            className="rounded border border-gray-300 px-3 py-2 md:col-span-3"
-          />
-          <input
-            type="number"
-            step="any"
-            placeholder="Latitude"
-            value={listing.address.coordinates.lat}
-            onChange={(event) =>
-              setListing((prev) => ({
-                ...prev,
-                address: {
-                  ...prev.address,
-                  coordinates: {
-                    ...prev.address.coordinates,
-                    lat: Number(event.target.value || 0),
-                  },
-                },
-              }))
-            }
-            className="rounded border border-gray-300 px-3 py-2"
-          />
-          <input
-            type="number"
-            step="any"
-            placeholder="Longitude"
-            value={listing.address.coordinates.lng}
-            onChange={(event) =>
-              setListing((prev) => ({
-                ...prev,
-                address: {
-                  ...prev.address,
-                  coordinates: {
-                    ...prev.address.coordinates,
-                    lng: Number(event.target.value || 0),
-                  },
-                },
-              }))
-            }
-            className="rounded border border-gray-300 px-3 py-2"
-          />
-        </div>
-      </section>
-
-      <section className="space-y-3 rounded border border-gray-200 p-4">
-        <h2 className="font-medium">Property Details</h2>
+        <h2 className="mb-3 border-b border-gray-100 pb-2 text-base font-semibold text-gray-700">
+          Property Details
+        </h2>
         <div className="grid gap-3 md:grid-cols-3">
           {NUMERIC_FIELDS.map(({ label, key }) => (
             <div key={key}>
@@ -553,42 +671,69 @@ export default function ListingForm({
           ))}
           <div>
             <label className="mb-1 block text-sm">Furnishing</label>
-            <input
+            <select
               value={listing.furnishing ?? ''}
               onChange={(event) =>
                 setListing((prev) => ({
                   ...prev,
-                  furnishing: event.target.value as Listing['furnishing'],
+                  furnishing:
+                    event.target.value === ''
+                      ? undefined
+                      : (event.target.value as Listing['furnishing']),
                 }))
               }
-              className="w-full rounded border border-gray-300 px-3 py-2"
-            />
+              className="w-full rounded border border-gray-300 px-3 py-2">
+              <option value="">-</option>
+              {FURNISHING_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="mb-1 block text-sm">Condition</label>
-            <input
+            <select
               value={listing.condition ?? ''}
               onChange={(event) =>
                 setListing((prev) => ({
                   ...prev,
-                  condition: event.target.value as Listing['condition'],
+                  condition:
+                    event.target.value === ''
+                      ? undefined
+                      : (event.target.value as Listing['condition']),
                 }))
               }
-              className="w-full rounded border border-gray-300 px-3 py-2"
-            />
+              className="w-full rounded border border-gray-300 px-3 py-2">
+              <option value="">-</option>
+              {CONDITION_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="mb-1 block text-sm">Energy Rating</label>
-            <input
+            <select
               value={listing.energyRating ?? ''}
               onChange={(event) =>
                 setListing((prev) => ({
                   ...prev,
-                  energyRating: event.target.value as Listing['energyRating'],
+                  energyRating:
+                    event.target.value === ''
+                      ? undefined
+                      : (event.target.value as Listing['energyRating']),
                 }))
               }
-              className="w-full rounded border border-gray-300 px-3 py-2"
-            />
+              className="w-full rounded border border-gray-300 px-3 py-2">
+              <option value="">-</option>
+              {ENERGY_RATING_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="mb-1 block text-sm">Lease Unit</label>
@@ -632,32 +777,114 @@ export default function ListingForm({
       </section>
 
       <section className="space-y-3 rounded border border-gray-200 p-4">
-        <h2 className="font-medium">Multi-select Arrays (comma separated)</h2>
+        <h2 className="mb-3 border-b border-gray-100 pb-2 text-base font-semibold text-gray-700">
+          Multi-select Arrays
+        </h2>
         <div className="grid gap-3 md:grid-cols-2">
-          <input
-            placeholder="Features"
-            value={featuresCsv}
-            onChange={(event) => setFeaturesCsv(event.target.value)}
-            className="rounded border border-gray-300 px-3 py-2"
-          />
-          <input
-            placeholder="Amenities"
-            value={amenitiesCsv}
-            onChange={(event) => setAmenitiesCsv(event.target.value)}
-            className="rounded border border-gray-300 px-3 py-2"
-          />
-          <input
-            placeholder="Views"
-            value={viewCsv}
-            onChange={(event) => setViewCsv(event.target.value)}
-            className="rounded border border-gray-300 px-3 py-2"
-          />
-          <input
-            placeholder="Suitable for"
-            value={suitableForCsv}
-            onChange={(event) => setSuitableForCsv(event.target.value)}
-            className="rounded border border-gray-300 px-3 py-2"
-          />
+          <div>
+            <p className="mb-2 block text-sm">Features</p>
+            <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
+              {FEATURE_OPTIONS.map((option) => (
+                <label
+                  key={option}
+                  className="flex items-center gap-2 rounded border border-gray-200 px-3 py-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={Boolean(listing.features?.includes(option))}
+                    onChange={(event) =>
+                      setListing((prev) => ({
+                        ...prev,
+                        features: toggleArrayValue(
+                          prev.features,
+                          option,
+                          event.target.checked
+                        ),
+                      }))
+                    }
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p className="mb-2 block text-sm">Amenities</p>
+            <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
+              {AMENITY_OPTIONS.map((option) => (
+                <label
+                  key={option}
+                  className="flex items-center gap-2 rounded border border-gray-200 px-3 py-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={Boolean(listing.amenities?.includes(option))}
+                    onChange={(event) =>
+                      setListing((prev) => ({
+                        ...prev,
+                        amenities: toggleArrayValue(
+                          prev.amenities,
+                          option,
+                          event.target.checked
+                        ),
+                      }))
+                    }
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p className="mb-2 block text-sm">Views</p>
+            <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
+              {VIEW_OPTIONS.map((option) => (
+                <label
+                  key={option}
+                  className="flex items-center gap-2 rounded border border-gray-200 px-3 py-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={Boolean(listing.view?.includes(option))}
+                    onChange={(event) =>
+                      setListing((prev) => ({
+                        ...prev,
+                        view: toggleArrayValue(
+                          prev.view,
+                          option,
+                          event.target.checked
+                        ),
+                      }))
+                    }
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p className="mb-2 block text-sm">Suitable for</p>
+            <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
+              {SUITABLE_FOR_OPTIONS.map((option) => (
+                <label
+                  key={option}
+                  className="flex items-center gap-2 rounded border border-gray-200 px-3 py-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={Boolean(listing.suitableFor?.includes(option))}
+                    onChange={(event) =>
+                      setListing((prev) => ({
+                        ...prev,
+                        suitableFor: toggleArrayValue(
+                          prev.suitableFor,
+                          option,
+                          event.target.checked
+                        ),
+                      }))
+                    }
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
+          </div>
           <input
             placeholder="Tags"
             value={tagsCsv}
@@ -674,7 +901,9 @@ export default function ListingForm({
       </section>
 
       <section className="space-y-3 rounded border border-gray-200 p-4">
-        <h2 className="font-medium">Status</h2>
+        <h2 className="mb-3 border-b border-gray-100 pb-2 text-base font-semibold text-gray-700">
+          Status
+        </h2>
         <div className="grid gap-2 md:grid-cols-3">
           {BOOLEAN_FIELDS.map(({ key, label }) => (
             <label key={key} className="flex items-center gap-2 text-sm">
@@ -696,15 +925,23 @@ export default function ListingForm({
 
       {mode === 'edit' && (
         <section className="space-y-3 rounded border border-gray-200 p-4">
-          <h2 className="font-medium">Images</h2>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(event) =>
-              handleImageUpload(event.target.files?.[0] ?? null)
-            }
-            disabled={uploading}
-          />
+          <h2 className="mb-3 border-b border-gray-100 pb-2 text-base font-semibold text-gray-700">
+            Images
+          </h2>
+          <label className="flex cursor-pointer items-center justify-center rounded border border-dashed border-gray-300 bg-gray-50 px-4 py-6 text-sm text-gray-600 hover:bg-gray-100">
+            <span>
+              {uploading ? 'Uploading image...' : 'Click to upload image'}
+            </span>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(event) =>
+                handleImageUpload(event.target.files?.[0] ?? null)
+              }
+              disabled={uploading}
+              className="hidden"
+            />
+          </label>
           <div className="grid gap-3 md:grid-cols-3">
             {(listing.images ?? []).map((image) => (
               <div
