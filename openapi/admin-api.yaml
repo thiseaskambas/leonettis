@@ -1,0 +1,430 @@
+openapi: 3.1.0
+info:
+  title: Leonettis Admin API
+  version: 1.0.0
+  description: |
+    Admin-only APIs for authentication, listings CRUD, image storage, and one-time seeding.
+servers:
+  - url: http://localhost:3000
+tags:
+  - name: Admin Auth
+  - name: Admin Listings
+  - name: Admin Seed
+paths:
+  /api/admin/auth/login:
+    post:
+      tags: [Admin Auth]
+      summary: Login with admin password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [password]
+              properties:
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Authenticated
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+              description: Sets the httpOnly admin_token JWT cookie.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+        "401":
+          description: Invalid credentials
+  /api/admin/auth/logout:
+    post:
+      tags: [Admin Auth]
+      summary: Logout and clear admin cookie
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+  /api/admin/listings:
+    get:
+      tags: [Admin Listings]
+      summary: Get all listings (admin view)
+      security:
+        - adminCookie: []
+      responses:
+        "200":
+          description: Listing collection
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  listings:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Listing"
+        "401":
+          description: Unauthorized
+    post:
+      tags: [Admin Listings]
+      summary: Create listing
+      security:
+        - adminCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ListingInput"
+      responses:
+        "201":
+          description: Created listing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  listing:
+                    $ref: "#/components/schemas/Listing"
+        "400":
+          description: Validation error
+        "401":
+          description: Unauthorized
+  /api/admin/listings/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    get:
+      tags: [Admin Listings]
+      summary: Get listing by id
+      security:
+        - adminCookie: []
+      responses:
+        "200":
+          description: Listing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  listing:
+                    $ref: "#/components/schemas/Listing"
+        "404":
+          description: Not found
+        "401":
+          description: Unauthorized
+    put:
+      tags: [Admin Listings]
+      summary: Update listing by id
+      security:
+        - adminCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ListingInput"
+      responses:
+        "200":
+          description: Updated listing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  listing:
+                    $ref: "#/components/schemas/Listing"
+        "404":
+          description: Not found
+        "401":
+          description: Unauthorized
+    delete:
+      tags: [Admin Listings]
+      summary: Delete listing by id
+      security:
+        - adminCookie: []
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+        "404":
+          description: Not found
+        "401":
+          description: Unauthorized
+  /api/admin/listings/{id}/images:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    post:
+      tags: [Admin Listings]
+      summary: Upload a listing image
+      security:
+        - adminCookie: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  image:
+                    $ref: "#/components/schemas/ListingImageWithKey"
+        "404":
+          description: Listing not found
+        "401":
+          description: Unauthorized
+  /api/admin/listings/images:
+    delete:
+      tags: [Admin Listings]
+      summary: Delete a listing image
+      security:
+        - adminCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [listingId, imageUrl, imageKey]
+              properties:
+                listingId:
+                  type: string
+                imageUrl:
+                  type: string
+                imageKey:
+                  type: string
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+        "401":
+          description: Unauthorized
+  /api/admin/seed:
+    post:
+      tags: [Admin Seed]
+      summary: One-time seed from static mock data
+      security:
+        - adminCookie: []
+      responses:
+        "200":
+          description: Seed operation completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  inserted:
+                    type: integer
+                  skipped:
+                    type: integer
+        "401":
+          description: Unauthorized
+components:
+  securitySchemes:
+    adminCookie:
+      type: apiKey
+      in: cookie
+      name: admin_token
+  schemas:
+    ListingImage:
+      type: object
+      required: [url, name]
+      properties:
+        url:
+          type: string
+        name:
+          type: string
+        key:
+          type: string
+        description:
+          type: string
+    ListingImageWithKey:
+      allOf:
+        - $ref: "#/components/schemas/ListingImage"
+        - type: object
+          required: [key]
+          properties:
+            key:
+              type: string
+    ListingInput:
+      type: object
+      required: [title, slug, address, listingType, category, propertyType, tags]
+      properties:
+        id:
+          type: string
+        title:
+          type: object
+          additionalProperties:
+            type: string
+        description:
+          type: object
+          additionalProperties:
+            type: string
+        slug:
+          type: string
+        address:
+          type: object
+          properties:
+            streetNumber:
+              type: string
+            streetName:
+              type: string
+            city:
+              type: string
+            state:
+              type: string
+            region:
+              type: string
+            zipCode:
+              type: string
+            country:
+              type: string
+            displayAddress:
+              type: string
+            coordinates:
+              type: object
+              required: [lat, lng]
+              properties:
+                lat:
+                  type: number
+                lng:
+                  type: number
+        listingType:
+          type: string
+          enum: [buy, rent]
+        category:
+          type: array
+          items:
+            type: string
+        propertyType:
+          type: string
+        price:
+          type: number
+        bedrooms:
+          type: number
+        bathrooms:
+          type: number
+        squareMetersInterior:
+          type: number
+        squareMetersOutdoor:
+          type: number
+        squareMetersTotal:
+          type: number
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/ListingImage"
+        mainImage:
+          type: string
+        videos:
+          type: array
+          items:
+            type: string
+        features:
+          type: array
+          items:
+            type: string
+        furnishing:
+          type: string
+        amenities:
+          type: array
+          items:
+            type: string
+        suitableFor:
+          type: array
+          items:
+            type: string
+        view:
+          type: array
+          items:
+            type: string
+        publishedAt:
+          type: string
+        updatedAt:
+          type: string
+        isFeatured:
+          type: boolean
+        isActive:
+          type: boolean
+        isSold:
+          type: boolean
+        isRented:
+          type: boolean
+        tags:
+          type: array
+          items:
+            type: string
+        favorite:
+          type: boolean
+        urgent:
+          type: boolean
+        condition:
+          type: string
+        yearBuilt:
+          type: number
+        energyRating:
+          type: string
+        yearRenovated:
+          type: number
+        availableNow:
+          type: boolean
+        availableUponRequest:
+          type: boolean
+        availableFrom:
+          type: string
+        availableTo:
+          type: string
+        leaseDuration:
+          type: number
+        leaseDurationUnit:
+          type: string
+          enum: [month, year]
+        leaseDurationType:
+          type: string
+          enum: [fixed, flexible]
+    Listing:
+      allOf:
+        - $ref: "#/components/schemas/ListingInput"
+        - type: object
+          required: [id, slug, publishedAt, updatedAt]

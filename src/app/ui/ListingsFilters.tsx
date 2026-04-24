@@ -27,7 +27,7 @@ import {
   pruneSelections,
   selectionsToParams,
 } from '../lib/definitions/search-filters';
-import { parseSearchParams } from '../lib/services/listings-service';
+import { parseSearchParams } from '../lib/helpers/listing-search-params';
 
 const PRICE_MAX = 2_000_000;
 const PRICE_STEP = 10_000;
@@ -155,7 +155,8 @@ const ListingsFilters = ({
   const handleSearch = useCallback(() => {
     const params = selectionsToParams(listingType, selections);
     if (priceRange[0] > 0) params.set('minPrice', String(priceRange[0]));
-    if (priceRange[1] < PRICE_MAX) params.set('maxPrice', String(priceRange[1]));
+    if (priceRange[1] < PRICE_MAX)
+      params.set('maxPrice', String(priceRange[1]));
     setIsDrawerOpen(false);
     router.replace(`/${listingType}?${params.toString()}`);
   }, [listingType, selections, priceRange, router]);
@@ -224,7 +225,9 @@ const ListingsFilters = ({
                 <Accordion.Trigger
                   className={expandedKeys.has(filter.id) ? 'pb-0' : ''}>
                   <div className="flex flex-col items-start">
-                    <span className="text-base">{getFilterLabel(filter.id)}</span>
+                    <span className="text-base">
+                      {getFilterLabel(filter.id)}
+                    </span>
                     <span className="text-tiff-700 dark:text-brand-primary h-5 text-base font-normal">
                       {hasSelection && summary}
                     </span>
@@ -239,12 +242,13 @@ const ListingsFilters = ({
                   {filter.selectionMode === 'single' ? (
                     <RadioGroup
                       value={getSelectedIds(selections[filter.id])[0] ?? ''}
-                      onChange={(value) =>
-                        handleSingleSelect(filter.id, value)
-                      }
+                      onChange={(value) => handleSingleSelect(filter.id, value)}
                       name={`filter-${filter.id}`}>
                       {visibleOptions.map((option) => (
-                        <Radio key={option.id} value={option.id} className="group">
+                        <Radio
+                          key={option.id}
+                          value={option.id}
+                          className="group">
                           <Radio.Control>
                             <Radio.Indicator className="radio-indicator-brand" />
                           </Radio.Control>
@@ -302,9 +306,7 @@ const ListingsFilters = ({
             </button>
           )}
         </div>
-        <div className="flex flex-1 flex-col gap-4 p-4">
-          {filterContent}
-        </div>
+        <div className="flex flex-1 flex-col gap-4 p-4">{filterContent}</div>
         <div className="border-tiff-gray-200 border-t p-4 dark:border-white/10">
           <Button
             className="bg-tiff-700 dark:bg-brand-primary w-full text-base font-semibold text-white"

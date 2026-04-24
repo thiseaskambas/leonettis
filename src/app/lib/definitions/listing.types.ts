@@ -97,6 +97,7 @@ type Condition =
 export interface ListingImage {
   url: string;
   name: string;
+  key?: string;
   description?: string;
 }
 

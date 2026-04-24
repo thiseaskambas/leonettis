@@ -13,6 +13,8 @@ import PropertyDetails from './components/PropertyDetails';
 import PropertyGallery from './components/PropertyGallery';
 import PropertyHero from './components/PropertyHero';
 
+export const dynamic = 'force-dynamic';
+
 interface PropertyPageProps {
   params: Promise<{ locale: string; slug: string }>;
 }
@@ -27,7 +29,7 @@ export async function generateMetadata({
   }
 
   setRequestLocale(locale);
-  const raw = getListingBySlug(slug);
+  const raw = await getListingBySlug(slug);
   if (!raw) {
     return {};
   }
@@ -41,7 +43,7 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
   const t = await getTranslations('property');
   const tFilters = await getTranslations('search-bar.filters');
 
-  const raw = getListingBySlug(slug);
+  const raw = await getListingBySlug(slug);
   if (!raw) notFound();
 
   const listing = getLocalizedListing(raw, locale as Locale);
