@@ -36,4 +36,33 @@ describe('/api/admin/listings route', () => {
     expect(response.status).toBe(200);
     expect(Array.isArray(body.listings)).toBe(true);
   });
+
+  it('persists predefined and custom array values in create payload', async () => {
+    const request = new Request('http://localhost/api/admin/listings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: { en: 'Sunset Villa', fr: '', gr: '', de: '', it: '' },
+        listingType: 'buy',
+        propertyType: 'house',
+        category: ['residential'],
+        tags: [],
+        features: ['garden', 'Roof Deck'],
+        amenities: ['parking', 'Private Dock'],
+        view: ['sea', 'Sunset Panorama'],
+        suitableFor: ['family', 'Digital Nomads'],
+      }),
+    });
+
+    const response = await POST(request as never);
+    expect(response.status).toBe(201);
+    expect(insertOne).toHaveBeenCalledWith(
+      expect.objectContaining({
+        features: ['garden', 'Roof Deck'],
+        amenities: ['parking', 'Private Dock'],
+        view: ['sea', 'Sunset Panorama'],
+        suitableFor: ['family', 'Digital Nomads'],
+      })
+    );
+  });
 });

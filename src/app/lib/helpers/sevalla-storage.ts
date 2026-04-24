@@ -3,6 +3,10 @@ import {
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+
+const ALLOWED_MEDIA_CONTENT_TYPE_PREFIXES = ['image/', 'video/'] as const;
+const DEFAULT_UPLOAD_URL_TTL_SECONDS = 900;
 
 function getSevallaConfig() {
   const endpoint = process.env.SEVALLA_ENDPOINT;
@@ -62,6 +66,48 @@ export async function uploadToSevalla(
   );
 
   return `${publicUrl.replace(/\/$/, '')}/${key}`;
+}
+
+interface PresignedMediaUploadParams {
+  key: string;
+  contentType: string;
+  contentLength: number;
+  expiresInSeconds?: number;
+}
+
+export async function createSevallaPresignedUploadUrl({
+  key,
+  contentType,
+  contentLength,
+  expiresInSeconds = DEFAULT_UPLOAD_URL_TTL_SECONDS,
+}: PresignedMediaUploadParams): Promise<string> {
+  if (
+    !ALLOWED_MEDIA_CONTENT_TYPE_PREFIXES.some((prefix) =>
+      contentType.startsWith(prefix)
+    )
+  ) {
+    throw new Error('Unsupported media content type for upload URL');
+  }
+
+  if (!Number.isFinite(contentLength) || contentLength <= 0) {
+    throw new Error('contentLength must be a positive number');
+  }
+
+  if (!Number.isFinite(expiresInSeconds) || expiresInSeconds <= 0) {
+    throw new Error('expiresInSeconds must be a positive number');
+  }
+
+  const { bucket } = getSevallaConfig();
+  return getSignedUrl(
+    getS3Client(),
+    new PutObjectCommand({
+      Bucket: bucket,
+      Key: key,
+      ContentType: contentType,
+      ContentLength: contentLength,
+    }),
+    { expiresIn: expiresInSeconds }
+  );
 }
 
 export async function deleteFromSevalla(key: string): Promise<void> {

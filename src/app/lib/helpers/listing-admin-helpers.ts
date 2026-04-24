@@ -58,6 +58,56 @@ function sanitizeBoolean(value: unknown): boolean | undefined {
   return typeof value === 'boolean' ? value : undefined;
 }
 
+function inferMediaNameFromUrl(url: string): string {
+  try {
+    const pathname = new URL(url).pathname;
+    const filename = pathname.split('/').filter(Boolean).at(-1);
+    if (filename) return decodeURIComponent(filename);
+  } catch {
+    // Fallback to raw string parsing for non-URL values.
+  }
+
+  const fallback = url.split('/').filter(Boolean).at(-1);
+  return fallback ? decodeURIComponent(fallback) : 'video';
+}
+
+function sanitizeVideoItem(
+  item: unknown
+): NonNullable<Listing['videos']>[number] | null {
+  if (typeof item === 'string') {
+    const url = item.trim();
+    if (!url) return null;
+    return {
+      url,
+      name: inferMediaNameFromUrl(url),
+    };
+  }
+
+  if (!item || typeof item !== 'object') return null;
+  const video = item as Record<string, unknown>;
+  if (typeof video.url !== 'string') return null;
+  const url = video.url.trim();
+  if (!url) return null;
+
+  const name =
+    typeof video.name === 'string' && video.name.trim()
+      ? video.name.trim()
+      : inferMediaNameFromUrl(url);
+
+  return {
+    url,
+    name,
+    key:
+      typeof video.key === 'string' && video.key.trim()
+        ? video.key.trim()
+        : undefined,
+    description:
+      typeof video.description === 'string' ? video.description : undefined,
+    contentType:
+      typeof video.contentType === 'string' ? video.contentType : undefined,
+  };
+}
+
 export function sanitizeListingInput(payload: unknown): Partial<Listing> {
   const data = payload && typeof payload === 'object' ? payload : {};
   const raw = data as Record<string, unknown>;
@@ -86,7 +136,11 @@ export function sanitizeListingInput(payload: unknown): Partial<Listing> {
     squareMetersOutdoor: sanitizeNumber(raw.squareMetersOutdoor),
     squareMetersTotal: sanitizeNumber(raw.squareMetersTotal),
     mainImage: typeof raw.mainImage === 'string' ? raw.mainImage : undefined,
-    videos: sanitizeStringArray(raw.videos),
+    videos: Array.isArray(raw.videos)
+      ? (raw.videos
+          .map((item) => sanitizeVideoItem(item))
+          .filter(Boolean) as Listing['videos'])
+      : undefined,
     features: sanitizeStringArray(raw.features) as Listing['features'],
     furnishing:
       typeof raw.furnishing === 'string'

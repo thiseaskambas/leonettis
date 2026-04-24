@@ -79,4 +79,55 @@ describe('listing-admin-helpers', () => {
       },
     ]);
   });
+
+  it('keeps trimmed predefined and custom array values', () => {
+    const payload = sanitizeListingInput({
+      features: ['garden', ' roof deck ', ''],
+      amenities: ['parking', ' Private Dock '],
+      view: ['sea', ' Sunset Panorama '],
+      suitableFor: ['family', ' Digital Nomads '],
+    });
+
+    expect(payload.features).toEqual(['garden', 'roof deck']);
+    expect(payload.amenities).toEqual(['parking', 'Private Dock']);
+    expect(payload.view).toEqual(['sea', 'Sunset Panorama']);
+    expect(payload.suitableFor).toEqual(['family', 'Digital Nomads']);
+  });
+
+  it('normalizes videos as metadata objects', () => {
+    const payload = sanitizeListingInput({
+      videos: [
+        {
+          url: 'https://cdn.example.com/listings/1/videos/clip.mp4',
+          name: 'clip.mp4',
+          key: 'listings/1/videos/clip.mp4',
+          description: 'Walkthrough',
+          contentType: 'video/mp4',
+        },
+      ],
+    });
+
+    expect(payload.videos).toEqual([
+      {
+        url: 'https://cdn.example.com/listings/1/videos/clip.mp4',
+        name: 'clip.mp4',
+        key: 'listings/1/videos/clip.mp4',
+        description: 'Walkthrough',
+        contentType: 'video/mp4',
+      },
+    ]);
+  });
+
+  it('supports legacy string video arrays', () => {
+    const payload = sanitizeListingInput({
+      videos: ['https://cdn.example.com/listings/1/videos/clip.mp4'],
+    });
+
+    expect(payload.videos).toEqual([
+      {
+        url: 'https://cdn.example.com/listings/1/videos/clip.mp4',
+        name: 'clip.mp4',
+      },
+    ]);
+  });
 });

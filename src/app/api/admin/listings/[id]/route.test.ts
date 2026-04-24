@@ -131,4 +131,93 @@ describe('/api/admin/listings/[id] route', () => {
       { returnDocument: 'after', projection: { _id: 0 } }
     );
   });
+
+  it('passes predefined and custom array values in PUT updates', async () => {
+    findOneAndUpdate.mockResolvedValueOnce({
+      id: '1',
+      features: ['garden', 'Roof Deck'],
+      amenities: ['parking', 'Private Dock'],
+      view: ['sea', 'Sunset Panorama'],
+      suitableFor: ['family', 'Digital Nomads'],
+    });
+
+    const request = new Request('http://localhost/api/admin/listings/1', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        features: ['garden', 'Roof Deck'],
+        amenities: ['parking', 'Private Dock'],
+        view: ['sea', 'Sunset Panorama'],
+        suitableFor: ['family', 'Digital Nomads'],
+      }),
+    });
+
+    const response = await PUT(request as never, {
+      params: Promise.resolve({ id: '1' }),
+    });
+
+    expect(response.status).toBe(200);
+    expect(findOneAndUpdate).toHaveBeenCalledWith(
+      { id: '1' },
+      {
+        $set: expect.objectContaining({
+          features: ['garden', 'Roof Deck'],
+          amenities: ['parking', 'Private Dock'],
+          view: ['sea', 'Sunset Panorama'],
+          suitableFor: ['family', 'Digital Nomads'],
+          updatedAt: expect.any(String),
+        }),
+      },
+      { returnDocument: 'after', projection: { _id: 0 } }
+    );
+  });
+
+  it('preserves video metadata in PUT updates', async () => {
+    findOneAndUpdate.mockResolvedValueOnce({
+      id: '1',
+      videos: [
+        {
+          url: 'https://cdn.example.com/listings/1/video.mp4',
+          name: 'video.mp4',
+          key: 'listings/1/videos/video.mp4',
+        },
+      ],
+    });
+
+    const request = new Request('http://localhost/api/admin/listings/1', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        videos: [
+          {
+            url: 'https://cdn.example.com/listings/1/video.mp4',
+            name: 'video.mp4',
+            key: 'listings/1/videos/video.mp4',
+          },
+        ],
+      }),
+    });
+
+    const response = await PUT(request as never, {
+      params: Promise.resolve({ id: '1' }),
+    });
+
+    expect(response.status).toBe(200);
+    expect(findOneAndUpdate).toHaveBeenCalledWith(
+      { id: '1' },
+      {
+        $set: expect.objectContaining({
+          videos: [
+            {
+              url: 'https://cdn.example.com/listings/1/video.mp4',
+              name: 'video.mp4',
+              key: 'listings/1/videos/video.mp4',
+            },
+          ],
+          updatedAt: expect.any(String),
+        }),
+      },
+      { returnDocument: 'after', projection: { _id: 0 } }
+    );
+  });
 });

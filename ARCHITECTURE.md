@@ -92,15 +92,15 @@ Copy `.example.env` to `.env.local` and fill in all values before running locall
 | `ADMIN_PASSWORD`   | Yes      | Plain-text password for admin login              |
 | `ADMIN_JWT_SECRET` | Yes      | Secret for signing JWTs — must be 32+ characters |
 
-### Sevalla image storage
+### Sevalla media storage
 
-| Variable             | Required | Description                                   |
-| -------------------- | -------- | --------------------------------------------- |
-| `SEVALLA_ENDPOINT`   | Yes      | S3-compatible API endpoint URL                |
-| `SEVALLA_BUCKET`     | Yes      | Bucket name                                   |
-| `SEVALLA_ACCESS_KEY` | Yes      | S3 access key ID                              |
-| `SEVALLA_SECRET_KEY` | Yes      | S3 secret access key                          |
-| `SEVALLA_PUBLIC_URL` | Yes      | Public CDN/bucket base URL for serving images |
+| Variable             | Required | Description                                  |
+| -------------------- | -------- | -------------------------------------------- |
+| `SEVALLA_ENDPOINT`   | Yes      | S3-compatible API endpoint URL               |
+| `SEVALLA_BUCKET`     | Yes      | Bucket name                                  |
+| `SEVALLA_ACCESS_KEY` | Yes      | S3 access key ID                             |
+| `SEVALLA_SECRET_KEY` | Yes      | S3 secret access key                         |
+| `SEVALLA_PUBLIC_URL` | Yes      | Public CDN/bucket base URL for serving media |
 
 ### Email
 
@@ -194,7 +194,7 @@ getLocalizedListing(listing, locale) [listing-helpers.ts]
 
 1. Calls `getListingBySlug(slug)` — returns `null` → `notFound()`
 2. Builds translation maps for all enum labels (features, amenities, conditions, etc.) server-side
-3. Renders four components: `PropertyHero`, `PropertyBreadcrumb`, `PropertyDetails`, `PropertyGallery`
+3. Renders five components: `PropertyHero`, `PropertyBreadcrumb`, `PropertyDetails`, `PropertyGallery`, `PropertyVideoGallery`
 
 ### Filter Component
 
@@ -245,17 +245,23 @@ Defined in [src/app/lib/definitions/listing.types.ts](src/app/lib/definitions/li
 | ----------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `ListingCategory` | `commercial`, `residential`, `industrial`, `agricultural`                                                                        |
 | `PropertyType`    | `apartment`, `field`, `house`, `land`, `business`, `garage`, `building`, `office`, `warehouse`                                   |
-| `ViewType`        | `sea`, `mountain`, `city`, `countryside`, `lake`, `river`, `forest`, `park`, `beach`, `other`                                    |
-| `Amenities`       | `swimming pool`, `gym`, `jacuzzi`, `sauna`, `steam room`, `tennis court`, `golf course`, `parking`, `garage`, `terrace`, `other` |
-| `Features`        | `air conditioning`, `heating`, `fireplace`, `stove`, `balcony`, `terrace`, `garden`, `parking`, `garage`, `other`                |
+| `ViewType`        | Canonical values: `sea`, `mountain`, `city`, `countryside`, `lake`, `river`, `forest`, `park`, `beach`, `other`                   |
+| `Amenities`       | Canonical values: `swimming pool`, `gym`, `jacuzzi`, `sauna`, `steam room`, `tennis court`, `golf course`, `parking`, `garage`, `terrace`, `other` |
+| `Features`        | Canonical values: `air conditioning`, `heating`, `fireplace`, `stove`, `balcony`, `terrace`, `garden`, `parking`, `garage`, `other` |
 | `Furnishing`      | `furnished`, `unfurnished`, `partially furnished`, `other`                                                                       |
-| `SuitableFor`     | `family`, `couple`, `single`, `business`, `students`, `investment`, `embassy`, `vacation home`, `other`                          |
+| `SuitableFor`     | Canonical values: `family`, `couple`, `single`, `business`, `students`, `investment`, `embassy`, `vacation home`, `other`         |
 | `EnergyRating`    | `A`–`G`                                                                                                                          |
 | `Condition`       | `new`, `used`, `renovated`, `partially renovated`, `renovation needed`, `other`                                                  |
 
+For admin-managed array fields (`features`, `amenities`, `view`, `suitableFor`), listings may also store custom free-text values in addition to these canonical options.
+
 **`LocalizedListing`** extends `Listing` but with `title: string` and `description?: string` instead of `Record<Locale, string>`. Use this type whenever a component receives a listing that's already been localized.
 
-**`ListingImage`:** `{ url: string; name: string; key?: string; description?: string }`. The `key` is the S3 object key — only present for images uploaded through the admin. Required for deletion from Sevalla.
+**`ListingImage`:** `{ url: string; name: string; key?: string; description?: string }`.
+
+**`ListingVideo`:** `{ url: string; name: string; key?: string; description?: string }`.
+
+The `key` is the S3 object key for media uploaded through admin and is used for delete operations.
 
 ### Service Layer
 
@@ -371,10 +377,12 @@ All routes live under `/api/admin/`. The middleware protects all of them except 
 
 #### Image routes
 
-| Method | Path                              | Notes                                                                                                                                                                                |
-| ------ | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| POST   | `/api/admin/listings/[id]/images` | Accepts `multipart/form-data` with a `file` field. Sanitizes filename. Uploads to Sevalla. Pushes `{ url, name, key }` into `listing.images[]` in MongoDB. Returns the image object. |
-| DELETE | `/api/admin/listings/images`      | Body: `{ listingId, imageUrl, imageKey }`. Deletes from Sevalla (by key), then removes from MongoDB images array (matched by URL). Returns `200`.                                    |
+| Method | Path                              | Notes                                                                                                                                                                                                                                                                                 |
+| ------ | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| POST   | `/api/admin/listings/[id]/images` | Accepts `multipart/form-data` with a `file` field. Supports image/video MIME types. Uploads to Sevalla under `listings/{id}/images/...` or `listings/{id}/videos/...`. Images are pushed to `listing.images[]`; videos are pushed to `listing.videos[]` as metadata objects. Returns uploaded media metadata. |
+| POST   | `/api/admin/listings/[id]/media/presign` | Validates `filename`, `contentType`, `size`, and listing existence. Enforces max file size `500MB` (`524288000` bytes). Returns signed Sevalla PUT URL + media metadata (`url`, `name`, `key`, `mediaType`) for direct browser upload.                                              |
+| POST   | `/api/admin/listings/[id]/media/finalize` | Persists uploaded media metadata on listing after successful direct browser upload. Supports both images and videos.                                                                                                                                                              |
+| DELETE | `/api/admin/listings/images`      | Body: `{ listingId, mediaType, mediaUrl, mediaKey }`. Removes the media reference from MongoDB and deletes the object from Sevalla by key. Returns `200` with an explicit lifecycle confirmation message.                                                                                           |
 
 #### Seed route
 
@@ -382,18 +390,35 @@ All routes live under `/api/admin/`. The middleware protects all of them except 
 | ------ | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | POST   | `/api/admin/seed` | One-time data import. Iterates `listingsData` mock array, skips existing listings (matched by `id`), inserts new ones. Returns `{ inserted, skipped }`. |
 
-### Image Upload Flow
+### Media Upload Flow
 
 ```
-Admin UI selects file → FormData({ file })
+Admin UI creates listing first, then uploads selected files.
+For large videos, upload bytes go browser->Sevalla via signed URL.
+  selection UX: additive picker, dedupe by file metadata, per-file remove, clear-all
+  create-mode upload execution: each file is attempted independently; one failure does not short-circuit later files
               │
               ▼
+POST /api/admin/listings/[id]/media/presign
+  validate file metadata (type + <=500MB + listing exists)
+  create signed PutObject URL and deterministic media key
+              │
+              ▼
+Browser PUT signedUploadUrl (file bytes sent directly to Sevalla)
+              │
+              ▼
+POST /api/admin/listings/[id]/media/finalize
+  persist { url, name, key, mediaType, contentType? } on listing
+              │
+              ▼
+Legacy fallback/server upload:
 POST /api/admin/listings/[id]/images
+  validate file type: image/* or video/* (fallback to extension when File.type is missing)
   sanitize filename: lowercase, spaces→dashes, strip unsafe chars
               │
               ▼
 uploadToSevalla(key, buffer, contentType)   [sevalla-storage.ts]
-  key format: listings/{listingId}/{Date.now()}-{sanitizedFilename}
+  key format: listings/{listingId}/{images|videos}/{Date.now()}-{sanitizedFilename}
   S3Client.send(PutObjectCommand)
               │
               ▼
@@ -401,12 +426,28 @@ Sevalla S3 bucket stores the object
   returns: `${SEVALLA_PUBLIC_URL}/${key}`
               │
               ▼
-MongoDB: $push to listing.images[]
-  { url: publicUrl, name: sanitizedFilename, key: objectKey }
+MongoDB:
+  - image file: $push to listing.images[] as { url, name, key }
+  - video file: $push to listing.videos[] as { url, name, key, contentType? }
               │
               ▼
-Response: the image object (including key — needed for future deletion)
+DELETE /api/admin/listings/images:
+  validates listing/media match, deletes object from Sevalla, then $pulls image/video reference by URL
+              │
+              ▼
+Create redirect behavior:
+  - if all uploads succeed -> /admin/listings/{id}/edit
+  - if any upload fails   -> /admin/listings/{id}/edit?mediaUpload=failed
+Edit form then shows a non-blocking warning banner and clears the query param.
 ```
+
+### Compression Follow-up Scope
+
+Large-video direct upload is the quick win and does not include compression/transcoding.
+Follow-up work should add:
+- async transcoding worker (FFmpeg or managed service),
+- video processing state on listing media (`pending`, `processing`, `ready`, `failed`),
+- automatic swap from original upload key/URL to compressed delivery output.
 
 ### Input Sanitization
 
@@ -427,7 +468,8 @@ Response: the image object (including key — needed for future deletion)
 
 - Returns `Partial<Listing>` — undefined fields are omitted, making it safe to spread into a MongoDB `$set` for partial updates.
 - Empty arrays (`[]`) are preserved, which signals the intent to clear a field.
-- Image entries require both `url` and `name` as strings; entries failing this check are dropped. The `key` field is preserved from existing entries so S3 objects can still be deleted later.
+- Image and video entries require both `url` and `name` as strings; invalid entries are dropped. The `key` field is preserved so S3 objects can still be deleted later. Video entries also preserve optional `contentType` so clients can render without hardcoded MIME assumptions.
+- Legacy `videos: string[]` payloads are still accepted and normalized into `{ url, name }` objects during sanitization.
 
 **`buildListingSlug(listing: Partial<Listing>): string`**
 
@@ -446,7 +488,7 @@ All pages are inside [src/app/admin/](src/app/admin/).
 
 **Shared components:**
 
-- **`ListingForm.tsx`** — large client component covering the full `Listing` schema: multi-locale text inputs, numeric fields, enum selects, boolean toggles, checkbox groups for enum arrays, and image upload/delete UI.
+- **`ListingForm.tsx`** — large client component covering the full `Listing` schema: multi-locale text inputs, numeric fields, enum selects, boolean toggles, checkbox groups for enum arrays, and unified media upload/delete UI. Features, Amenities, Views, and Suitable for keep predefined checkboxes and also support custom comma-separated entries rendered as removable chips. Create mode keeps additive media queueing with dedupe/remove/clear before submit, attempts each queued upload independently, and redirects with a warning query signal on partial failures; edit mode supports immediate image/video uploads, per-item delete for both types, and shows a non-blocking warning when redirected from a partial create upload failure.
 - **`DeleteListingButton.tsx`** — inline confirm UI that calls `DELETE /api/admin/listings/[id]` and refreshes the dashboard on success.
 - **`AdminLogoutButton.tsx`** — calls `POST /api/admin/auth/logout`, then redirects to `/admin/login`.
 

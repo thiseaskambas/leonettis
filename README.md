@@ -84,6 +84,8 @@ SEVALLA_PUBLIC_URL=https://...
   - `GET/POST /api/admin/listings`
   - `GET/PUT/DELETE /api/admin/listings/:id`
   - `POST /api/admin/listings/:id/images`
+  - `POST /api/admin/listings/:id/media/presign`
+  - `POST /api/admin/listings/:id/media/finalize`
   - `DELETE /api/admin/listings/images`
   - `POST /api/admin/seed`
 
@@ -106,15 +108,29 @@ OpenAPI spec for admin endpoints:
 ### Admin update behavior
 
 - Sending `[]` for admin listing array fields in `PUT /api/admin/listings/:id` clears the stored values (for example `tags`, `features`, `amenities`, `view`, `suitableFor`, and `videos`).
+- On `/admin/listings/new` and `/admin/listings/:id/edit`, Features/Amenities/Views/Suitable for keep predefined checkboxes and also support custom comma-separated values as removable chips (saved in the same arrays as string values).
 - Listing image metadata preserves `images[].key` during listing create/update requests so uploaded object keys remain available for future deletes.
+- `POST /api/admin/listings/:id/images` remains available for server-side uploads, accepts all image/video MIME types (with filename-extension fallback when `File.type` is missing), and persists `{ url, name, key, contentType? }` metadata.
+- Large video uploads now use direct browser upload flow: `POST /api/admin/listings/:id/media/presign` -> browser `PUT` to signed Sevalla URL -> `POST /api/admin/listings/:id/media/finalize`.
+- Direct upload presign enforces a hard 500MB max file size (`524288000` bytes).
+- Compression/transcoding is intentionally deferred to a follow-up pipeline; the quick win focuses on reliable large upload transport + metadata persistence.
+- The listing form uses a unified `Media` section: create mode keeps additive/deduplicated queueing before submit, while edit mode supports immediate image/video uploads and per-item delete for both media types.
+- In create mode, media uploads are resilient per file: a failed file does not stop remaining selected files from being attempted.
+- After create-mode partial media failures, redirect to edit includes `?mediaUpload=failed` and edit mode shows a non-blocking warning while keeping already uploaded files.
+- `DELETE /api/admin/listings/images` removes image/video references from MongoDB and deletes the matching object from the Sevalla bucket.
+- Property detail pages now render both a Photo Gallery and a dedicated Video Gallery section below it.
 
 ### Verification checklist
 
 1. `npm run dev`
 2. Login at `/admin/login`.
 3. Create, edit, and delete a listing from `/admin`.
-4. Upload and remove listing images in edit mode.
-5. Confirm unauthorized calls to `/api/admin/*` return `401`.
+4. Create a listing from `/admin/listings/new` with mixed photo/video file selection and verify media appears after redirect to edit mode.
+5. Force one file upload failure during create and verify later files are still attempted and successful uploads persist.
+6. Verify `?mediaUpload=failed` appears only when at least one create-time upload fails and that edit mode shows a warning banner.
+7. Delete both an image and a video in edit mode and verify DB reference cleanup plus Sevalla object deletion through API logs/tests.
+8. Upload a large video (near 500MB) and verify direct upload + finalize flow succeeds without app-server buffering failures.
+9. Confirm unauthorized calls to `/api/admin/*` return `401`.
 
 Color palette link :
 https://www.tints.dev/palette/v1:dGlmZnw4MUQ4RDB8MzAwfHB8MHwwfDB8MTAwfGF-dGlmZi1zYXR8MDBBREEyfDQwMHxwfDB8MHwwfDEwMHxhfnRpZmYtZ3JheXxFOEYzRjF8NTAwfHB8MHwwfDB8MTAwfG1-dGlmZi1waW5rfEYwNTVCMXw0MDB8cHwwfDB8MHwxMDB8YX5sZW9ufDdFRDhFMHwyMDB8cHwwfDB8MHwxMDB8YX5sZW9uLXBpbmt8Zjc2NmEwfDQwMHxwfDB8MHwwfDEwMHxhfmxlb24tc2F0fDU4ZTRlMHwyMDB8cHwwfDB8MHwxMDB8YX5sZW9uLWJsdWV8Mjk0ZWEwfDgwMHxwfDB8MHwwfDEwMHxh

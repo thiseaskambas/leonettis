@@ -12,6 +12,7 @@ import PropertyBreadcrumb from './components/PropertyBreadcrumb';
 import PropertyDetails from './components/PropertyDetails';
 import PropertyGallery from './components/PropertyGallery';
 import PropertyHero from './components/PropertyHero';
+import PropertyVideoGallery from './components/PropertyVideoGallery';
 
 export const dynamic = 'force-dynamic';
 
@@ -200,6 +201,16 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
               images={listing.images}
               title={listing.title}
               galleryLabel={t('gallery')}
+              closeLabel={t('close')}
+            />
+          </div>
+        )}
+
+        {listing.videos && listing.videos.length > 0 && (
+          <div className="mt-16">
+            <PropertyVideoGallery
+              videos={listing.videos}
+              galleryLabel={t('videoGallery')}
               closeLabel={t('close')}
             />
           </div>

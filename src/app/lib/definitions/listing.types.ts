@@ -94,11 +94,23 @@ type Condition =
   | 'renovation needed'
   | 'other';
 
+type FlexibleTextList = Array<
+  Features | Amenities | ViewType | SuitableFor | string
+>;
+
 export interface ListingImage {
   url: string;
   name: string;
   key?: string;
   description?: string;
+}
+
+export interface ListingVideo {
+  url: string;
+  name: string;
+  key?: string;
+  description?: string;
+  contentType?: string;
 }
 
 export interface Listing {
@@ -118,12 +130,12 @@ export interface Listing {
   squareMetersTotal?: number;
   images?: ListingImage[];
   mainImage?: string;
-  videos?: string[];
-  features?: Features[];
+  videos?: ListingVideo[];
+  features?: FlexibleTextList;
   furnishing?: Furnishing;
-  amenities?: Amenities[];
-  suitableFor?: SuitableFor[];
-  view?: ViewType[];
+  amenities?: FlexibleTextList;
+  suitableFor?: FlexibleTextList;
+  view?: FlexibleTextList;
   publishedAt: string;
   updatedAt: string;
   isFeatured?: boolean;

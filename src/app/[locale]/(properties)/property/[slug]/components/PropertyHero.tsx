@@ -8,16 +8,17 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import type {
   Address,
   ListingImage,
+  ListingVideo,
 } from '@/app/lib/definitions/listing.types';
 import { getMediaUrl } from '@/app/lib/helpers/media-helpers';
 
 type HeroSlide =
   | { type: 'image'; src: string; name: string; description?: string }
-  | { type: 'video'; src: string };
+  | { type: 'video'; src: string; name: string; contentType?: string };
 
 interface PropertyHeroProps {
   images?: ListingImage[];
-  videos?: string[];
+  videos?: ListingVideo[];
   title: string;
   address: Address;
 }
@@ -39,7 +40,12 @@ export default function PropertyHero({
       name: img.name,
       description: img.description,
     })) ?? []),
-    ...(videos?.map((src) => ({ type: 'video' as const, src })) ?? []),
+    ...(videos?.map((video) => ({
+      type: 'video' as const,
+      src: video.url,
+      name: video.name,
+      contentType: video.contentType,
+    })) ?? []),
   ];
 
   const infoOverlay = (
@@ -81,7 +87,10 @@ export default function PropertyHero({
                     playsInline
                     suppressHydrationWarning
                     preload="auto">
-                    <source src={getMediaUrl(slide.src)} type="video/mp4" />
+                    <source
+                      src={getMediaUrl(slide.src)}
+                      type={slide.contentType || undefined}
+                    />
                   </video>
                 ) : (
                   <Image

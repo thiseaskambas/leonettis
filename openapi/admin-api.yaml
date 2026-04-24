@@ -3,7 +3,7 @@ info:
   title: Leonettis Admin API
   version: 1.0.0
   description: |
-    Admin-only APIs for authentication, listings CRUD, image storage, and one-time seeding.
+    Admin-only APIs for authentication, listings CRUD, media storage, and one-time seeding.
 servers:
   - url: http://localhost:3000
 tags:
@@ -26,7 +26,7 @@ paths:
                 password:
                   type: string
       responses:
-        "200":
+        '200':
           description: Authenticated
           headers:
             Set-Cookie:
@@ -40,14 +40,14 @@ paths:
                 properties:
                   ok:
                     type: boolean
-        "401":
+        '401':
           description: Invalid credentials
   /api/admin/auth/logout:
     post:
       tags: [Admin Auth]
       summary: Logout and clear admin cookie
       responses:
-        "200":
+        '200':
           description: Logged out
           content:
             application/json:
@@ -63,7 +63,7 @@ paths:
       security:
         - adminCookie: []
       responses:
-        "200":
+        '200':
           description: Listing collection
           content:
             application/json:
@@ -73,8 +73,8 @@ paths:
                   listings:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Listing"
-        "401":
+                      $ref: '#/components/schemas/Listing'
+        '401':
           description: Unauthorized
     post:
       tags: [Admin Listings]
@@ -86,9 +86,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ListingInput"
+              $ref: '#/components/schemas/ListingInput'
       responses:
-        "201":
+        '201':
           description: Created listing
           content:
             application/json:
@@ -96,10 +96,10 @@ paths:
                 type: object
                 properties:
                   listing:
-                    $ref: "#/components/schemas/Listing"
-        "400":
+                    $ref: '#/components/schemas/Listing'
+        '400':
           description: Validation error
-        "401":
+        '401':
           description: Unauthorized
   /api/admin/listings/{id}:
     parameters:
@@ -114,7 +114,7 @@ paths:
       security:
         - adminCookie: []
       responses:
-        "200":
+        '200':
           description: Listing
           content:
             application/json:
@@ -122,10 +122,10 @@ paths:
                 type: object
                 properties:
                   listing:
-                    $ref: "#/components/schemas/Listing"
-        "404":
+                    $ref: '#/components/schemas/Listing'
+        '404':
           description: Not found
-        "401":
+        '401':
           description: Unauthorized
     put:
       tags: [Admin Listings]
@@ -137,9 +137,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ListingInput"
+              $ref: '#/components/schemas/ListingInput'
       responses:
-        "200":
+        '200':
           description: Updated listing
           content:
             application/json:
@@ -147,10 +147,10 @@ paths:
                 type: object
                 properties:
                   listing:
-                    $ref: "#/components/schemas/Listing"
-        "404":
+                    $ref: '#/components/schemas/Listing'
+        '404':
           description: Not found
-        "401":
+        '401':
           description: Unauthorized
     delete:
       tags: [Admin Listings]
@@ -158,7 +158,7 @@ paths:
       security:
         - adminCookie: []
       responses:
-        "200":
+        '200':
           description: Deleted
           content:
             application/json:
@@ -167,9 +167,9 @@ paths:
                 properties:
                   ok:
                     type: boolean
-        "404":
+        '404':
           description: Not found
-        "401":
+        '401':
           description: Unauthorized
   /api/admin/listings/{id}/images:
     parameters:
@@ -180,7 +180,7 @@ paths:
           type: string
     post:
       tags: [Admin Listings]
-      summary: Upload a listing image
+      summary: Upload listing media (image or video)
       security:
         - adminCookie: []
       requestBody:
@@ -195,23 +195,99 @@ paths:
                   type: string
                   format: binary
       responses:
-        "200":
+        '200':
           description: Uploaded
           content:
             application/json:
               schema:
                 type: object
                 properties:
+                  media:
+                    $ref: '#/components/schemas/UploadedListingMedia'
                   image:
-                    $ref: "#/components/schemas/ListingImageWithKey"
-        "404":
+                    $ref: '#/components/schemas/ListingImageWithKey'
+                required: [media]
+        '400':
+          description: Invalid or unsupported file type
+        '404':
           description: Listing not found
-        "401":
+        '401':
+          description: Unauthorized
+  /api/admin/listings/{id}/media/presign:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    post:
+      tags: [Admin Listings]
+      summary: Create direct media upload URL
+      description: Returns a signed Sevalla upload URL for direct browser upload and enforces the 500MB max file size policy.
+      security:
+        - adminCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MediaPresignRequest'
+      responses:
+        '200':
+          description: Upload URL created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaPresignResponse'
+        '400':
+          description: Invalid payload or unsupported media type/size
+        '404':
+          description: Listing not found
+        '401':
+          description: Unauthorized
+  /api/admin/listings/{id}/media/finalize:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    post:
+      tags: [Admin Listings]
+      summary: Finalize uploaded media on listing
+      description: Persists uploaded media metadata on the listing after a successful direct upload.
+      security:
+        - adminCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MediaFinalizeRequest'
+      responses:
+        '200':
+          description: Media finalized on listing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  media:
+                    $ref: '#/components/schemas/UploadedListingMedia'
+                  image:
+                    $ref: '#/components/schemas/ListingImageWithKey'
+                required: [media]
+        '400':
+          description: Invalid payload
+        '404':
+          description: Listing not found
+        '401':
           description: Unauthorized
   /api/admin/listings/images:
     delete:
       tags: [Admin Listings]
-      summary: Delete a listing image
+      summary: Delete listing media
+      description: Deletes the media object from Sevalla and removes the matching image/video reference from the listing document.
       security:
         - adminCookie: []
       requestBody:
@@ -220,16 +296,19 @@ paths:
           application/json:
             schema:
               type: object
-              required: [listingId, imageUrl, imageKey]
+              required: [listingId, mediaType, mediaUrl, mediaKey]
               properties:
                 listingId:
                   type: string
-                imageUrl:
+                mediaType:
                   type: string
-                imageKey:
+                  enum: [image, video]
+                mediaUrl:
+                  type: string
+                mediaKey:
                   type: string
       responses:
-        "200":
+        '200':
           description: Deleted
           content:
             application/json:
@@ -238,7 +317,12 @@ paths:
                 properties:
                   ok:
                     type: boolean
-        "401":
+                  message:
+                    type: string
+                    description: Confirms both Sevalla object deletion and DB reference removal.
+        '404':
+          description: Listing/media reference not found
+        '401':
           description: Unauthorized
   /api/admin/seed:
     post:
@@ -247,7 +331,7 @@ paths:
       security:
         - adminCookie: []
       responses:
-        "200":
+        '200':
           description: Seed operation completed
           content:
             application/json:
@@ -258,7 +342,7 @@ paths:
                     type: integer
                   skipped:
                     type: integer
-        "401":
+        '401':
           description: Unauthorized
 components:
   securitySchemes:
@@ -281,15 +365,91 @@ components:
           type: string
     ListingImageWithKey:
       allOf:
-        - $ref: "#/components/schemas/ListingImage"
+        - $ref: '#/components/schemas/ListingImage'
         - type: object
           required: [key]
           properties:
             key:
               type: string
+    ListingVideo:
+      type: object
+      required: [url, name]
+      properties:
+        url:
+          type: string
+        name:
+          type: string
+        key:
+          type: string
+        description:
+          type: string
+        contentType:
+          type: string
+          description: Optional MIME type for uploaded videos (for example video/webm).
+    UploadedListingMedia:
+      type: object
+      required: [url, name, key, mediaType]
+      properties:
+        url:
+          type: string
+        name:
+          type: string
+        key:
+          type: string
+        mediaType:
+          type: string
+          enum: [image, video]
+        contentType:
+          type: string
+          description: Optional MIME type for uploaded media.
+    MediaPresignRequest:
+      type: object
+      required: [filename, contentType, size]
+      properties:
+        filename:
+          type: string
+        contentType:
+          type: string
+          description: Must start with image/ or video/.
+        size:
+          type: integer
+          format: int64
+          minimum: 1
+          maximum: 524288000
+          description: File size in bytes. Max 500MB.
+    MediaPresignResponse:
+      type: object
+      required: [uploadUrl, maxFileSizeBytes, expiresInSeconds, media]
+      properties:
+        uploadUrl:
+          type: string
+        maxFileSizeBytes:
+          type: integer
+          format: int64
+        expiresInSeconds:
+          type: integer
+        media:
+          $ref: '#/components/schemas/UploadedListingMedia'
+    MediaFinalizeRequest:
+      type: object
+      required: [url, key, name, mediaType]
+      properties:
+        url:
+          type: string
+        key:
+          type: string
+        name:
+          type: string
+        mediaType:
+          type: string
+          enum: [image, video]
+        contentType:
+          type: string
+          description: Optional MIME type for uploaded media.
     ListingInput:
       type: object
-      required: [title, slug, address, listingType, category, propertyType, tags]
+      required:
+        [title, slug, address, listingType, category, propertyType, tags]
       properties:
         id:
           type: string
@@ -354,29 +514,33 @@ components:
         images:
           type: array
           items:
-            $ref: "#/components/schemas/ListingImage"
+            $ref: '#/components/schemas/ListingImage'
         mainImage:
           type: string
         videos:
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/ListingVideo'
         features:
           type: array
+          description: Predefined feature IDs plus optional custom admin-defined values.
           items:
             type: string
         furnishing:
           type: string
         amenities:
           type: array
+          description: Predefined amenity IDs plus optional custom admin-defined values.
           items:
             type: string
         suitableFor:
           type: array
+          description: Predefined suitability IDs plus optional custom admin-defined values.
           items:
             type: string
         view:
           type: array
+          description: Predefined view IDs plus optional custom admin-defined values.
           items:
             type: string
         publishedAt:
@@ -425,6 +589,6 @@ components:
           enum: [fixed, flexible]
     Listing:
       allOf:
-        - $ref: "#/components/schemas/ListingInput"
+        - $ref: '#/components/schemas/ListingInput'
         - type: object
           required: [id, slug, publishedAt, updatedAt]

@@ -135,7 +135,12 @@ export const listingsData: Listing[] = [
       py(13, 14),
       py(14, 15),
     ],
-    videos: ['images/leonettis/pyrgaki-field-2/pyrgaki-field-2-9.mp4'],
+    videos: [
+      {
+        url: 'images/leonettis/pyrgaki-field-2/pyrgaki-field-2-9.mp4',
+        name: 'pyrgaki-field-2-9.mp4',
+      },
+    ],
     description: {
       en: 'Description 1',
       fr: 'Description 1',

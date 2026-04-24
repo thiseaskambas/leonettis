@@ -64,16 +64,25 @@ export default async function AdminListingsPage() {
           <tbody>
             {listings.map((listing) => {
               const status = getListingStatus(listing);
+              const thumbnailImage =
+                Array.isArray(listing.images) &&
+                listing.images.length > 0 &&
+                typeof listing.images[0] === 'object' &&
+                listing.images[0] !== null &&
+                'url' in listing.images[0] &&
+                typeof listing.images[0].url === 'string'
+                  ? listing.images[0].url
+                  : undefined;
 
               return (
                 <tr
                   key={listing.id}
                   className="border-t border-gray-200 hover:bg-gray-50">
                   <td className="px-3 py-2">
-                    {listing.mainImage ? (
+                    {thumbnailImage ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
-                        src={listing.mainImage}
+                        src={thumbnailImage}
                         alt={listing.title.en}
                         className="h-8 w-8 rounded object-cover"
                       />
