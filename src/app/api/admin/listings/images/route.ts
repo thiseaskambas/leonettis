@@ -33,18 +33,25 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
   }
 
   const collection = await getListingsCollection();
-  const listingQuery =
+  const listing = await collection.findOne(
+    { id: listingId },
+    {
+      projection: { id: 1, images: 1, videos: 1 },
+    }
+  );
+  const legacyVideos = (listing as { videos?: unknown[] } | null)?.videos;
+  const hasLegacyVideoReference =
+    Array.isArray(legacyVideos) &&
+    legacyVideos.some(
+      (video): video is string => typeof video === 'string' && video === mediaUrl
+    );
+  const hasMediaReference =
     mediaType === 'image'
-      ? { id: listingId, 'images.url': mediaUrl }
-      : {
-          id: listingId,
-          $or: [{ 'videos.url': mediaUrl }, { videos: mediaUrl }],
-        };
+      ? listing?.images?.some((image) => image.url === mediaUrl)
+      : listing?.videos?.some((video) => video.url === mediaUrl) ||
+        hasLegacyVideoReference;
 
-  const listing = await collection.findOne(listingQuery, {
-    projection: { id: 1 },
-  });
-  if (!listing) {
+  if (!listing || !hasMediaReference) {
     return NextResponse.json(
       { error: 'Listing media not found for deletion' },
       { status: 404 }
@@ -65,7 +72,7 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
     );
     await collection.updateOne(
       { id: listingId },
-      { $pull: { videos: mediaUrl } }
+      { $pull: { videos: mediaUrl } } as never
     );
   }
 

@@ -20,7 +20,16 @@ import { DELETE } from './route';
 describe('DELETE /api/admin/listings/images', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    findOne.mockResolvedValue({ id: 'abc' });
+    findOne.mockResolvedValue({
+      id: 'abc',
+      images: [{ url: 'https://img/x.jpg', name: 'x.jpg' }],
+      videos: [
+        {
+          url: 'https://cdn.example.com/listings/abc/videos/x.mp4',
+          name: 'x.mp4',
+        },
+      ],
+    });
   });
 
   it('removes image entry and storage object', async () => {
@@ -68,7 +77,11 @@ describe('DELETE /api/admin/listings/images', () => {
     expect(updateOne).toHaveBeenNthCalledWith(
       1,
       { id: 'abc' },
-      { $pull: { videos: { url: 'https://cdn.example.com/listings/abc/videos/x.mp4' } } }
+      {
+        $pull: {
+          videos: { url: 'https://cdn.example.com/listings/abc/videos/x.mp4' },
+        },
+      }
     );
     expect(updateOne).toHaveBeenNthCalledWith(
       2,
@@ -94,5 +107,44 @@ describe('DELETE /api/admin/listings/images', () => {
     expect(response.status).toBe(404);
     expect(deleteFromSevallaMock).not.toHaveBeenCalled();
     expect(updateOne).not.toHaveBeenCalled();
+  });
+
+  it('removes legacy string video entry and storage object', async () => {
+    findOne.mockResolvedValueOnce({
+      id: 'abc',
+      videos: ['https://cdn.example.com/listings/abc/videos/x.mp4'],
+    });
+    const request = new Request('http://localhost/api/admin/listings/images', {
+      method: 'DELETE',
+      body: JSON.stringify({
+        listingId: 'abc',
+        mediaType: 'video',
+        mediaUrl: 'https://cdn.example.com/listings/abc/videos/x.mp4',
+        mediaKey: 'listings/abc/videos/x.mp4',
+      }),
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const response = await DELETE(request as never);
+    const body = await response.json();
+    expect(response.status).toBe(200);
+    expect(body.ok).toBe(true);
+    expect(deleteFromSevallaMock).toHaveBeenCalledWith(
+      'listings/abc/videos/x.mp4'
+    );
+    expect(updateOne).toHaveBeenNthCalledWith(
+      1,
+      { id: 'abc' },
+      {
+        $pull: {
+          videos: { url: 'https://cdn.example.com/listings/abc/videos/x.mp4' },
+        },
+      }
+    );
+    expect(updateOne).toHaveBeenNthCalledWith(
+      2,
+      { id: 'abc' },
+      { $pull: { videos: 'https://cdn.example.com/listings/abc/videos/x.mp4' } }
+    );
   });
 });
