@@ -10,6 +10,7 @@ tags:
   - name: Admin Auth
   - name: Admin Listings
   - name: Admin Seed
+  - name: Admin Translation
 paths:
   /api/admin/auth/login:
     post:
@@ -344,6 +345,34 @@ paths:
                     type: integer
         '401':
           description: Unauthorized
+  /api/admin/translate:
+    post:
+      tags: [Admin Translation]
+      summary: Translate listing text across locales
+      description: Translates title or description from one source locale into all remaining admin locales.
+      security:
+        - adminCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminTranslateRequest'
+      responses:
+        '200':
+          description: Translation completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminTranslateResponse'
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Unauthorized
+        '502':
+          description: Invalid model output
+        '500':
+          description: Translation provider failure
 components:
   securitySchemes:
     adminCookie:
@@ -446,6 +475,29 @@ components:
         contentType:
           type: string
           description: Optional MIME type for uploaded media.
+    AdminTranslateRequest:
+      type: object
+      required: [text, sourceLocale, field]
+      properties:
+        text:
+          type: string
+        sourceLocale:
+          $ref: '#/components/schemas/Locale'
+        field:
+          type: string
+          enum: [title, description]
+    AdminTranslateResponse:
+      type: object
+      required: [translations]
+      properties:
+        translations:
+          type: object
+          description: Contains all locales except the provided sourceLocale.
+          additionalProperties:
+            type: string
+    Locale:
+      type: string
+      enum: [en, fr, gr, de, it]
     ListingInput:
       type: object
       required:

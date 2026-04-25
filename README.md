@@ -53,7 +53,7 @@ https://next-intl.dev
 Install required packages:
 
 ```bash
-npm install mongodb jose @aws-sdk/client-s3
+npm install mongodb jose @aws-sdk/client-s3 openai
 ```
 
 ### Required env vars
@@ -70,6 +70,7 @@ SEVALLA_BUCKET=leonettis
 SEVALLA_ACCESS_KEY=...
 SEVALLA_SECRET_KEY=...
 SEVALLA_PUBLIC_URL=https://...
+OPENAI_API_KEY=...
 ```
 
 ### Routes
@@ -90,6 +91,7 @@ SEVALLA_PUBLIC_URL=https://...
   - `POST /api/admin/listings/:id/media/finalize`
   - `DELETE /api/admin/listings/images`
   - `POST /api/admin/seed`
+  - `POST /api/admin/translate`
 
 ### Seed MongoDB
 
@@ -121,6 +123,7 @@ OpenAPI spec for admin endpoints:
 - After create-mode partial media failures, redirect to edit includes `?mediaUpload=failed` and edit mode shows a non-blocking warning while keeping already uploaded files.
 - `DELETE /api/admin/listings/images` removes image/video references from MongoDB and deletes the matching object from the Sevalla bucket.
 - Property detail pages now render both a Photo Gallery and a dedicated Video Gallery section below it.
+- Admin listing form supports per-field AI translation for `title` and `description` from the active locale into the other 4 locales via `POST /api/admin/translate` (always overwrites target locales).
 
 ### Verification checklist
 

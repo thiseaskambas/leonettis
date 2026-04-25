@@ -16,6 +16,7 @@ Real estate listing platform for properties in Paros, Greece. Supports browsing,
 | Auth           | `jose` — HS256 JWT stored in httpOnly cookie                           |
 | i18n           | next-intl 4, 5 locales (en / fr / gr / de / it)                        |
 | Email          | Resend                                                                 |
+| AI translation | OpenAI (`gpt-4o-mini`, JSON mode)                                     |
 | Testing        | Vitest (Node environment)                                              |
 | Icons          | lucide-react                                                           |
 
@@ -46,6 +47,7 @@ src/
         listings/[id]/images/   # POST upload image
         listings/images/        # DELETE image
         seed/                   # POST seed from mock data
+        translate/              # POST AI translation for admin form fields
       contact/                  # POST — send email via Resend
     lib/
       db/
@@ -91,6 +93,7 @@ Copy `.example.env` to `.env.local` and fill in all values before running locall
 | ------------------ | -------- | ------------------------------------------------ |
 | `ADMIN_PASSWORD`   | Yes      | Plain-text password for admin login              |
 | `ADMIN_JWT_SECRET` | Yes      | Secret for signing JWTs — must be 32+ characters |
+| `OPENAI_API_KEY`   | Yes (translation endpoint) | API key for `/api/admin/translate` |
 
 ### Sevalla media storage
 
@@ -390,6 +393,12 @@ All routes live under `/api/admin/`. The middleware protects all of them except 
 | ------ | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | POST   | `/api/admin/seed` | One-time data import. Iterates `listingsData` mock array, skips existing listings (matched by `id`), inserts new ones. Returns `{ inserted, skipped }`. |
 
+#### Translation route
+
+| Method | Path                    | Notes                                                                                                                                                                                                                           |
+| ------ | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| POST   | `/api/admin/translate`  | Body: `{ text, sourceLocale, field }`. Validates non-empty text and supported locale/field, calls OpenAI `gpt-4o-mini` in JSON mode, and returns `{ translations }` for all non-source locales (always overwrite behavior). |
+
 ### Media Upload Flow
 
 ```
@@ -488,7 +497,7 @@ All pages are inside [src/app/admin/](src/app/admin/).
 
 **Shared components:**
 
-- **`ListingForm.tsx`** — large client component covering the full `Listing` schema: multi-locale text inputs, numeric fields, enum selects, boolean toggles, checkbox groups for enum arrays, and unified media upload/delete UI. Features, Amenities, Views, and Suitable for keep predefined checkboxes and also support custom comma-separated entries rendered as removable chips. Create mode keeps additive media queueing with dedupe/remove/clear before submit, attempts each queued upload independently, and redirects with a warning query signal on partial failures; edit mode supports immediate image/video uploads, per-item delete for both types, and shows a non-blocking warning when redirected from a partial create upload failure.
+- **`ListingForm.tsx`** — large client component covering the full `Listing` schema: multi-locale text inputs, numeric fields, enum selects, boolean toggles, checkbox groups for enum arrays, and unified media upload/delete UI. Features, Amenities, Views, and Suitable for keep predefined checkboxes and also support custom comma-separated entries rendered as removable chips. Create mode keeps additive media queueing with dedupe/remove/clear before submit, attempts each queued upload independently, and redirects with a warning query signal on partial failures; edit mode supports immediate image/video uploads, per-item delete for both types, and shows a non-blocking warning when redirected from a partial create upload failure. The localized title and description inputs include per-field `Translate from <LOCALE> →` controls that call `/api/admin/translate` and overwrite all other locales.
 - **`DeleteListingButton.tsx`** — inline confirm UI that calls `DELETE /api/admin/listings/[id]` and refreshes the dashboard on success.
 - **`AdminLogoutButton.tsx`** — calls `POST /api/admin/auth/logout`, then redirects to `/admin/login`.
 
@@ -526,6 +535,7 @@ All pages are inside [src/app/admin/](src/app/admin/).
 | `api/admin/listings/images/route.test.ts` | DELETE image — Sevalla + MongoDB cleanup                                                                                                       |
 | `api/admin/auth/login/route.test.ts`      | Login — correct/incorrect password, cookie set                                                                                                 |
 | `api/admin/seed/route.test.ts`            | Seed — insert/skip logic                                                                                                                       |
+| `api/admin/translate/route.test.ts`       | Translation endpoint — payload validation, successful translation mapping, malformed model output handling                                     |
 
 Run tests:
 

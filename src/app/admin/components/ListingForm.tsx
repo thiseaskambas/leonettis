@@ -342,6 +342,8 @@ export default function ListingForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [translatingTitle, setTranslatingTitle] = useState(false);
+  const [translatingDescription, setTranslatingDescription] = useState(false);
   const [uploadingMediaName, setUploadingMediaName] = useState<string | null>(
     null
   );
@@ -544,6 +546,75 @@ export default function ListingForm({
     }
   };
 
+  const translateField = async (field: 'title' | 'description') => {
+    const text =
+      field === 'title'
+        ? listing.title[activeLocale] ?? ''
+        : listing.description?.[activeLocale] ?? '';
+    if (!text.trim()) return;
+
+    const setLoading =
+      field === 'title' ? setTranslatingTitle : setTranslatingDescription;
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/admin/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text,
+          sourceLocale: activeLocale,
+          field,
+        }),
+      });
+
+      if (!response.ok) {
+        const body = (await response.json().catch(() => ({}))) as {
+          error?: string;
+        };
+        throw new Error(body.error ?? 'Translation failed');
+      }
+
+      const body = (await response.json()) as {
+        translations?: Partial<Record<LocaleCode, string>>;
+      };
+      const translations = body.translations;
+
+      if (!translations || typeof translations !== 'object') {
+        throw new Error('Translation response is invalid');
+      }
+
+      setListing((previous) => {
+        if (field === 'title') {
+          return {
+            ...previous,
+            title: {
+              ...previous.title,
+              ...translations,
+            },
+          };
+        }
+
+        return {
+          ...previous,
+          description: {
+            ...(previous.description ?? baseLocalizedText()),
+            ...translations,
+          },
+        };
+      });
+    } catch (translateError) {
+      const message =
+        translateError instanceof Error
+          ? translateError.message
+          : 'Translation failed';
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleMediaUpload = async (file: File | null) => {
     if (!file || !listing.id) return;
     setUploading(true);
@@ -719,6 +790,19 @@ export default function ListingForm({
               className="w-full rounded border border-gray-300 px-3 py-2"
               required={activeLocale === 'en'}
             />
+            {(listing.title[activeLocale] ?? '').trim() && (
+              <button
+                type="button"
+                onClick={() => {
+                  void translateField('title');
+                }}
+                disabled={translatingTitle}
+                className="mt-2 rounded border border-gray-300 px-2 py-1 text-xs text-gray-600 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60">
+                {translatingTitle
+                  ? 'Translating...'
+                  : `Translate title from ${activeLocale.toUpperCase()} →`}
+              </button>
+            )}
           </div>
           <div>
             <label className="mb-1 block text-sm">Slug</label>
@@ -749,6 +833,19 @@ export default function ListingForm({
               rows={4}
               className="w-full rounded border border-gray-300 px-3 py-2"
             />
+            {(listing.description?.[activeLocale] ?? '').trim() && (
+              <button
+                type="button"
+                onClick={() => {
+                  void translateField('description');
+                }}
+                disabled={translatingDescription}
+                className="mt-2 rounded border border-gray-300 px-2 py-1 text-xs text-gray-600 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60">
+                {translatingDescription
+                  ? 'Translating...'
+                  : `Translate description from ${activeLocale.toUpperCase()} →`}
+              </button>
+            )}
           </div>
         </div>
       </section>
