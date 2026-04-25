@@ -227,6 +227,12 @@
     "availableFrom": "Διαθέσιμο Από",
     "availableUponRequest": "Διαθέσιμο κατόπιν αιτήματος",
     "priceUponRequest": "Τιμή κατόπιν αιτήματος",
+    "status": {
+      "sold": "Πωλήθηκε",
+      "rented": "Ενοικιάστηκε",
+      "pending": "Σε εκκρεμότητα",
+      "under_offer": "Υπό συζήτηση"
+    },
     "contact": "Επικοινωνία",
     "breadcrumb": {
       "home": "Αρχική",

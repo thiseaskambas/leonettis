@@ -227,6 +227,12 @@
     "availableFrom": "Disponible à partir du",
     "availableUponRequest": "Disponible sur demande",
     "priceUponRequest": "Prix sur demande",
+    "status": {
+      "sold": "Vendu",
+      "rented": "Loué",
+      "pending": "En cours",
+      "under_offer": "Offre en cours"
+    },
     "contact": "Nous contacter",
     "breadcrumb": {
       "home": "Accueil",

@@ -2,6 +2,13 @@ import type { Listing } from '@/app/lib/definitions/listing.types';
 import { type Locale, locales } from '@/i18n/routing';
 
 const allLocales = Object.keys(locales) as Locale[];
+const LISTING_STATUSES = new Set<Listing['status']>([
+  'active',
+  'sold',
+  'rented',
+  'pending',
+  'under_offer',
+]);
 
 function slugify(input: string): string {
   return input
@@ -149,10 +156,12 @@ export function sanitizeListingInput(payload: unknown): Partial<Listing> {
     amenities: sanitizeStringArray(raw.amenities) as Listing['amenities'],
     suitableFor: sanitizeStringArray(raw.suitableFor) as Listing['suitableFor'],
     view: sanitizeStringArray(raw.view) as Listing['view'],
+    status:
+      typeof raw.status === 'string' &&
+      LISTING_STATUSES.has(raw.status as Listing['status'])
+        ? (raw.status as Listing['status'])
+        : undefined,
     isFeatured: sanitizeBoolean(raw.isFeatured),
-    isActive: sanitizeBoolean(raw.isActive),
-    isSold: sanitizeBoolean(raw.isSold),
-    isRented: sanitizeBoolean(raw.isRented),
     tags: sanitizeStringArray(raw.tags),
     favorite: sanitizeBoolean(raw.favorite),
     urgent: sanitizeBoolean(raw.urgent),

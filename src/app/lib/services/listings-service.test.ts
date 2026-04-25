@@ -42,6 +42,7 @@ describe('searchListings', () => {
 
     expect(countDocuments).toHaveBeenCalledWith({
       listingType: 'buy',
+      status: { $exists: true, $ne: null },
       category: { $in: ['residential'] },
       price: { $gte: 100, $lte: 200 },
     });

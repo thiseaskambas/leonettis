@@ -7,7 +7,10 @@ import type { Swiper as SwiperType } from 'swiper';
 import { Keyboard, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { LocalizedListing } from '@/app/lib/definitions/listing.types';
+import {
+  LocalizedListing,
+  ListingStatus,
+} from '@/app/lib/definitions/listing.types';
 import { Link } from '@/i18n/navigation';
 
 import { getMediaBlurDataURL, getMediaUrl } from '../lib/helpers/media-helpers';
@@ -69,6 +72,15 @@ export default function ListingCard({
   } = listing;
   const t = useTranslations('property');
   const [loadedIndices, setLoadedIndices] = useState<number[]>([0, 1]);
+  const statusColors: Partial<Record<ListingStatus, string>> = {
+    sold: 'bg-red-600',
+    rented: 'bg-leon-blue-500',
+    pending: 'bg-amber-500',
+    under_offer: 'bg-purple-600',
+  };
+  const statusKey =
+    listing.status && listing.status !== 'active' ? listing.status : null;
+  const statusColor = statusKey ? statusColors[statusKey] : undefined;
 
   const handleSlideChange = (swiper: SwiperType) => {
     const currentIndex = swiper.activeIndex;
@@ -99,6 +111,12 @@ export default function ListingCard({
 
       {/* Aspect Ratio Container */}
       <div className="relative aspect-3/4 w-full md:aspect-4/3">
+        {statusKey && statusColor && (
+          <div
+            className={`absolute top-0 right-0 left-0 z-30 py-1.5 text-center text-sm font-bold tracking-widest text-white uppercase ${statusColor}`}>
+            {t(`status.${statusKey}`)}
+          </div>
+        )}
         <Swiper
           rewind={true}
           onSlideChange={handleSlideChange}

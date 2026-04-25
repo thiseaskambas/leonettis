@@ -122,6 +122,14 @@ const ENERGY_RATING_OPTIONS: NonNullable<Listing['energyRating']>[] = [
   'G',
 ];
 
+const STATUS_OPTIONS: NonNullable<Listing['status']>[] = [
+  'active',
+  'sold',
+  'rented',
+  'pending',
+  'under_offer',
+];
+
 type NumericListingField =
   | 'bedrooms'
   | 'bathrooms'
@@ -144,25 +152,19 @@ const NUMERIC_FIELDS: { label: string; key: NumericListingField }[] = [
 ];
 
 type BooleanListingField =
-  | 'isActive'
   | 'isFeatured'
-  | 'isSold'
-  | 'isRented'
   | 'urgent'
   | 'availableNow'
   | 'availableUponRequest';
 
 const BOOLEAN_FIELDS: { key: BooleanListingField; label: string }[] = [
-  { key: 'isActive', label: 'Active' },
   { key: 'isFeatured', label: 'Featured' },
-  { key: 'isSold', label: 'Sold' },
-  { key: 'isRented', label: 'Rented' },
   { key: 'urgent', label: 'Urgent' },
   { key: 'availableNow', label: 'Available now' },
   { key: 'availableUponRequest', label: 'Available upon request' },
 ];
 
-const MAX_VIDEO_FILE_SIZE_BYTES = 500 * 1024 * 1024;
+const MAX_MEDIA_FILE_SIZE_BYTES = 500 * 1024 * 1024;
 
 function toggleArrayValue<T extends string>(
   values: T[] | undefined,
@@ -276,10 +278,8 @@ function getInitialListing(initialListing?: Listing): Listing {
     view: [],
     publishedAt: now,
     updatedAt: now,
+    status: 'active',
     isFeatured: false,
-    isActive: true,
-    isSold: false,
-    isRented: false,
     tags: [],
     favorite: false,
     urgent: false,
@@ -364,43 +364,15 @@ export default function ListingForm({
     router.replace(buildUrlWithoutMediaUploadParam(pathname, searchParams));
   }, [pathname, router, searchParams, showMediaUploadWarning]);
 
-  const uploadListingMediaFile = async (
+  const uploadListingMediaDirectly = async (
     listingId: string,
     file: File
   ): Promise<UploadedMedia> => {
-    const formData = new FormData();
-    formData.set('file', file);
-    const response = await fetch(`/api/admin/listings/${listingId}/images`, {
-      method: 'POST',
-      body: formData,
-    });
-
-    if (!response.ok) {
-      throw new Error('Media upload failed');
-    }
-
-    const body = (await response.json()) as {
-      media?: {
-        url: string;
-        key: string;
-        name: string;
-        mediaType: 'image' | 'video';
-      };
-    };
-
-    if (!body.media) {
-      throw new Error('Upload response is missing media metadata');
-    }
-
-    return body.media;
-  };
-
-  const uploadListingVideoDirectly = async (
-    listingId: string,
-    file: File
-  ): Promise<UploadedMedia> => {
-    if (file.size > MAX_VIDEO_FILE_SIZE_BYTES) {
-      throw new Error('Video exceeds 500MB maximum size');
+    const isVideo = file.type.startsWith('video/');
+    if (file.size > MAX_MEDIA_FILE_SIZE_BYTES) {
+      throw new Error(
+        `${isVideo ? 'Video' : 'Image'} exceeds 500MB maximum size`
+      );
     }
 
     const presignResponse = await fetch(
@@ -410,14 +382,14 @@ export default function ListingForm({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           filename: file.name,
-          contentType: file.type || 'video/mp4',
+          contentType: file.type || (isVideo ? 'video/mp4' : 'image/jpeg'),
           size: file.size,
         }),
       }
     );
 
     if (!presignResponse.ok) {
-      throw new Error('Failed to prepare direct video upload');
+      throw new Error('Failed to prepare direct media upload');
     }
 
     const presignBody = (await presignResponse.json()) as {
@@ -431,12 +403,12 @@ export default function ListingForm({
     const uploadResponse = await fetch(presignBody.uploadUrl, {
       method: 'PUT',
       headers: {
-        'Content-Type': file.type || 'video/mp4',
+        'Content-Type': file.type || (isVideo ? 'video/mp4' : 'image/jpeg'),
       },
       body: file,
     });
     if (!uploadResponse.ok) {
-      throw new Error('Direct video upload failed');
+      throw new Error('Direct media upload failed');
     }
 
     const finalizeResponse = await fetch(
@@ -450,7 +422,7 @@ export default function ListingForm({
       }
     );
     if (!finalizeResponse.ok) {
-      throw new Error('Failed to finalize uploaded video');
+      throw new Error('Failed to finalize uploaded media');
     }
 
     const finalizeBody = (await finalizeResponse.json()) as {
@@ -467,11 +439,7 @@ export default function ListingForm({
     listingId: string,
     file: File
   ): Promise<UploadedMedia> => {
-    if (file.type.startsWith('video/')) {
-      return uploadListingVideoDirectly(listingId, file);
-    }
-
-    return uploadListingMediaFile(listingId, file);
+    return uploadListingMediaDirectly(listingId, file);
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -1549,7 +1517,7 @@ export default function ListingForm({
               creation)
             </label>
             <p className="text-xs text-gray-500">
-              Video files up to {formatFileSize(MAX_VIDEO_FILE_SIZE_BYTES)} are
+              Media files up to {formatFileSize(MAX_MEDIA_FILE_SIZE_BYTES)} are
               allowed.
             </p>
             <input
@@ -1626,7 +1594,7 @@ export default function ListingForm({
               />
             </label>
             <p className="text-xs text-gray-500">
-              Video files up to {formatFileSize(MAX_VIDEO_FILE_SIZE_BYTES)} are
+              Media files up to {formatFileSize(MAX_MEDIA_FILE_SIZE_BYTES)} are
               allowed.
             </p>
             {uploadingMediaName ? (
@@ -1698,6 +1666,24 @@ export default function ListingForm({
         <h2 className="mb-3 border-b border-gray-100 pb-2 text-base font-semibold text-gray-700">
           Status
         </h2>
+        <div>
+          <label className="mb-1 block text-sm">Listing status</label>
+          <select
+            value={listing.status ?? 'active'}
+            onChange={(event) =>
+              setListing((prev) => ({
+                ...prev,
+                status: event.target.value as Listing['status'],
+              }))
+            }
+            className="w-full rounded border border-gray-300 px-3 py-2 md:w-80">
+            {STATUS_OPTIONS.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </div>
         <div className="grid gap-2 md:grid-cols-3">
           {BOOLEAN_FIELDS.map(({ key, label }) => (
             <label key={key} className="flex items-center gap-2 text-sm">

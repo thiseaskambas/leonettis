@@ -34,6 +34,13 @@ export type PropertyType =
   | 'office'
   | 'warehouse';
 
+export type ListingStatus =
+  | 'active'
+  | 'sold'
+  | 'rented'
+  | 'pending'
+  | 'under_offer';
+
 type ViewType =
   | 'sea'
   | 'mountain'
@@ -138,10 +145,8 @@ export interface Listing {
   view?: FlexibleTextList;
   publishedAt: string;
   updatedAt: string;
+  status?: ListingStatus;
   isFeatured?: boolean;
-  isActive?: boolean;
-  isSold?: boolean;
-  isRented?: boolean;
   tags: string[];
   favorite?: boolean;
   urgent?: boolean;

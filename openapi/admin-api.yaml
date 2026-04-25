@@ -181,7 +181,8 @@ paths:
           type: string
     post:
       tags: [Admin Listings]
-      summary: Upload listing media (image or video)
+      summary: Upload listing media via app server (legacy fallback)
+      description: Legacy multipart upload endpoint. Prefer `/api/admin/listings/{id}/media/presign` + direct `PUT` + `/api/admin/listings/{id}/media/finalize` for normal image/video uploads.
       security:
         - adminCookie: []
       requestBody:
@@ -224,7 +225,7 @@ paths:
     post:
       tags: [Admin Listings]
       summary: Create direct media upload URL
-      description: Returns a signed Sevalla upload URL for direct browser upload and enforces the 500MB max file size policy.
+      description: Preferred upload entrypoint for both images and videos. Returns a signed Sevalla upload URL for direct browser upload and enforces the 500MB max file size policy.
       security:
         - adminCookie: []
       requestBody:
@@ -599,13 +600,10 @@ components:
           type: string
         updatedAt:
           type: string
+        status:
+          type: string
+          enum: [active, sold, rented, pending, under_offer]
         isFeatured:
-          type: boolean
-        isActive:
-          type: boolean
-        isSold:
-          type: boolean
-        isRented:
           type: boolean
         tags:
           type: array

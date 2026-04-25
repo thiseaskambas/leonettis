@@ -5,7 +5,12 @@ import { Listing, LocalizedListing } from '../definitions/listing.types';
 
 export async function getListingBySlug(slug: string): Promise<Listing | null> {
   const collection = await getListingsCollection();
-  return await collection.findOne({ slug }, { projection: { _id: 0 } });
+  const listing = await collection.findOne({ slug }, { projection: { _id: 0 } });
+  if (!listing?.status) {
+    return null;
+  }
+
+  return listing;
 }
 
 export async function getListingById(id: string): Promise<Listing | null> {

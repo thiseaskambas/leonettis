@@ -58,6 +58,7 @@ describe('/api/admin/listings route', () => {
     expect(response.status).toBe(201);
     expect(insertOne).toHaveBeenCalledWith(
       expect.objectContaining({
+        status: 'active',
         features: ['garden', 'Roof Deck'],
         amenities: ['parking', 'Private Dock'],
         view: ['sea', 'Sunset Panorama'],

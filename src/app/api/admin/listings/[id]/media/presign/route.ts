@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { getListingsCollection } from '@/app/lib/db/mongodb';
-import { createSevallaPresignedUploadUrl } from '@/app/lib/helpers/sevalla-storage';
+import {
+  createSevallaPresignedUploadUrl,
+  getSevallaPublicUrl,
+} from '@/app/lib/helpers/sevalla-storage';
 
 const MAX_FILE_SIZE_BYTES = 500 * 1024 * 1024;
 const PRESIGNED_UPLOAD_TTL_SECONDS = 15 * 60;
@@ -79,9 +82,7 @@ export async function POST(
       contentLength: size,
       expiresInSeconds: PRESIGNED_UPLOAD_TTL_SECONDS,
     });
-
-    const mediaUrl = new URL(uploadUrl);
-    mediaUrl.search = '';
+    const mediaUrl = `${getSevallaPublicUrl()}/${key}`;
 
     return NextResponse.json(
       {
@@ -89,7 +90,7 @@ export async function POST(
         maxFileSizeBytes: MAX_FILE_SIZE_BYTES,
         expiresInSeconds: PRESIGNED_UPLOAD_TTL_SECONDS,
         media: {
-          url: mediaUrl.toString(),
+          url: mediaUrl,
           name: filename,
           key,
           mediaType,

@@ -114,8 +114,8 @@ OpenAPI spec for admin endpoints:
 - Sending `[]` for admin listing array fields in `PUT /api/admin/listings/:id` clears the stored values (for example `tags`, `features`, `amenities`, `view`, `suitableFor`, and `videos`).
 - On `/admin/listings/new` and `/admin/listings/:id/edit`, Features/Amenities/Views/Suitable for keep predefined checkboxes and also support custom comma-separated values as removable chips (saved in the same arrays as string values).
 - Listing image metadata preserves `images[].key` during listing create/update requests so uploaded object keys remain available for future deletes.
-- `POST /api/admin/listings/:id/images` remains available for server-side uploads, accepts all image/video MIME types (with filename-extension fallback when `File.type` is missing), and persists `{ url, name, key, contentType? }` metadata.
-- Large video uploads now use direct browser upload flow: `POST /api/admin/listings/:id/media/presign` -> browser `PUT` to signed Sevalla URL -> `POST /api/admin/listings/:id/media/finalize`.
+- Direct browser upload is now the primary path for both images and videos: `POST /api/admin/listings/:id/media/presign` -> browser `PUT` to signed Sevalla URL -> `POST /api/admin/listings/:id/media/finalize`.
+- `POST /api/admin/listings/:id/images` remains available as a legacy server-side fallback, accepts all image/video MIME types (with filename-extension fallback when `File.type` is missing), and persists `{ url, name, key, contentType? }` metadata.
 - Direct upload presign enforces a hard 500MB max file size (`524288000` bytes).
 - Compression/transcoding is intentionally deferred to a follow-up pipeline; the quick win focuses on reliable large upload transport + metadata persistence.
 - The listing form uses a unified `Media` section: create mode keeps additive/deduplicated queueing before submit, while edit mode supports immediate image/video uploads and per-item delete for both media types.
@@ -124,6 +124,7 @@ OpenAPI spec for admin endpoints:
 - `DELETE /api/admin/listings/images` removes image/video references from MongoDB and deletes the matching object from the Sevalla bucket.
 - Property detail pages now render both a Photo Gallery and a dedicated Video Gallery section below it.
 - Admin listing form supports per-field AI translation for `title` and `description` from the active locale into the other 4 locales via `POST /api/admin/translate` (always overwrites target locales).
+- Listing lifecycle is controlled via `status` (`active`, `sold`, `rented`, `pending`, `under_offer`); listings without `status` are excluded from public list/detail pages, and non-active statuses render translated banners.
 
 ### Verification checklist
 

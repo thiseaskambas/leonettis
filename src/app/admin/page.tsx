@@ -7,24 +7,30 @@ import DeleteListingButton from './components/DeleteListingButton';
 export const dynamic = 'force-dynamic';
 
 function getListingStatus(listing: {
-  isSold?: boolean;
-  isRented?: boolean;
+  status?: 'active' | 'sold' | 'rented' | 'pending' | 'under_offer';
   isFeatured?: boolean;
-  isActive?: boolean;
 }) {
-  if (listing.isSold) {
+  if (listing.status === 'sold') {
     return { label: 'sold', className: 'bg-red-100 text-red-700' };
   }
 
-  if (listing.isRented) {
+  if (listing.status === 'rented') {
     return { label: 'rented', className: 'bg-orange-100 text-orange-700' };
+  }
+
+  if (listing.status === 'pending') {
+    return { label: 'pending', className: 'bg-amber-100 text-amber-700' };
+  }
+
+  if (listing.status === 'under_offer') {
+    return { label: 'under offer', className: 'bg-purple-100 text-purple-700' };
   }
 
   if (listing.isFeatured) {
     return { label: 'featured', className: 'bg-blue-100 text-blue-700' };
   }
 
-  if (listing.isActive) {
+  if (listing.status === 'active') {
     return { label: 'active', className: 'bg-green-100 text-green-700' };
   }
 

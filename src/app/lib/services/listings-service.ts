@@ -18,7 +18,10 @@ export async function searchListings(
 ): Promise<PaginatedListings> {
   const page = params.page ?? DEFAULT_PAGE;
   const limit = params.limit ?? DEFAULT_LIMIT;
-  const query: Record<string, unknown> = { listingType: params.listingType };
+  const query: Record<string, unknown> = {
+    listingType: params.listingType,
+    status: { $exists: true, $ne: null },
+  };
 
   if (params.category?.length) query.category = { $in: params.category };
   if (params.propertyType?.length)

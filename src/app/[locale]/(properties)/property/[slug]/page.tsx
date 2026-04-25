@@ -173,6 +173,7 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
           videos={listing.videos}
           title={listing.title}
           address={listing.address}
+          status={listing.status}
         />
       </div>
 

@@ -94,6 +94,20 @@ describe('listing-admin-helpers', () => {
     expect(payload.suitableFor).toEqual(['family', 'Digital Nomads']);
   });
 
+  it('accepts valid status and ignores removed lifecycle booleans', () => {
+    const payload = sanitizeListingInput({
+      status: 'pending',
+      isActive: true,
+      isSold: true,
+      isRented: true,
+    });
+
+    expect(payload.status).toBe('pending');
+    expect(payload).not.toHaveProperty('isActive');
+    expect(payload).not.toHaveProperty('isSold');
+    expect(payload).not.toHaveProperty('isRented');
+  });
+
   it('normalizes videos as metadata objects', () => {
     const payload = sanitizeListingInput({
       videos: [

@@ -2,12 +2,14 @@
 
 import { MapPin } from 'lucide-react';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 import type {
   Address,
   ListingImage,
+  ListingStatus,
   ListingVideo,
 } from '@/app/lib/definitions/listing.types';
 import { getMediaUrl } from '@/app/lib/helpers/media-helpers';
@@ -21,6 +23,7 @@ interface PropertyHeroProps {
   videos?: ListingVideo[];
   title: string;
   address: Address;
+  status?: ListingStatus;
 }
 
 export default function PropertyHero({
@@ -28,7 +31,17 @@ export default function PropertyHero({
   videos,
   title,
   address,
+  status,
 }: PropertyHeroProps) {
+  const t = useTranslations('property');
+  const statusColors: Partial<Record<ListingStatus, string>> = {
+    sold: 'bg-red-600',
+    rented: 'bg-leon-blue-500',
+    pending: 'bg-amber-500',
+    under_offer: 'bg-purple-600',
+  };
+  const statusKey = status && status !== 'active' ? status : null;
+  const statusColor = statusKey ? statusColors[statusKey] : undefined;
   const displayAddress =
     address.displayAddress ??
     [address.city, address.region, address.state].filter(Boolean).join(', ');
@@ -68,6 +81,12 @@ export default function PropertyHero({
     <div className="relative w-full">
       {/* Swiper carousel */}
       <div className="relative h-[55vw] min-h-80 w-full md:h-[65vh]">
+        {statusKey && statusColor && (
+          <div
+            className={`absolute top-0 right-0 left-0 z-30 py-2 text-center text-sm font-bold tracking-widest text-white uppercase ${statusColor}`}>
+            {t(`status.${statusKey}`)}
+          </div>
+        )}
         <Swiper
           slidesPerView={1}
           spaceBetween={0}
@@ -119,6 +138,12 @@ export default function PropertyHero({
 
       {/* Mobile info block — below the slideshow (title + address only; price & specs in PropertyDetails) */}
       <div className="from-tiff-gray-50 to-tiff-gray-100 dark:from-tiff-gray-950 dark:to-tiff-gray-900 bg-linear-to-b px-5 py-6 md:hidden">
+        {statusKey && statusColor && (
+          <div
+            className={`mb-3 inline-flex rounded-full px-3 py-1 text-xs font-bold tracking-wide text-white uppercase ${statusColor}`}>
+            {t(`status.${statusKey}`)}
+          </div>
+        )}
         {infoOverlay}
       </div>
     </div>
