@@ -138,12 +138,12 @@ export default function PropertyHero({
 
       {/* Mobile info block — below the slideshow (title + address only; price & specs in PropertyDetails) */}
       <div className="from-tiff-gray-50 to-tiff-gray-100 dark:from-tiff-gray-950 dark:to-tiff-gray-900 bg-linear-to-b px-5 py-6 md:hidden">
-        {statusKey && statusColor && (
+        {/*{statusKey && statusColor && (
           <div
             className={`mb-3 inline-flex rounded-full px-3 py-1 text-xs font-bold tracking-wide text-white uppercase ${statusColor}`}>
             {t(`status.${statusKey}`)}
           </div>
-        )}
+        )}*/}
         {infoOverlay}
       </div>
     </div>

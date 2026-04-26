@@ -166,8 +166,8 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
 
   return (
     <div className="from-tiff-gray-50 via-tiff-gray-100 to-leon-blue-50 dark:from-tiff-gray-950 dark:via-leon-blue-950 dark:to-tiff-gray-900 min-h-screen bg-linear-to-br">
-      {/* Hero — full width, no top margin (sits under the navbar) */}
-      <div className="pt-16 md:pt-20">
+      {/* Hero — full width */}
+      <div className="pt-22 md:pt-30">
         <PropertyHero
           images={listing.images}
           videos={listing.videos}
