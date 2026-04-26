@@ -108,20 +108,41 @@ export async function POST(
   if (media.mediaType === 'image' && file.type !== 'image/svg+xml') {
     const rawBuffer = Buffer.from(await file.arrayBuffer());
     let webpBuffer: Buffer;
+    let icoBuffer: Buffer | null = null;
     try {
-      webpBuffer = await sharp(rawBuffer)
+      const { data, info } = await sharp(rawBuffer)
         .resize({ width: 1920, withoutEnlargement: true })
         .webp({ quality: 85 })
-        .toBuffer();
+        .toBuffer({ resolveWithObject: true });
+      webpBuffer = data;
+      const icoWidth = Math.max(1, Math.round(info.width * 0.02));
+      const icoHeight = Math.max(1, Math.round(info.height * 0.02));
+      try {
+        icoBuffer = await sharp(webpBuffer)
+          .resize(icoWidth, icoHeight)
+          .webp({ quality: 60 })
+          .toBuffer();
+      } catch (err) {
+        console.warn('[ico] thumbnail generation failed:', err);
+      }
     } catch {
       return NextResponse.json(
         { error: 'Invalid or unsupported image file' },
         { status: 400 }
       );
     }
+    const timestamp = Date.now();
     const safeBase = sanitizeFilename(file.name).replace(/\.[^.]+$/, '');
-    key = `listings/${id}/images/${Date.now()}-${safeBase}.webp`;
+    key = `listings/${id}/images/${timestamp}-${safeBase}.webp`;
     url = await uploadToSevalla(key, webpBuffer, 'image/webp');
+    if (icoBuffer) {
+      const icoKey = `listings/${id}/images/ico-${timestamp}-${safeBase}.webp`;
+      try {
+        await uploadToSevalla(icoKey, icoBuffer, 'image/webp');
+      } catch (err) {
+        console.warn('[ico] thumbnail upload failed:', err);
+      }
+    }
   } else {
     const safeName = sanitizeFilename(file.name);
     key = `listings/${id}/${media.mediaType}s/${Date.now()}-${safeName}`;

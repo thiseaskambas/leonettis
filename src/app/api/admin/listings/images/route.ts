@@ -3,6 +3,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getListingsCollection } from '@/app/lib/db/mongodb';
 import { deleteFromSevalla } from '@/app/lib/helpers/sevalla-storage';
 
+function deriveIcoKey(mainKey: string): string {
+  const lastSlash = mainKey.lastIndexOf('/');
+  if (lastSlash === -1) return `ico-${mainKey}`;
+  return `${mainKey.slice(0, lastSlash + 1)}ico-${mainKey.slice(lastSlash + 1)}`;
+}
+
 interface DeleteImagePayload {
   listingId?: string;
   mediaType?: 'image' | 'video';
@@ -61,6 +67,11 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
   await deleteFromSevalla(mediaKey);
 
   if (mediaType === 'image') {
+    try {
+      await deleteFromSevalla(deriveIcoKey(mediaKey));
+    } catch {
+      // Legacy images may have no ico- companion; ignore.
+    }
     await collection.updateOne(
       { id: listingId },
       { $pull: { images: { url: mediaUrl } } }

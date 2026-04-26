@@ -382,10 +382,10 @@ All routes live under `/api/admin/`. The middleware protects all of them except 
 
 | Method | Path                              | Notes                                                                                                                                                                                                                                                                                 |
 | ------ | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| POST   | `/api/admin/listings/[id]/images` | **Primary path for images** from the admin UI: `multipart/form-data` field `file`. Non-SVG raster images are resized (max width 1920px), encoded as WebP (quality 85), then uploaded to Sevalla; metadata is appended on the listing. SVG images and videos are uploaded raw on this route if used. Max file size `500MB` (same as presign). Videos from the admin UI still use presign + direct PUT + finalize. |
+| POST   | `/api/admin/listings/[id]/images` | **Primary path for images** from the admin UI: `multipart/form-data` field `file`. Non-SVG raster images are resized (max width 1920px), encoded as WebP (quality 85), then uploaded to Sevalla; a tiny WebP blur sibling (`ico-{same-stem}.webp`, ~2% dimensions) is uploaded alongside for lazy-load placeholders. SVG images and videos are uploaded raw on this route if used. Max file size `500MB` (same as presign). Videos from the admin UI still use presign + direct PUT + finalize. |
 | POST   | `/api/admin/listings/[id]/media/presign` | Validates `filename`, `contentType`, `size`, and listing existence. Enforces max file size `500MB` (`524288000` bytes). Returns signed Sevalla PUT URL + media metadata (`url`, `name`, `key`, `mediaType`) for direct browser upload.                                              |
 | POST   | `/api/admin/listings/[id]/media/finalize` | Persists uploaded media metadata on listing after successful direct browser upload. Supports both images and videos.                                                                                                                                                              |
-| DELETE | `/api/admin/listings/images`      | Body: `{ listingId, mediaType, mediaUrl, mediaKey }`. Removes the media reference from MongoDB and deletes the object from Sevalla by key. Returns `200` with an explicit lifecycle confirmation message.                                                                                           |
+| DELETE | `/api/admin/listings/images`      | Body: `{ listingId, mediaType, mediaUrl, mediaKey }`. Removes the media reference from MongoDB and deletes the object from Sevalla by key. For images, also attempts deletion of the matching `ico-*` key (non-fatal if absent). Returns `200` with an explicit lifecycle confirmation message.                                                                                           |
 
 #### Seed route
 
@@ -411,11 +411,12 @@ Images (raster, not SVG):
               ▼
 POST /api/admin/listings/[id]/images  (multipart/form-data, field "file")
   validate type + size (<=500MB) + listing exists
-  Sharp: resize max width 1920, WebP q85 → buffer
+  Sharp: resize max width 1920, WebP q85 → buffer (+ optional tiny ico-* WebP for blur)
   key: listings/{id}/images/{timestamp}-{basename}.webp
               │
               ▼
 uploadToSevalla(key, webpBuffer, image/webp)   [sevalla-storage.ts]
+  best-effort: upload ico-{timestamp}-{basename}.webp
               │
               ▼
 MongoDB $push image { url, name, key } on listing

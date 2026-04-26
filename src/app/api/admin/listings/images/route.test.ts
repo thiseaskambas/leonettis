@@ -48,7 +48,15 @@ describe('DELETE /api/admin/listings/images', () => {
     const body = await response.json();
     expect(response.status).toBe(200);
     expect(body.ok).toBe(true);
-    expect(deleteFromSevallaMock).toHaveBeenCalledWith('listings/abc/x.jpg');
+    expect(deleteFromSevallaMock).toHaveBeenCalledTimes(2);
+    expect(deleteFromSevallaMock).toHaveBeenNthCalledWith(
+      1,
+      'listings/abc/x.jpg'
+    );
+    expect(deleteFromSevallaMock).toHaveBeenNthCalledWith(
+      2,
+      'listings/abc/ico-x.jpg'
+    );
     expect(updateOne).toHaveBeenCalledWith(
       { id: 'abc' },
       { $pull: { images: { url: 'https://img/x.jpg' } } }

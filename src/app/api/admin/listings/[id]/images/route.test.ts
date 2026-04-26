@@ -60,11 +60,22 @@ describe('POST /api/admin/listings/[id]/images', () => {
     expect(body.media.mediaType).toBe('image');
     expect(body.media.contentType).toBe('image/webp');
     expect(body.image).toBeDefined();
-    expect(uploadToSevallaMock).toHaveBeenCalledWith(
-      expect.stringMatching(/listings\/listing-1\/images\/\d+-image\.webp$/),
-      expect.any(Buffer),
-      'image/webp'
+    expect(uploadToSevallaMock).toHaveBeenCalledTimes(2);
+    const mainKey = uploadToSevallaMock.mock.calls[0][0] as string;
+    const icoKey = uploadToSevallaMock.mock.calls[1][0] as string;
+    const tsMatch = mainKey.match(/(\d+)-image\.webp$/);
+    expect(tsMatch).not.toBeNull();
+    expect(mainKey).toBe(
+      `listings/listing-1/images/${tsMatch![1]}-image.webp`
     );
+    expect(icoKey).toBe(
+      `listings/listing-1/images/ico-${tsMatch![1]}-image.webp`
+    );
+    const mainBuf = uploadToSevallaMock.mock.calls[0][1] as Buffer;
+    const icoBuf = uploadToSevallaMock.mock.calls[1][1] as Buffer;
+    expect(icoBuf.length).toBeLessThan(mainBuf.length);
+    expect(uploadToSevallaMock.mock.calls[0][2]).toBe('image/webp');
+    expect(uploadToSevallaMock.mock.calls[1][2]).toBe('image/webp');
     expect(updateOne).toHaveBeenCalledWith(
       { id: 'listing-1' },
       {
