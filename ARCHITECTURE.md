@@ -382,7 +382,7 @@ All routes live under `/api/admin/`. The middleware protects all of them except 
 
 | Method | Path                              | Notes                                                                                                                                                                                                                                                                                 |
 | ------ | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| POST   | `/api/admin/listings/[id]/images` | Legacy fallback route. Accepts `multipart/form-data` with a `file` field and uploads through the app server. Supports image/video MIME types and persists uploaded media metadata on the listing. Prefer direct upload flow for normal image/video uploads. |
+| POST   | `/api/admin/listings/[id]/images` | **Primary path for images** from the admin UI: `multipart/form-data` field `file`. Non-SVG raster images are resized (max width 1920px), encoded as WebP (quality 85), then uploaded to Sevalla; metadata is appended on the listing. SVG images and videos are uploaded raw on this route if used. Max file size `500MB` (same as presign). Videos from the admin UI still use presign + direct PUT + finalize. |
 | POST   | `/api/admin/listings/[id]/media/presign` | Validates `filename`, `contentType`, `size`, and listing existence. Enforces max file size `500MB` (`524288000` bytes). Returns signed Sevalla PUT URL + media metadata (`url`, `name`, `key`, `mediaType`) for direct browser upload.                                              |
 | POST   | `/api/admin/listings/[id]/media/finalize` | Persists uploaded media metadata on listing after successful direct browser upload. Supports both images and videos.                                                                                                                                                              |
 | DELETE | `/api/admin/listings/images`      | Body: `{ listingId, mediaType, mediaUrl, mediaKey }`. Removes the media reference from MongoDB and deletes the object from Sevalla by key. Returns `200` with an explicit lifecycle confirmation message.                                                                                           |
@@ -403,9 +403,24 @@ All routes live under `/api/admin/`. The middleware protects all of them except 
 
 ```
 Admin UI creates listing first, then uploads selected files.
-For images and videos, upload bytes go browser->Sevalla via signed URL.
+
+Images (raster, not SVG):
   selection UX: additive picker, dedupe by file metadata, per-file remove, clear-all
   create-mode upload execution: each file is attempted independently; one failure does not short-circuit later files
+              │
+              ▼
+POST /api/admin/listings/[id]/images  (multipart/form-data, field "file")
+  validate type + size (<=500MB) + listing exists
+  Sharp: resize max width 1920, WebP q85 → buffer
+  key: listings/{id}/images/{timestamp}-{basename}.webp
+              │
+              ▼
+uploadToSevalla(key, webpBuffer, image/webp)   [sevalla-storage.ts]
+              │
+              ▼
+MongoDB $push image { url, name, key } on listing
+
+Videos (and any caller still using direct upload for images):
               │
               ▼
 POST /api/admin/listings/[id]/media/presign
@@ -418,9 +433,8 @@ Browser PUT signedUploadUrl (file bytes sent directly to Sevalla)
               ▼
 POST /api/admin/listings/[id]/media/finalize
   persist { url, name, key, mediaType, contentType? } on listing
-              │
-              ▼
-Legacy fallback/server upload:
+
+Server upload (same route handles SVG / video if posted as multipart):
 POST /api/admin/listings/[id]/images
   validate file type: image/* or video/* (fallback to extension when File.type is missing)
   sanitize filename: lowercase, spaces→dashes, strip unsafe chars

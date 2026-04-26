@@ -17,6 +17,14 @@ vi.mock('@/app/lib/helpers/sevalla-storage', () => ({
 
 import { POST } from './route';
 
+/** Minimal valid 1×1 PNG (Sharp accepts this in tests). */
+const MINIMAL_PNG = Uint8Array.from(
+  Buffer.from(
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+    'base64'
+  )
+);
+
 describe('POST /api/admin/listings/[id]/images', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -30,8 +38,8 @@ describe('POST /api/admin/listings/[id]/images', () => {
     const formData = new FormData();
     formData.set(
       'file',
-      new File([new Uint8Array([1, 2, 3])], 'image.jpg', {
-        type: 'image/jpeg',
+      new File([MINIMAL_PNG], 'image.png', {
+        type: 'image/png',
       })
     );
 
@@ -50,20 +58,78 @@ describe('POST /api/admin/listings/[id]/images', () => {
 
     expect(response.status).toBe(200);
     expect(body.media.mediaType).toBe('image');
-    expect(body.media.contentType).toBe('image/jpeg');
+    expect(body.media.contentType).toBe('image/webp');
     expect(body.image).toBeDefined();
+    expect(uploadToSevallaMock).toHaveBeenCalledWith(
+      expect.stringMatching(/listings\/listing-1\/images\/\d+-image\.webp$/),
+      expect.any(Buffer),
+      'image/webp'
+    );
     expect(updateOne).toHaveBeenCalledWith(
       { id: 'listing-1' },
       {
         $push: {
           images: expect.objectContaining({
             url: expect.any(String),
-            name: 'image.jpg',
-            key: expect.stringContaining('listings/listing-1/images/'),
+            name: 'image.png',
+            key: expect.stringMatching(
+              /listings\/listing-1\/images\/\d+-image\.webp$/
+            ),
           }),
         },
       }
     );
+  });
+
+  it('returns 400 when image bytes are not a valid image', async () => {
+    const formData = new FormData();
+    formData.set(
+      'file',
+      new File([new Uint8Array([1, 2, 3])], 'broken.jpg', {
+        type: 'image/jpeg',
+      })
+    );
+
+    const request = new Request(
+      'http://localhost/api/admin/listings/listing-1/images',
+      {
+        method: 'POST',
+        body: formData,
+      }
+    );
+
+    const response = await POST(request as never, {
+      params: Promise.resolve({ id: 'listing-1' }),
+    });
+
+    expect(response.status).toBe(400);
+    expect(uploadToSevallaMock).not.toHaveBeenCalled();
+    expect(updateOne).not.toHaveBeenCalled();
+  });
+
+  it('returns 400 when file exceeds max size', async () => {
+    const big = new Uint8Array(1);
+    const file = new File([big], 'huge.jpg', { type: 'image/jpeg' });
+    Object.defineProperty(file, 'size', { value: 500 * 1024 * 1024 + 1 });
+
+    const formData = new FormData();
+    formData.set('file', file);
+
+    const request = new Request(
+      'http://localhost/api/admin/listings/listing-1/images',
+      {
+        method: 'POST',
+        body: formData,
+      }
+    );
+
+    const response = await POST(request as never, {
+      params: Promise.resolve({ id: 'listing-1' }),
+    });
+
+    expect(response.status).toBe(400);
+    expect(uploadToSevallaMock).not.toHaveBeenCalled();
+    expect(updateOne).not.toHaveBeenCalled();
   });
 
   it('uploads video files and appends video metadata', async () => {

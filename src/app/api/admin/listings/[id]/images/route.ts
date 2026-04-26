@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import sharp from 'sharp';
 
 import { getListingsCollection } from '@/app/lib/db/mongodb';
-import type {
-  ListingImage,
-} from '@/app/lib/definitions/listing.types';
+import type { ListingImage } from '@/app/lib/definitions/listing.types';
 import { uploadToSevalla } from '@/app/lib/helpers/sevalla-storage';
+
+/** Align with presign route and admin client max upload size. */
+const MAX_FILE_SIZE_BYTES = 500 * 1024 * 1024;
 
 function sanitizeFilename(filename: string): string {
   return filename.replace(/[^a-zA-Z0-9_.-]/g, '-').toLowerCase();
@@ -74,6 +76,13 @@ export async function POST(
     return NextResponse.json({ error: 'file is required' }, { status: 400 });
   }
 
+  if (file.size > MAX_FILE_SIZE_BYTES) {
+    return NextResponse.json(
+      { error: 'File exceeds maximum size' },
+      { status: 400 }
+    );
+  }
+
   const media = resolveMediaTypeAndContentType(file);
   if (!media) {
     return NextResponse.json(
@@ -88,10 +97,37 @@ export async function POST(
     return NextResponse.json({ error: 'Listing not found' }, { status: 404 });
   }
 
-  const safeName = sanitizeFilename(file.name);
-  const key = `listings/${id}/${media.mediaType}s/${Date.now()}-${safeName}`;
-  const fileBuffer = Buffer.from(await file.arrayBuffer());
-  const url = await uploadToSevalla(key, fileBuffer, media.contentType);
+  let url: string;
+  let key: string;
+
+  const outputContentType =
+    media.mediaType === 'image' && file.type !== 'image/svg+xml'
+      ? 'image/webp'
+      : media.contentType;
+
+  if (media.mediaType === 'image' && file.type !== 'image/svg+xml') {
+    const rawBuffer = Buffer.from(await file.arrayBuffer());
+    let webpBuffer: Buffer;
+    try {
+      webpBuffer = await sharp(rawBuffer)
+        .resize({ width: 1920, withoutEnlargement: true })
+        .webp({ quality: 85 })
+        .toBuffer();
+    } catch {
+      return NextResponse.json(
+        { error: 'Invalid or unsupported image file' },
+        { status: 400 }
+      );
+    }
+    const safeBase = sanitizeFilename(file.name).replace(/\.[^.]+$/, '');
+    key = `listings/${id}/images/${Date.now()}-${safeBase}.webp`;
+    url = await uploadToSevalla(key, webpBuffer, 'image/webp');
+  } else {
+    const safeName = sanitizeFilename(file.name);
+    key = `listings/${id}/${media.mediaType}s/${Date.now()}-${safeName}`;
+    const fileBuffer = Buffer.from(await file.arrayBuffer());
+    url = await uploadToSevalla(key, fileBuffer, media.contentType);
+  }
 
   if (media.mediaType === 'image') {
     const image: ListingImage = { url, name: file.name, key };
@@ -104,7 +140,7 @@ export async function POST(
           name: file.name,
           key,
           mediaType: media.mediaType,
-          contentType: media.contentType,
+          contentType: outputContentType,
         },
         image,
       },
@@ -122,7 +158,7 @@ export async function POST(
         name: file.name,
         key,
         mediaType: media.mediaType,
-        contentType: media.contentType,
+        contentType: outputContentType,
       },
     },
     { status: 200 }

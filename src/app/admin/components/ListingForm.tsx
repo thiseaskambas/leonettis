@@ -375,6 +375,19 @@ export default function ListingForm({
       );
     }
 
+    if (!isVideo) {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch(`/api/admin/listings/${listingId}/images`, {
+        method: 'POST',
+        body: formData,
+      });
+      if (!res.ok) throw new Error('Image upload failed');
+      const body = (await res.json()) as { media?: UploadedMedia };
+      if (!body.media) throw new Error('Image upload response missing media');
+      return body.media;
+    }
+
     const presignResponse = await fetch(
       `/api/admin/listings/${listingId}/media/presign`,
       {
@@ -517,8 +530,8 @@ export default function ListingForm({
   const translateField = async (field: 'title' | 'description') => {
     const text =
       field === 'title'
-        ? listing.title[activeLocale] ?? ''
-        : listing.description?.[activeLocale] ?? '';
+        ? (listing.title[activeLocale] ?? '')
+        : (listing.description?.[activeLocale] ?? '');
     if (!text.trim()) return;
 
     const setLoading =
