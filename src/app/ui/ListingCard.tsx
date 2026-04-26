@@ -8,8 +8,8 @@ import { Keyboard, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 import {
-  LocalizedListing,
   ListingStatus,
+  LocalizedListing,
 } from '@/app/lib/definitions/listing.types';
 import { Link } from '@/i18n/navigation';
 
@@ -113,7 +113,7 @@ export default function ListingCard({
       <div className="relative aspect-3/4 w-full md:aspect-4/3">
         {statusKey && statusColor && (
           <div
-            className={`absolute top-0 right-0 left-0 z-30 py-1.5 text-center text-sm font-bold tracking-widest text-white uppercase ${statusColor}`}>
+            className={`absolute top-0 right-0 left-0 z-30 py-3 text-center text-sm font-bold tracking-widest text-white uppercase ${statusColor}`}>
             {t(`status.${statusKey}`)}
           </div>
         )}
