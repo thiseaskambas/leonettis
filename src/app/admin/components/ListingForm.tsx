@@ -344,6 +344,10 @@ export default function ListingForm({
   const [uploading, setUploading] = useState(false);
   const [translatingTitle, setTranslatingTitle] = useState(false);
   const [translatingDescription, setTranslatingDescription] = useState(false);
+  const [improvingDescription, setImprovingDescription] = useState(false);
+  const [descriptionPreview, setDescriptionPreview] = useState<string | null>(
+    null
+  );
   const [uploadingMediaName, setUploadingMediaName] = useState<string | null>(
     null
   );
@@ -596,6 +600,48 @@ export default function ListingForm({
     }
   };
 
+  const improveDescription = async () => {
+    const text = listing.description?.[activeLocale] ?? '';
+    if (!text.trim()) return;
+
+    setImprovingDescription(true);
+    setError(null);
+    setDescriptionPreview(null);
+
+    try {
+      const response = await fetch('/api/admin/improve-description', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text,
+          locale: activeLocale,
+        }),
+      });
+
+      if (!response.ok) {
+        const body = (await response.json().catch(() => ({}))) as {
+          error?: string;
+        };
+        throw new Error(body.error ?? 'Improvement failed');
+      }
+
+      const body = (await response.json()) as { improved?: string };
+      if (!body.improved) {
+        throw new Error('Empty response from improve API');
+      }
+
+      setDescriptionPreview(body.improved);
+    } catch (improveError) {
+      const message =
+        improveError instanceof Error
+          ? improveError.message
+          : 'Improvement failed';
+      setError(message);
+    } finally {
+      setImprovingDescription(false);
+    }
+  };
+
   const handleMediaUpload = async (file: File | null) => {
     if (!file || !listing.id) return;
     setUploading(true);
@@ -743,7 +789,10 @@ export default function ListingForm({
             <button
               key={locale}
               type="button"
-              onClick={() => setActiveLocale(locale)}
+              onClick={() => {
+                setActiveLocale(locale);
+                setDescriptionPreview(null);
+              }}
               className={`rounded border px-3 py-1 text-sm ${
                 activeLocale === locale
                   ? 'bg-black text-white'
@@ -815,17 +864,61 @@ export default function ListingForm({
               className="w-full rounded border border-gray-300 px-3 py-2"
             />
             {(listing.description?.[activeLocale] ?? '').trim() && (
-              <button
-                type="button"
-                onClick={() => {
-                  void translateField('description');
-                }}
-                disabled={translatingDescription}
-                className="mt-2 rounded border border-gray-300 px-2 py-1 text-xs text-gray-600 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60">
-                {translatingDescription
-                  ? 'Translating...'
-                  : `Translate description from ${activeLocale.toUpperCase()} →`}
-              </button>
+              <div className="mt-2 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    void improveDescription();
+                  }}
+                  disabled={improvingDescription || translatingDescription}
+                  className="rounded border border-gray-300 px-2 py-1 text-xs text-gray-600 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60">
+                  {improvingDescription
+                    ? 'Improving...'
+                    : `Improve (${activeLocale.toUpperCase()})`}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    void translateField('description');
+                  }}
+                  disabled={translatingDescription || improvingDescription}
+                  className="rounded border border-gray-300 px-2 py-1 text-xs text-gray-600 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60">
+                  {translatingDescription
+                    ? 'Translating...'
+                    : `Translate description from ${activeLocale.toUpperCase()} →`}
+                </button>
+              </div>
+            )}
+            {descriptionPreview !== null && (
+              <div className="mt-3 rounded border border-blue-200 bg-blue-50 p-3 text-sm text-gray-700">
+                <p className="mb-1 text-xs font-semibold uppercase text-blue-500">
+                  Preview
+                </p>
+                <p className="whitespace-pre-wrap">{descriptionPreview}</p>
+                <div className="mt-2 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setListing((prev) => ({
+                        ...prev,
+                        description: {
+                          ...(prev.description ?? baseLocalizedText()),
+                          [activeLocale]: descriptionPreview,
+                        },
+                      }));
+                      setDescriptionPreview(null);
+                    }}
+                    className="rounded bg-blue-600 px-3 py-1 text-xs text-white hover:bg-blue-700">
+                    Accept
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDescriptionPreview(null)}
+                    className="rounded border border-gray-300 px-3 py-1 text-xs text-gray-600 hover:bg-gray-50">
+                    Discard
+                  </button>
+                </div>
+              </div>
             )}
           </div>
         </div>

@@ -92,6 +92,7 @@ OPENAI_API_KEY=...
   - `DELETE /api/admin/listings/images`
   - `POST /api/admin/seed`
   - `POST /api/admin/translate`
+  - `POST /api/admin/improve-description`
 
 ### Seed MongoDB
 
@@ -124,6 +125,7 @@ OpenAPI spec for admin endpoints:
 - `DELETE /api/admin/listings/images` removes image/video references from MongoDB and deletes the matching object from the Sevalla bucket.
 - Property detail pages now render both a Photo Gallery and a dedicated Video Gallery section below it.
 - Admin listing form supports per-field AI translation for `title` and `description` from the active locale into the other 4 locales via `POST /api/admin/translate` (always overwrites target locales).
+- Admin listing form also supports description-only AI improvement for the active locale via `POST /api/admin/improve-description`, showing a preview with Accept/Discard before replacing textarea content.
 - Listing lifecycle is controlled via `status` (`active`, `sold`, `rented`, `pending`, `under_offer`); listings without `status` are excluded from public list/detail pages, and non-active statuses render translated banners.
 
 ### Verification checklist
@@ -137,6 +139,7 @@ OpenAPI spec for admin endpoints:
 7. Delete both an image and a video in edit mode and verify DB reference cleanup plus Sevalla object deletion through API logs/tests.
 8. Upload a large video (near 500MB) and verify direct upload + finalize flow succeeds without app-server buffering failures.
 9. Confirm unauthorized calls to `/api/admin/*` return `401`.
+10. In admin listing form, improve a rough localized description, verify preview Accept/Discard behavior, then translate from that locale and confirm other locales update.
 
 Color palette link :
 https://www.tints.dev/palette/v1:dGlmZnw4MUQ4RDB8MzAwfHB8MHwwfDB8MTAwfGF-dGlmZi1zYXR8MDBBREEyfDQwMHxwfDB8MHwwfDEwMHxhfnRpZmYtZ3JheXxFOEYzRjF8NTAwfHB8MHwwfDB8MTAwfG1-dGlmZi1waW5rfEYwNTVCMXw0MDB8cHwwfDB8MHwxMDB8YX5sZW9ufDdFRDhFMHwyMDB8cHwwfDB8MHwxMDB8YX5sZW9uLXBpbmt8Zjc2NmEwfDQwMHxwfDB8MHwwfDEwMHxhfmxlb24tc2F0fDU4ZTRlMHwyMDB8cHwwfDB8MHwxMDB8YX5sZW9uLWJsdWV8Mjk0ZWEwfDgwMHxwfDB8MHwwfDEwMHxh

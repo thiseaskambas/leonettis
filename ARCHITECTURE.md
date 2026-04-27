@@ -16,7 +16,7 @@ Real estate listing platform for properties in Paros, Greece. Supports browsing,
 | Auth           | `jose` — HS256 JWT stored in httpOnly cookie                           |
 | i18n           | next-intl 4, 5 locales (en / fr / gr / de / it)                        |
 | Email          | Resend                                                                 |
-| AI translation | OpenAI (`gpt-4o-mini`, JSON mode)                                     |
+| AI translation | OpenAI (`gpt-4o-mini`)                                                 |
 | Testing        | Vitest (Node environment)                                              |
 | Icons          | lucide-react                                                           |
 
@@ -398,6 +398,7 @@ All routes live under `/api/admin/`. The middleware protects all of them except 
 | Method | Path                    | Notes                                                                                                                                                                                                                           |
 | ------ | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | POST   | `/api/admin/translate`  | Body: `{ text, sourceLocale, field }`. Validates non-empty text and supported locale/field, calls OpenAI `gpt-4o-mini` in JSON mode, and returns `{ translations }` for all non-source locales (always overwrite behavior). |
+| POST   | `/api/admin/improve-description` | Body: `{ text, locale }`. Validates non-empty text and supported locale, calls OpenAI `gpt-4o-mini`, and returns `{ improved }` in the same language as the input locale for preview-first acceptance in the admin form. |
 
 ### Media Upload Flow
 
@@ -512,7 +513,7 @@ All pages are inside [src/app/admin/](src/app/admin/).
 
 **Shared components:**
 
-- **`ListingForm.tsx`** — large client component covering the full `Listing` schema: multi-locale text inputs, numeric fields, enum selects, boolean toggles, checkbox groups for enum arrays, and unified media upload/delete UI. Features, Amenities, Views, and Suitable for keep predefined checkboxes and also support custom comma-separated entries rendered as removable chips. Create mode keeps additive media queueing with dedupe/remove/clear before submit, attempts each queued upload independently, and redirects with a warning query signal on partial failures; edit mode supports immediate image/video uploads, per-item delete for both types, and shows a non-blocking warning when redirected from a partial create upload failure. The localized title and description inputs include per-field `Translate from <LOCALE> →` controls that call `/api/admin/translate` and overwrite all other locales.
+- **`ListingForm.tsx`** — large client component covering the full `Listing` schema: multi-locale text inputs, numeric fields, enum selects, boolean toggles, checkbox groups for enum arrays, and unified media upload/delete UI. Features, Amenities, Views, and Suitable for keep predefined checkboxes and also support custom comma-separated entries rendered as removable chips. Create mode keeps additive media queueing with dedupe/remove/clear before submit, attempts each queued upload independently, and redirects with a warning query signal on partial failures; edit mode supports immediate image/video uploads, per-item delete for both types, and shows a non-blocking warning when redirected from a partial create upload failure. The localized title input includes `Translate from <LOCALE> →` controls that call `/api/admin/translate` and overwrite all other locales, while the localized description input supports both `Improve (<LOCALE>)` preview-first rewriting via `/api/admin/improve-description` and `Translate description from <LOCALE> →` propagation.
 - **`DeleteListingButton.tsx`** — inline confirm UI that calls `DELETE /api/admin/listings/[id]` and refreshes the dashboard on success.
 - **`AdminLogoutButton.tsx`** — calls `POST /api/admin/auth/logout`, then redirects to `/admin/login`.
 

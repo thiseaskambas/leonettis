@@ -374,6 +374,34 @@ paths:
           description: Invalid model output
         '500':
           description: Translation provider failure
+  /api/admin/improve-description:
+    post:
+      tags: [Admin Translation]
+      summary: Improve listing description in same locale
+      description: Rewrites a draft real estate description into polished copy while keeping the same language as the provided locale.
+      security:
+        - adminCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminImproveDescriptionRequest'
+      responses:
+        '200':
+          description: Description improved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminImproveDescriptionResponse'
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Unauthorized
+        '502':
+          description: Empty model output
+        '500':
+          description: Improvement provider failure
 components:
   securitySchemes:
     adminCookie:
@@ -496,6 +524,20 @@ components:
           description: Contains all locales except the provided sourceLocale.
           additionalProperties:
             type: string
+    AdminImproveDescriptionRequest:
+      type: object
+      required: [text, locale]
+      properties:
+        text:
+          type: string
+        locale:
+          $ref: '#/components/schemas/Locale'
+    AdminImproveDescriptionResponse:
+      type: object
+      required: [improved]
+      properties:
+        improved:
+          type: string
     Locale:
       type: string
       enum: [en, fr, gr, de, it]
