@@ -2,7 +2,7 @@ import { MongoClient } from 'mongodb';
 
 import type { Listing } from '@/app/lib/definitions/listing.types';
 
-const MONGODB_DB_NAME = process.env.MONGODB_DB_NAME ?? 'leonettis';
+const MONGODB_DB_NAME = process.env.MONGODB_DB_NAME ?? 'dev';
 const LISTINGS_COLLECTION = 'listings';
 
 function getMongoUri(): string {
