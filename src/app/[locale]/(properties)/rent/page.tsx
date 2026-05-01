@@ -3,13 +3,13 @@ import { getLocale, getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { LocalizedListing } from '@/app/lib/definitions/listing.types';
 import { getLocalizedListing } from '@/app/lib/helpers/listing-helpers';
-import {
-  parseSearchParams,
-  searchListings,
-} from '@/app/lib/services/listings-service';
+import { parseSearchParams } from '@/app/lib/helpers/listing-search-params';
+import { searchListings } from '@/app/lib/services/listings-service';
 import ListingCard from '@/app/ui/ListingCard';
 import ListingsFilters from '@/app/ui/ListingsFilters';
 import { isValidLocale, Locale } from '@/i18n/routing';
+
+export const dynamic = 'force-dynamic';
 
 interface RentPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;

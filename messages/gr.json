@@ -221,11 +221,18 @@
     "suitableFor": "Κατάλληλο Για",
     "description": "Περιγραφή",
     "gallery": "Φωτογραφίες",
+    "videoGallery": "Βίντεο",
     "close": "Κλείσιμο",
     "availableNow": "Διαθέσιμο Άμεσα",
     "availableFrom": "Διαθέσιμο Από",
     "availableUponRequest": "Διαθέσιμο κατόπιν αιτήματος",
     "priceUponRequest": "Τιμή κατόπιν αιτήματος",
+    "status": {
+      "sold": "Πωλήθηκε",
+      "rented": "Ενοικιάστηκε",
+      "pending": "Σε εκκρεμότητα",
+      "under_offer": "Υπό συζήτηση"
+    },
     "contact": "Επικοινωνία",
     "breadcrumb": {
       "home": "Αρχική",

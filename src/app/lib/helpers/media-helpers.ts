@@ -3,6 +3,10 @@
  * when set (e.g. CloudFront); otherwise returns the path as-is (e.g. local /public).
  */
 export function getMediaUrl(path: string): string {
+  if (/^(https?:)?\/\//i.test(path)) {
+    return path;
+  }
+
   const base = process.env.NEXT_PUBLIC_MEDIA_BASE_URL;
   if (!base) return path;
   const normalized = path.startsWith('/') ? path.slice(1) : path;
@@ -11,6 +15,23 @@ export function getMediaUrl(path: string): string {
 }
 
 export function getMediaBlurDataURL(path: string): string {
+  if (/^(https?:)?\/\//i.test(path)) {
+    try {
+      const parsed = new URL(path);
+      const pathname = parsed.pathname.replace(/^\//, '');
+      const lastSlashIndex = pathname.lastIndexOf('/');
+      const iconPath =
+        lastSlashIndex === -1
+          ? `ico-${pathname}`
+          : `${pathname.substring(0, lastSlashIndex + 1)}ico-${pathname.substring(lastSlashIndex + 1)}`;
+
+      parsed.pathname = `/${iconPath}`;
+      return parsed.toString();
+    } catch {
+      return path;
+    }
+  }
+
   const base = process.env.NEXT_PUBLIC_MEDIA_BASE_URL;
   if (!base) return path;
 

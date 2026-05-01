@@ -221,11 +221,18 @@
     "suitableFor": "Suitable For",
     "description": "Description",
     "gallery": "Photo Gallery",
+    "videoGallery": "Video Gallery",
     "close": "Close",
     "availableNow": "Available Now",
     "availableFrom": "Available From",
     "availableUponRequest": "Available Upon Request",
     "priceUponRequest": "Price Upon Request",
+    "status": {
+      "sold": "Sold",
+      "rented": "Rented",
+      "pending": "Pending",
+      "under_offer": "Under Offer"
+    },
     "contact": "Contact Us",
     "breadcrumb": {
       "home": "Home",

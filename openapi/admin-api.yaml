@@ -1,0 +1,686 @@
+openapi: 3.1.0
+info:
+  title: Leonettis Admin API
+  version: 1.0.0
+  description: |
+    Admin-only APIs for authentication, listings CRUD, media storage, and one-time seeding.
+servers:
+  - url: http://localhost:3000
+tags:
+  - name: Admin Auth
+  - name: Admin Listings
+  - name: Admin Seed
+  - name: Admin Translation
+paths:
+  /api/admin/auth/login:
+    post:
+      tags: [Admin Auth]
+      summary: Login with admin password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [password]
+              properties:
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Authenticated
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+              description: Sets the httpOnly admin_token JWT cookie.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+        '401':
+          description: Invalid credentials
+  /api/admin/auth/logout:
+    post:
+      tags: [Admin Auth]
+      summary: Logout and clear admin cookie
+      responses:
+        '200':
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+  /api/admin/listings:
+    get:
+      tags: [Admin Listings]
+      summary: Get all listings (admin view)
+      security:
+        - adminCookie: []
+      responses:
+        '200':
+          description: Listing collection
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  listings:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Listing'
+        '401':
+          description: Unauthorized
+    post:
+      tags: [Admin Listings]
+      summary: Create listing
+      security:
+        - adminCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListingInput'
+      responses:
+        '201':
+          description: Created listing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  listing:
+                    $ref: '#/components/schemas/Listing'
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+  /api/admin/listings/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    get:
+      tags: [Admin Listings]
+      summary: Get listing by id
+      security:
+        - adminCookie: []
+      responses:
+        '200':
+          description: Listing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  listing:
+                    $ref: '#/components/schemas/Listing'
+        '404':
+          description: Not found
+        '401':
+          description: Unauthorized
+    put:
+      tags: [Admin Listings]
+      summary: Update listing by id
+      security:
+        - adminCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListingInput'
+      responses:
+        '200':
+          description: Updated listing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  listing:
+                    $ref: '#/components/schemas/Listing'
+        '404':
+          description: Not found
+        '401':
+          description: Unauthorized
+    delete:
+      tags: [Admin Listings]
+      summary: Delete listing by id
+      security:
+        - adminCookie: []
+      responses:
+        '200':
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+        '404':
+          description: Not found
+        '401':
+          description: Unauthorized
+  /api/admin/listings/{id}/images:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    post:
+      tags: [Admin Listings]
+      summary: Upload listing media via app server (legacy fallback)
+      description: Legacy multipart upload endpoint. Prefer `/api/admin/listings/{id}/media/presign` + direct `PUT` + `/api/admin/listings/{id}/media/finalize` for normal image/video uploads.
+      security:
+        - adminCookie: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  media:
+                    $ref: '#/components/schemas/UploadedListingMedia'
+                  image:
+                    $ref: '#/components/schemas/ListingImageWithKey'
+                required: [media]
+        '400':
+          description: Invalid or unsupported file type
+        '404':
+          description: Listing not found
+        '401':
+          description: Unauthorized
+  /api/admin/listings/{id}/media/presign:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    post:
+      tags: [Admin Listings]
+      summary: Create direct media upload URL
+      description: Preferred upload entrypoint for both images and videos. Returns a signed Sevalla upload URL for direct browser upload and enforces the 500MB max file size policy.
+      security:
+        - adminCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MediaPresignRequest'
+      responses:
+        '200':
+          description: Upload URL created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaPresignResponse'
+        '400':
+          description: Invalid payload or unsupported media type/size
+        '404':
+          description: Listing not found
+        '401':
+          description: Unauthorized
+  /api/admin/listings/{id}/media/finalize:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    post:
+      tags: [Admin Listings]
+      summary: Finalize uploaded media on listing
+      description: Persists uploaded media metadata on the listing after a successful direct upload.
+      security:
+        - adminCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MediaFinalizeRequest'
+      responses:
+        '200':
+          description: Media finalized on listing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  media:
+                    $ref: '#/components/schemas/UploadedListingMedia'
+                  image:
+                    $ref: '#/components/schemas/ListingImageWithKey'
+                required: [media]
+        '400':
+          description: Invalid payload
+        '404':
+          description: Listing not found
+        '401':
+          description: Unauthorized
+  /api/admin/listings/images:
+    delete:
+      tags: [Admin Listings]
+      summary: Delete listing media
+      description: Deletes the media object from Sevalla and removes the matching image/video reference from the listing document.
+      security:
+        - adminCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [listingId, mediaType, mediaUrl, mediaKey]
+              properties:
+                listingId:
+                  type: string
+                mediaType:
+                  type: string
+                  enum: [image, video]
+                mediaUrl:
+                  type: string
+                mediaKey:
+                  type: string
+      responses:
+        '200':
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  message:
+                    type: string
+                    description: Confirms both Sevalla object deletion and DB reference removal.
+        '404':
+          description: Listing/media reference not found
+        '401':
+          description: Unauthorized
+  /api/admin/seed:
+    post:
+      tags: [Admin Seed]
+      summary: One-time seed from static mock data
+      security:
+        - adminCookie: []
+      responses:
+        '200':
+          description: Seed operation completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  inserted:
+                    type: integer
+                  skipped:
+                    type: integer
+        '401':
+          description: Unauthorized
+  /api/admin/translate:
+    post:
+      tags: [Admin Translation]
+      summary: Translate listing text across locales
+      description: Translates title or description from one source locale into all remaining admin locales.
+      security:
+        - adminCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminTranslateRequest'
+      responses:
+        '200':
+          description: Translation completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminTranslateResponse'
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Unauthorized
+        '502':
+          description: Invalid model output
+        '500':
+          description: Translation provider failure
+  /api/admin/improve-description:
+    post:
+      tags: [Admin Translation]
+      summary: Improve listing description in same locale
+      description: Rewrites a draft real estate description into polished copy while keeping the same language as the provided locale.
+      security:
+        - adminCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminImproveDescriptionRequest'
+      responses:
+        '200':
+          description: Description improved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminImproveDescriptionResponse'
+        '400':
+          description: Invalid request payload
+        '401':
+          description: Unauthorized
+        '502':
+          description: Empty model output
+        '500':
+          description: Improvement provider failure
+components:
+  securitySchemes:
+    adminCookie:
+      type: apiKey
+      in: cookie
+      name: admin_token
+  schemas:
+    ListingImage:
+      type: object
+      required: [url, name]
+      properties:
+        url:
+          type: string
+        name:
+          type: string
+        key:
+          type: string
+        description:
+          type: string
+    ListingImageWithKey:
+      allOf:
+        - $ref: '#/components/schemas/ListingImage'
+        - type: object
+          required: [key]
+          properties:
+            key:
+              type: string
+    ListingVideo:
+      type: object
+      required: [url, name]
+      properties:
+        url:
+          type: string
+        name:
+          type: string
+        key:
+          type: string
+        description:
+          type: string
+        contentType:
+          type: string
+          description: Optional MIME type for uploaded videos (for example video/webm).
+    UploadedListingMedia:
+      type: object
+      required: [url, name, key, mediaType]
+      properties:
+        url:
+          type: string
+        name:
+          type: string
+        key:
+          type: string
+        mediaType:
+          type: string
+          enum: [image, video]
+        contentType:
+          type: string
+          description: Optional MIME type for uploaded media.
+    MediaPresignRequest:
+      type: object
+      required: [filename, contentType, size]
+      properties:
+        filename:
+          type: string
+        contentType:
+          type: string
+          description: Must start with image/ or video/.
+        size:
+          type: integer
+          format: int64
+          minimum: 1
+          maximum: 524288000
+          description: File size in bytes. Max 500MB.
+    MediaPresignResponse:
+      type: object
+      required: [uploadUrl, maxFileSizeBytes, expiresInSeconds, media]
+      properties:
+        uploadUrl:
+          type: string
+        maxFileSizeBytes:
+          type: integer
+          format: int64
+        expiresInSeconds:
+          type: integer
+        media:
+          $ref: '#/components/schemas/UploadedListingMedia'
+    MediaFinalizeRequest:
+      type: object
+      required: [url, key, name, mediaType]
+      properties:
+        url:
+          type: string
+        key:
+          type: string
+        name:
+          type: string
+        mediaType:
+          type: string
+          enum: [image, video]
+        contentType:
+          type: string
+          description: Optional MIME type for uploaded media.
+    AdminTranslateRequest:
+      type: object
+      required: [text, sourceLocale, field]
+      properties:
+        text:
+          type: string
+        sourceLocale:
+          $ref: '#/components/schemas/Locale'
+        field:
+          type: string
+          enum: [title, description]
+    AdminTranslateResponse:
+      type: object
+      required: [translations]
+      properties:
+        translations:
+          type: object
+          description: Contains all locales except the provided sourceLocale.
+          additionalProperties:
+            type: string
+    AdminImproveDescriptionRequest:
+      type: object
+      required: [text, locale]
+      properties:
+        text:
+          type: string
+        locale:
+          $ref: '#/components/schemas/Locale'
+    AdminImproveDescriptionResponse:
+      type: object
+      required: [improved]
+      properties:
+        improved:
+          type: string
+    Locale:
+      type: string
+      enum: [en, fr, gr, de, it]
+    ListingInput:
+      type: object
+      required:
+        [title, slug, address, listingType, category, propertyType, tags]
+      properties:
+        id:
+          type: string
+        title:
+          type: object
+          additionalProperties:
+            type: string
+        description:
+          type: object
+          additionalProperties:
+            type: string
+        slug:
+          type: string
+        address:
+          type: object
+          properties:
+            streetNumber:
+              type: string
+            streetName:
+              type: string
+            city:
+              type: string
+            state:
+              type: string
+            region:
+              type: string
+            zipCode:
+              type: string
+            country:
+              type: string
+            displayAddress:
+              type: string
+            coordinates:
+              type: object
+              required: [lat, lng]
+              properties:
+                lat:
+                  type: number
+                lng:
+                  type: number
+        listingType:
+          type: string
+          enum: [buy, rent]
+        category:
+          type: array
+          items:
+            type: string
+        propertyType:
+          type: string
+        price:
+          type: number
+        bedrooms:
+          type: number
+        bathrooms:
+          type: number
+        squareMetersInterior:
+          type: number
+        squareMetersOutdoor:
+          type: number
+        squareMetersTotal:
+          type: number
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/ListingImage'
+        mainImage:
+          type: string
+        videos:
+          type: array
+          items:
+            $ref: '#/components/schemas/ListingVideo'
+        features:
+          type: array
+          description: Predefined feature IDs plus optional custom admin-defined values.
+          items:
+            type: string
+        furnishing:
+          type: string
+        amenities:
+          type: array
+          description: Predefined amenity IDs plus optional custom admin-defined values.
+          items:
+            type: string
+        suitableFor:
+          type: array
+          description: Predefined suitability IDs plus optional custom admin-defined values.
+          items:
+            type: string
+        view:
+          type: array
+          description: Predefined view IDs plus optional custom admin-defined values.
+          items:
+            type: string
+        publishedAt:
+          type: string
+        updatedAt:
+          type: string
+        status:
+          type: string
+          enum: [active, sold, rented, pending, under_offer]
+        isFeatured:
+          type: boolean
+        tags:
+          type: array
+          items:
+            type: string
+        favorite:
+          type: boolean
+        urgent:
+          type: boolean
+        condition:
+          type: string
+        yearBuilt:
+          type: number
+        energyRating:
+          type: string
+        yearRenovated:
+          type: number
+        availableNow:
+          type: boolean
+        availableUponRequest:
+          type: boolean
+        availableFrom:
+          type: string
+        availableTo:
+          type: string
+        leaseDuration:
+          type: number
+        leaseDurationUnit:
+          type: string
+          enum: [month, year]
+        leaseDurationType:
+          type: string
+          enum: [fixed, flexible]
+    Listing:
+      allOf:
+        - $ref: '#/components/schemas/ListingInput'
+        - type: object
+          required: [id, slug, publishedAt, updatedAt]

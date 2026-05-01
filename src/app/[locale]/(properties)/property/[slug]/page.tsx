@@ -12,6 +12,9 @@ import PropertyBreadcrumb from './components/PropertyBreadcrumb';
 import PropertyDetails from './components/PropertyDetails';
 import PropertyGallery from './components/PropertyGallery';
 import PropertyHero from './components/PropertyHero';
+import PropertyVideoGallery from './components/PropertyVideoGallery';
+
+export const dynamic = 'force-dynamic';
 
 interface PropertyPageProps {
   params: Promise<{ locale: string; slug: string }>;
@@ -27,7 +30,7 @@ export async function generateMetadata({
   }
 
   setRequestLocale(locale);
-  const raw = getListingBySlug(slug);
+  const raw = await getListingBySlug(slug);
   if (!raw) {
     return {};
   }
@@ -41,7 +44,7 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
   const t = await getTranslations('property');
   const tFilters = await getTranslations('search-bar.filters');
 
-  const raw = getListingBySlug(slug);
+  const raw = await getListingBySlug(slug);
   if (!raw) notFound();
 
   const listing = getLocalizedListing(raw, locale as Locale);
@@ -163,13 +166,14 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
 
   return (
     <div className="from-tiff-gray-50 via-tiff-gray-100 to-leon-blue-50 dark:from-tiff-gray-950 dark:via-leon-blue-950 dark:to-tiff-gray-900 min-h-screen bg-linear-to-br">
-      {/* Hero — full width, no top margin (sits under the navbar) */}
-      <div className="pt-16 md:pt-20">
+      {/* Hero — full width */}
+      <div className="pt-22 md:pt-30">
         <PropertyHero
           images={listing.images}
           videos={listing.videos}
           title={listing.title}
           address={listing.address}
+          status={listing.status}
         />
       </div>
 
@@ -198,6 +202,16 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
               images={listing.images}
               title={listing.title}
               galleryLabel={t('gallery')}
+              closeLabel={t('close')}
+            />
+          </div>
+        )}
+
+        {listing.videos && listing.videos.length > 0 && (
+          <div className="mt-16">
+            <PropertyVideoGallery
+              videos={listing.videos}
+              galleryLabel={t('videoGallery')}
               closeLabel={t('close')}
             />
           </div>

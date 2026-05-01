@@ -221,11 +221,18 @@
     "suitableFor": "Geeignet für",
     "description": "Beschreibung",
     "gallery": "Fotogalerie",
+    "videoGallery": "Videogalerie",
     "close": "Schließen",
     "availableNow": "Sofort verfügbar",
     "availableFrom": "Verfügbar ab",
     "availableUponRequest": "Auf Anfrage verfügbar",
     "priceUponRequest": "Preis auf Anfrage",
+    "status": {
+      "sold": "Verkauft",
+      "rented": "Vermietet",
+      "pending": "Ausstehend",
+      "under_offer": "Angebot laufend"
+    },
     "contact": "Kontakt aufnehmen",
     "breadcrumb": {
       "home": "Startseite",
