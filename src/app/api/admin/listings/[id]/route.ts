@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getListingsCollection } from '@/app/lib/db/mongodb';
 import {
   buildListingSlug,
+  deepPruneUndefined,
   sanitizeListingInput,
 } from '@/app/lib/helpers/listing-admin-helpers';
 
@@ -47,10 +48,8 @@ export async function PUT(
   }
   sanitized.updatedAt = new Date().toISOString();
 
-  // Drop undefined keys so $set never overwrites existing fields with null
-  const updatePayload = Object.fromEntries(
-    Object.entries(sanitized).filter(([, v]) => v !== undefined)
-  );
+  // Drop undefined keys recursively so partial PUT requests only update provided fields.
+  const updatePayload = deepPruneUndefined(sanitized);
 
   const collection = await getListingsCollection();
   const result = await collection.findOneAndUpdate(

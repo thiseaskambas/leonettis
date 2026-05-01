@@ -492,6 +492,7 @@ Follow-up work should add:
 **Key rules:**
 
 - Returns `Partial<Listing>` — undefined fields are omitted, making it safe to spread into a MongoDB `$set` for partial updates.
+- The admin listing `PUT` route applies recursive undefined pruning before `$set`, so partial payloads only mutate explicitly provided fields and cannot wipe unrelated listing data.
 - Empty arrays (`[]`) are preserved, which signals the intent to clear a field.
 - Image and video entries require both `url` and `name` as strings; invalid entries are dropped. The `key` field is preserved so S3 objects can still be deleted later. Video entries also preserve optional `contentType` so clients can render without hardcoded MIME assumptions.
 - Legacy `videos: string[]` payloads are still accepted and normalized into `{ url, name }` objects during sanitization.

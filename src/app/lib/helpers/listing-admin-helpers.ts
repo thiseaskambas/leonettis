@@ -115,6 +115,33 @@ function sanitizeVideoItem(
   };
 }
 
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    !Array.isArray(value) &&
+    Object.getPrototypeOf(value) === Object.prototype
+  );
+}
+
+export function deepPruneUndefined<T>(value: T): T {
+  if (Array.isArray(value)) {
+    return value.map((item) => deepPruneUndefined(item)) as T;
+  }
+
+  if (!isPlainObject(value)) {
+    return value;
+  }
+
+  const pruned = Object.fromEntries(
+    Object.entries(value)
+      .filter(([, entryValue]) => entryValue !== undefined)
+      .map(([key, entryValue]) => [key, deepPruneUndefined(entryValue)])
+  );
+
+  return pruned as T;
+}
+
 export function sanitizeListingInput(payload: unknown): Partial<Listing> {
   const data = payload && typeof payload === 'object' ? payload : {};
   const raw = data as Record<string, unknown>;

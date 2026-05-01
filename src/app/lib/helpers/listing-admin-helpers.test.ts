@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   buildListingSlug,
+  deepPruneUndefined,
   sanitizeListingInput,
 } from './listing-admin-helpers';
 
@@ -143,5 +144,36 @@ describe('listing-admin-helpers', () => {
         name: 'clip.mp4',
       },
     ]);
+  });
+
+  it('deep-prunes undefined keys while preserving falsy values and arrays', () => {
+    const payload = deepPruneUndefined({
+      title: undefined,
+      isFeatured: false,
+      price: 0,
+      tags: [],
+      nested: {
+        streetName: '',
+        streetNumber: undefined,
+        coordinates: {
+          lat: 0,
+          lng: 2,
+          altitude: undefined,
+        },
+      },
+    });
+
+    expect(payload).toEqual({
+      isFeatured: false,
+      price: 0,
+      tags: [],
+      nested: {
+        streetName: '',
+        coordinates: {
+          lat: 0,
+          lng: 2,
+        },
+      },
+    });
   });
 });

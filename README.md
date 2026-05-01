@@ -113,6 +113,7 @@ OpenAPI spec for admin endpoints:
 ### Admin update behavior
 
 - Sending `[]` for admin listing array fields in `PUT /api/admin/listings/:id` clears the stored values (for example `tags`, `features`, `amenities`, `view`, `suitableFor`, and `videos`).
+- `PUT /api/admin/listings/:id` now deep-prunes `undefined` values before MongoDB `$set`, so partial updates (for example image reorder payloads with only `images` and `mainImage`) do not null out unrelated fields.
 - On `/admin/listings/new` and `/admin/listings/:id/edit`, Features/Amenities/Views/Suitable for keep predefined checkboxes and also support custom comma-separated values as removable chips (saved in the same arrays as string values).
 - Listing image metadata preserves `images[].key` during listing create/update requests so uploaded object keys remain available for future deletes.
 - Direct browser upload is now the primary path for both images and videos: `POST /api/admin/listings/:id/media/presign` -> browser `PUT` to signed Sevalla URL -> `POST /api/admin/listings/:id/media/finalize`.
