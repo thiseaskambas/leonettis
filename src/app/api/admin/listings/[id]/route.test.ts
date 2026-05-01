@@ -172,6 +172,73 @@ describe('/api/admin/listings/[id] route', () => {
     );
   });
 
+  it('persists reordered images with mainImage in PUT updates', async () => {
+    findOneAndUpdate.mockResolvedValueOnce({
+      id: '1',
+      mainImage: 'https://cdn.example.com/listings/1/second.jpg',
+      images: [
+        {
+          url: 'https://cdn.example.com/listings/1/second.jpg',
+          name: 'second.jpg',
+          key: 'listings/1/second.jpg',
+        },
+        {
+          url: 'https://cdn.example.com/listings/1/first.jpg',
+          name: 'first.jpg',
+          key: 'listings/1/first.jpg',
+        },
+      ],
+    });
+
+    const request = new Request('http://localhost/api/admin/listings/1', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        mainImage: 'https://cdn.example.com/listings/1/second.jpg',
+        images: [
+          {
+            url: 'https://cdn.example.com/listings/1/second.jpg',
+            name: 'second.jpg',
+            key: 'listings/1/second.jpg',
+          },
+          {
+            url: 'https://cdn.example.com/listings/1/first.jpg',
+            name: 'first.jpg',
+            key: 'listings/1/first.jpg',
+          },
+        ],
+      }),
+    });
+
+    const response = await PUT(request as never, {
+      params: Promise.resolve({ id: '1' }),
+    });
+
+    expect(response.status).toBe(200);
+    expect(findOneAndUpdate).toHaveBeenCalledWith(
+      { id: '1' },
+      {
+        $set: expect.objectContaining({
+          mainImage: 'https://cdn.example.com/listings/1/second.jpg',
+          images: [
+            {
+              url: 'https://cdn.example.com/listings/1/second.jpg',
+              name: 'second.jpg',
+              key: 'listings/1/second.jpg',
+            },
+            {
+              url: 'https://cdn.example.com/listings/1/first.jpg',
+              name: 'first.jpg',
+              key: 'listings/1/first.jpg',
+            },
+          ],
+          updatedAt: expect.any(String),
+        }),
+      },
+      { returnDocument: 'after', projection: { _id: 0 } }
+    );
+  });
+
   it('preserves video metadata in PUT updates', async () => {
     findOneAndUpdate.mockResolvedValueOnce({
       id: '1',

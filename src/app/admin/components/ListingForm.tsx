@@ -1,5 +1,19 @@
 'use client';
 
+import {
+  closestCenter,
+  DndContext,
+  type DragEndEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  rectSortingStrategy,
+  SortableContext,
+  useSortable,
+} from '@dnd-kit/sortable';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from 'react';
 
@@ -200,6 +214,70 @@ function getMediaKey(media: { key?: string; url: string }): string {
   }
 }
 
+function getSortableImageId(image: ListingImage): string {
+  return image.key ?? image.url;
+}
+
+function SortableImageItem({
+  image,
+  isMainImage,
+  onDelete,
+}: {
+  image: ListingImage;
+  isMainImage: boolean;
+  onDelete: (mediaType: 'image' | 'video', media: ListingImage) => void;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: getSortableImageId(image),
+  });
+
+  const style = {
+    transform: transform
+      ? `translate3d(${transform.x}px, ${transform.y}px, 0) scaleX(${transform.scaleX}) scaleY(${transform.scaleY})`
+      : undefined,
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className="cursor-grab rounded border border-gray-200 p-3 active:cursor-grabbing">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={image.url}
+        alt={image.name}
+        className="mb-2 h-28 w-full rounded object-cover"
+      />
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <p className="truncate text-sm">{image.name}</p>
+        {isMainImage ? (
+          <span className="rounded bg-cyan-100 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-cyan-700 uppercase">
+            Main
+          </span>
+        ) : null}
+      </div>
+      <button
+        type="button"
+        onPointerDown={(event) => event.stopPropagation()}
+        onClick={() => onDelete('image', image)}
+        className="rounded border border-red-300 px-2 py-1 text-xs text-red-600">
+        Delete
+      </button>
+    </div>
+  );
+}
+
 function normalizeListingVideos(videos: unknown): ListingVideo[] {
   if (!Array.isArray(videos)) return [];
 
@@ -350,6 +428,9 @@ export default function ListingForm({
   );
   const [uploadingMediaName, setUploadingMediaName] = useState<string | null>(
     null
+  );
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
   );
 
   const formTitle = useMemo(
@@ -722,6 +803,47 @@ export default function ListingForm({
     }));
   };
 
+  const handleImageReorder = async (event: DragEndEvent) => {
+    if (!listing.id) return;
+
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const currentImages = listing.images ?? [];
+    const oldIndex = currentImages.findIndex(
+      (image) => getSortableImageId(image) === String(active.id)
+    );
+    const newIndex = currentImages.findIndex(
+      (image) => getSortableImageId(image) === String(over.id)
+    );
+    if (oldIndex < 0 || newIndex < 0) return;
+
+    const reorderedImages = arrayMove(currentImages, oldIndex, newIndex);
+    const nextMainImage = reorderedImages[0]?.url ?? '';
+
+    setListing((previous) => ({
+      ...previous,
+      images: reorderedImages,
+      mainImage: nextMainImage,
+    }));
+
+    const response = await fetch(`/api/admin/listings/${listing.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        images: reorderedImages,
+        mainImage: nextMainImage,
+      }),
+    });
+
+    if (!response.ok) {
+      setError('Failed to save image order');
+      return;
+    }
+
+    setError(null);
+  };
+
   const handleMediaFilesChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(event.target.files ?? []);
     if (selectedFiles.length === 0) return;
@@ -891,7 +1013,7 @@ export default function ListingForm({
             )}
             {descriptionPreview !== null && (
               <div className="mt-3 rounded border border-blue-200 bg-blue-50 p-3 text-sm text-gray-700">
-                <p className="mb-1 text-xs font-semibold uppercase text-blue-500">
+                <p className="mb-1 text-xs font-semibold text-blue-500 uppercase">
                   Preview
                 </p>
                 <p className="whitespace-pre-wrap">{descriptionPreview}</p>
@@ -1714,27 +1836,29 @@ export default function ListingForm({
               {(listing.images ?? []).length === 0 ? (
                 <p className="text-sm text-gray-500">No images uploaded.</p>
               ) : (
-                <div className="grid gap-3 md:grid-cols-3">
-                  {(listing.images ?? []).map((image) => (
-                    <div
-                      key={image.url}
-                      className="rounded border border-gray-200 p-3">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={image.url}
-                        alt={image.name}
-                        className="mb-2 h-28 w-full rounded object-cover"
-                      />
-                      <p className="mb-2 truncate text-sm">{image.name}</p>
-                      <button
-                        type="button"
-                        onClick={() => handleMediaDelete('image', image)}
-                        className="rounded border border-red-300 px-2 py-1 text-xs text-red-600">
-                        Delete
-                      </button>
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={(event) => {
+                    void handleImageReorder(event);
+                  }}>
+                  <SortableContext
+                    items={(listing.images ?? []).map((image) =>
+                      getSortableImageId(image)
+                    )}
+                    strategy={rectSortingStrategy}>
+                    <div className="grid gap-3 md:grid-cols-3">
+                      {(listing.images ?? []).map((image, index) => (
+                        <SortableImageItem
+                          key={getSortableImageId(image)}
+                          image={image}
+                          isMainImage={index === 0}
+                          onDelete={handleMediaDelete}
+                        />
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </SortableContext>
+                </DndContext>
               )}
             </div>
             <div className="space-y-2">

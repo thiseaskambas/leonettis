@@ -120,6 +120,7 @@ OpenAPI spec for admin endpoints:
 - Direct upload presign enforces a hard 500MB max file size (`524288000` bytes).
 - Compression/transcoding is intentionally deferred to a follow-up pipeline; the quick win focuses on reliable large upload transport + metadata persistence.
 - The listing form uses a unified `Media` section: create mode keeps additive/deduplicated queueing before submit, while edit mode supports immediate image/video uploads and per-item delete for both media types.
+- In edit mode, listing images are drag-and-drop reorderable; each reorder persists immediately through `PUT /api/admin/listings/:id`, and the first image is always synced as `mainImage`.
 - In create mode, media uploads are resilient per file: a failed file does not stop remaining selected files from being attempted.
 - After create-mode partial media failures, redirect to edit includes `?mediaUpload=failed` and edit mode shows a non-blocking warning while keeping already uploaded files.
 - `DELETE /api/admin/listings/images` removes image/video references from MongoDB and deletes the matching object from the Sevalla bucket.
@@ -140,6 +141,7 @@ OpenAPI spec for admin endpoints:
 8. Upload a large video (near 500MB) and verify direct upload + finalize flow succeeds without app-server buffering failures.
 9. Confirm unauthorized calls to `/api/admin/*` return `401`.
 10. In admin listing form, improve a rough localized description, verify preview Accept/Discard behavior, then translate from that locale and confirm other locales update.
+11. In admin edit mode, drag an image to reorder, refresh the page, and verify both order and featured/main image follow the new first position.
 
 Color palette link :
 https://www.tints.dev/palette/v1:dGlmZnw4MUQ4RDB8MzAwfHB8MHwwfDB8MTAwfGF-dGlmZi1zYXR8MDBBREEyfDQwMHxwfDB8MHwwfDEwMHxhfnRpZmYtZ3JheXxFOEYzRjF8NTAwfHB8MHwwfDB8MTAwfG1-dGlmZi1waW5rfEYwNTVCMXw0MDB8cHwwfDB8MHwxMDB8YX5sZW9ufDdFRDhFMHwyMDB8cHwwfDB8MHwxMDB8YX5sZW9uLXBpbmt8Zjc2NmEwfDQwMHxwfDB8MHwwfDEwMHxhfmxlb24tc2F0fDU4ZTRlMHwyMDB8cHwwfDB8MHwxMDB8YX5sZW9uLWJsdWV8Mjk0ZWEwfDgwMHxwfDB8MHwwfDEwMHxh
