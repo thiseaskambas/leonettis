@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getListingsCollection } from '@/app/lib/db/mongodb';
 import {
   buildListingSlug,
+  deepPruneUndefined,
   sanitizeListingInput,
 } from '@/app/lib/helpers/listing-admin-helpers';
 
@@ -34,18 +35,21 @@ export async function PUT(
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const updatePayload = sanitizeListingInput(payload);
-  if (updatePayload.title && !updatePayload.title.en) {
+  const sanitized = sanitizeListingInput(payload);
+  if (sanitized.title && !sanitized.title.en) {
     return NextResponse.json(
       { error: 'title.en is required when title is provided' },
       { status: 400 }
     );
   }
 
-  if (updatePayload.title?.en) {
-    updatePayload.slug = buildListingSlug(updatePayload);
+  if (sanitized.title?.en) {
+    sanitized.slug = buildListingSlug(sanitized);
   }
-  updatePayload.updatedAt = new Date().toISOString();
+  sanitized.updatedAt = new Date().toISOString();
+
+  // Drop undefined keys recursively so partial PUT requests only update provided fields.
+  const updatePayload = deepPruneUndefined(sanitized);
 
   const collection = await getListingsCollection();
   const result = await collection.findOneAndUpdate(

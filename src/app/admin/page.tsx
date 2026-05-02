@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { getListingsCollection } from '@/app/lib/db/mongodb';
 
 import DeleteListingButton from './components/DeleteListingButton';
+import { getListingCategoryLabel, getListingTitleEn } from './listing-row-utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -70,6 +71,8 @@ export default async function AdminListingsPage() {
           <tbody>
             {listings.map((listing) => {
               const status = getListingStatus(listing);
+              const titleEn = getListingTitleEn(listing);
+              const categoryLabel = getListingCategoryLabel(listing);
               const thumbnailImage =
                 Array.isArray(listing.images) &&
                 listing.images.length > 0 &&
@@ -89,16 +92,16 @@ export default async function AdminListingsPage() {
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={thumbnailImage}
-                        alt={listing.title.en}
+                        alt={titleEn}
                         className="h-8 w-8 rounded object-cover"
                       />
                     ) : (
                       <div className="h-8 w-8 rounded bg-gray-100" />
                     )}
                   </td>
-                  <td className="px-3 py-2">{listing.title.en}</td>
+                  <td className="px-3 py-2">{titleEn}</td>
                   <td className="px-3 py-2">{listing.listingType}</td>
-                  <td className="px-3 py-2">{listing.category.join(', ')}</td>
+                  <td className="px-3 py-2">{categoryLabel}</td>
                   <td className="px-3 py-2">
                     {listing.price != null ? `€${listing.price}` : 'N/A'}
                   </td>
