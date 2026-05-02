@@ -7,11 +7,7 @@ import {
 } from '../definitions/listing.types';
 import { ListingSearchParams } from '../helpers/listing-search-params';
 
-export type AdminSortField =
-  | 'updatedAt'
-  | 'publishedAt'
-  | 'price'
-  | 'title.en';
+export type AdminSortField = 'updatedAt' | 'publishedAt' | 'price' | 'title.en';
 
 export type AdminSortDirection = 'asc' | 'desc';
 
@@ -91,8 +87,7 @@ export async function getAdminListings(
 
   if (params.status) query.status = params.status;
   if (params.listingType) query.listingType = params.listingType;
-  if (params.category)
-    query.category = { $in: [params.category] };
+  if (params.category) query.category = { $in: [params.category] };
   if (params.propertyType) query.propertyType = params.propertyType;
 
   const sortField = params.sortField ?? 'updatedAt';
@@ -110,4 +105,15 @@ export async function getAdminListings(
     .toArray();
 
   return { listings: listings as Listing[], total, page, limit, totalPages };
+}
+
+export async function getAllPublishedSlugs(): Promise<string[]> {
+  const collection = await getListingsCollection();
+  const filter: Record<string, unknown> = {
+    status: { $exists: true, $ne: null },
+  };
+  const docs = await collection
+    .find(filter, { projection: { slug: 1, _id: 0 } })
+    .toArray();
+  return docs.map((d) => d.slug as string);
 }

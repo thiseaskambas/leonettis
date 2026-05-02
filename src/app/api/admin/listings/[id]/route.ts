@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { getListingsCollection } from '@/app/lib/db/mongodb';
@@ -6,6 +7,7 @@ import {
   deepPruneUndefined,
   sanitizeListingInput,
 } from '@/app/lib/helpers/listing-admin-helpers';
+import { locales } from '@/i18n/routing';
 
 export async function GET(
   _request: NextRequest,
@@ -62,6 +64,11 @@ export async function PUT(
     return NextResponse.json({ error: 'Listing not found' }, { status: 404 });
   }
 
+  const updatedSlug = (result as { slug: string }).slug;
+  for (const locale of Object.keys(locales)) {
+    revalidatePath(`/${locale}/property/${updatedSlug}`);
+  }
+
   return NextResponse.json({ listing: result }, { status: 200 });
 }
 
@@ -71,10 +78,18 @@ export async function DELETE(
 ): Promise<NextResponse> {
   const { id } = await context.params;
   const collection = await getListingsCollection();
-  const result = await collection.deleteOne({ id });
+  const deleted = await collection.findOneAndDelete(
+    { id },
+    { projection: { slug: 1, _id: 0 } }
+  );
 
-  if (!result.deletedCount) {
+  if (!deleted) {
     return NextResponse.json({ error: 'Listing not found' }, { status: 404 });
+  }
+
+  const deletedSlug = (deleted as { slug: string }).slug;
+  for (const locale of Object.keys(locales)) {
+    revalidatePath(`/${locale}/property/${deletedSlug}`);
   }
 
   return NextResponse.json({ ok: true }, { status: 200 });

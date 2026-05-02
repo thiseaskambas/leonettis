@@ -1,12 +1,13 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getLocale, getTranslations, setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import {
   getListingBySlug,
   getLocalizedListing,
 } from '@/app/lib/helpers/listing-helpers';
-import { isValidLocale, Locale } from '@/i18n/routing';
+import { getAllPublishedSlugs } from '@/app/lib/services/listings-service';
+import { isValidLocale, Locale, locales } from '@/i18n/routing';
 
 import PropertyBreadcrumb from './components/PropertyBreadcrumb';
 import PropertyDetails from './components/PropertyDetails';
@@ -14,7 +15,15 @@ import PropertyGallery from './components/PropertyGallery';
 import PropertyHero from './components/PropertyHero';
 import PropertyVideoGallery from './components/PropertyVideoGallery';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const slugs = await getAllPublishedSlugs();
+  const localeCodes = Object.keys(locales) as Locale[];
+  return localeCodes.flatMap((locale) =>
+    slugs.map((slug) => ({ locale, slug }))
+  );
+}
 
 interface PropertyPageProps {
   params: Promise<{ locale: string; slug: string }>;
@@ -39,8 +48,14 @@ export async function generateMetadata({
 }
 
 export default async function PropertyPage({ params }: PropertyPageProps) {
-  const { slug } = await params;
-  const locale = await getLocale();
+  const { slug, locale: localeParam } = await params;
+
+  if (!isValidLocale(localeParam)) {
+    notFound();
+  }
+
+  const locale = localeParam as Locale;
+  setRequestLocale(locale);
   const t = await getTranslations('property');
   const tFilters = await getTranslations('search-bar.filters');
 

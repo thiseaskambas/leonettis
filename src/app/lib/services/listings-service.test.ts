@@ -25,7 +25,11 @@ vi.mock('../db/mongodb', () => ({
   })),
 }));
 
-import { getAdminListings, searchListings } from './listings-service';
+import {
+  getAdminListings,
+  getAllPublishedSlugs,
+  searchListings,
+} from './listings-service';
 
 describe('searchListings', () => {
   beforeEach(() => {
@@ -133,5 +137,26 @@ describe('getAdminListings', () => {
 
     expect(cursor.skip).toHaveBeenCalledWith(50);
     expect(result.totalPages).toBe(2);
+  });
+});
+
+describe('getAllPublishedSlugs', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('queries published listings and returns slugs', async () => {
+    toArray.mockResolvedValueOnce([
+      { slug: 'paros-villa' },
+      { slug: 'naoussa-flat' },
+    ]);
+
+    const slugs = await getAllPublishedSlugs();
+
+    expect(find).toHaveBeenCalledWith(
+      { status: { $exists: true, $ne: null } },
+      { projection: { slug: 1, _id: 0 } }
+    );
+    expect(slugs).toEqual(['paros-villa', 'naoussa-flat']);
   });
 });

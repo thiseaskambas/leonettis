@@ -1,13 +1,23 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const deleteOne = vi.fn();
+import { locales } from '@/i18n/routing';
+
+const { revalidatePath } = vi.hoisted(() => ({
+  revalidatePath: vi.fn(),
+}));
+
+vi.mock('next/cache', () => ({
+  revalidatePath,
+}));
+
 const findOne = vi.fn();
+const findOneAndDelete = vi.fn();
 const findOneAndUpdate = vi.fn();
 
 vi.mock('@/app/lib/db/mongodb', () => ({
   getListingsCollection: vi.fn(async () => ({
-    deleteOne,
     findOne,
+    findOneAndDelete,
     findOneAndUpdate,
   })),
 }));
@@ -28,18 +38,39 @@ describe('/api/admin/listings/[id] route', () => {
     expect(response.status).toBe(404);
   });
 
-  it('deletes listing by id', async () => {
-    deleteOne.mockResolvedValueOnce({ deletedCount: 1 });
+  it('deletes listing by id and revalidates property paths', async () => {
+    findOneAndDelete.mockResolvedValueOnce({ slug: 'paros-villa' });
 
     const response = await DELETE({} as never, {
       params: Promise.resolve({ id: '1' }),
     });
     expect(response.status).toBe(200);
+    expect(findOneAndDelete).toHaveBeenCalledWith(
+      { id: '1' },
+      { projection: { slug: 1, _id: 0 } }
+    );
+    expect(revalidatePath).toHaveBeenCalledTimes(Object.keys(locales).length);
+    for (const locale of Object.keys(locales)) {
+      expect(revalidatePath).toHaveBeenCalledWith(
+        `/${locale}/property/paros-villa`
+      );
+    }
+  });
+
+  it('returns 404 on DELETE when listing is missing', async () => {
+    findOneAndDelete.mockResolvedValueOnce(null);
+
+    const response = await DELETE({} as never, {
+      params: Promise.resolve({ id: 'missing' }),
+    });
+    expect(response.status).toBe(404);
+    expect(revalidatePath).not.toHaveBeenCalled();
   });
 
   it('persists explicit empty arrays in PUT updates', async () => {
     findOneAndUpdate.mockResolvedValueOnce({
       id: '1',
+      slug: 'mock-slug',
       tags: [],
       features: [],
       amenities: [],
@@ -81,11 +112,18 @@ describe('/api/admin/listings/[id] route', () => {
       },
       { returnDocument: 'after', projection: { _id: 0 } }
     );
+    expect(revalidatePath).toHaveBeenCalledTimes(Object.keys(locales).length);
+    for (const locale of Object.keys(locales)) {
+      expect(revalidatePath).toHaveBeenCalledWith(
+        `/${locale}/property/mock-slug`
+      );
+    }
   });
 
   it('preserves image key metadata in PUT updates', async () => {
     findOneAndUpdate.mockResolvedValueOnce({
       id: '1',
+      slug: 'mock-slug',
       images: [
         {
           url: 'https://cdn.example.com/listings/1/main.jpg',
@@ -135,6 +173,7 @@ describe('/api/admin/listings/[id] route', () => {
   it('passes predefined and custom array values in PUT updates', async () => {
     findOneAndUpdate.mockResolvedValueOnce({
       id: '1',
+      slug: 'mock-slug',
       features: ['garden', 'Roof Deck'],
       amenities: ['parking', 'Private Dock'],
       view: ['sea', 'Sunset Panorama'],
@@ -175,6 +214,7 @@ describe('/api/admin/listings/[id] route', () => {
   it('persists reordered images with mainImage in PUT updates', async () => {
     findOneAndUpdate.mockResolvedValueOnce({
       id: '1',
+      slug: 'mock-slug',
       mainImage: 'https://cdn.example.com/listings/1/second.jpg',
       images: [
         {
@@ -249,6 +289,7 @@ describe('/api/admin/listings/[id] route', () => {
   it('deep-prunes undefined keys from nested objects in PUT updates', async () => {
     findOneAndUpdate.mockResolvedValueOnce({
       id: '1',
+      slug: 'mock-slug',
       address: {
         streetName: '',
         city: 'Paros',
@@ -294,6 +335,7 @@ describe('/api/admin/listings/[id] route', () => {
   it('preserves video metadata in PUT updates', async () => {
     findOneAndUpdate.mockResolvedValueOnce({
       id: '1',
+      slug: 'mock-slug',
       videos: [
         {
           url: 'https://cdn.example.com/listings/1/video.mp4',
