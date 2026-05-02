@@ -89,11 +89,11 @@ Copy `.example.env` to `.env.local` and fill in all values before running locall
 
 ### Admin authentication
 
-| Variable           | Required | Description                                      |
-| ------------------ | -------- | ------------------------------------------------ |
-| `ADMIN_PASSWORD`   | Yes      | Plain-text password for admin login              |
-| `ADMIN_JWT_SECRET` | Yes      | Secret for signing JWTs — must be 32+ characters |
-| `OPENAI_API_KEY`   | Yes (translation endpoint) | API key for `/api/admin/translate` |
+| Variable           | Required                   | Description                                      |
+| ------------------ | -------------------------- | ------------------------------------------------ |
+| `ADMIN_PASSWORD`   | Yes                        | Plain-text password for admin login              |
+| `ADMIN_JWT_SECRET` | Yes                        | Secret for signing JWTs — must be 32+ characters |
+| `OPENAI_API_KEY`   | Yes (translation endpoint) | API key for `/api/admin/translate`               |
 
 ### Sevalla media storage
 
@@ -193,7 +193,14 @@ getLocalizedListing(listing, locale) [listing-helpers.ts]
 
 ### Property Detail Page
 
-[src/app/[locale]/(properties)/property/[slug]/page.tsx](<src/app/[locale]/(properties)/property/[slug]/page.tsx>):
+[src/app/[locale]/(properties)/property/[slug]/page.tsx](<src/app/[locale]/(properties)/property/[slug]/page.tsx>) uses **ISR** (Incremental Static Regeneration), not `force-dynamic`:
+
+- `generateStaticParams()` loads all published listing slugs via `getAllPublishedSlugs()` in [listings-service.ts](src/app/lib/services/listings-service.ts) and pairs each slug with every locale from [routing.ts](src/i18n/routing.ts), so those pages are pre-rendered at build time (requires MongoDB during the build).
+- `export const revalidate = 3600` — stale pages refresh in the background at most once per hour.
+- `dynamicParams` remains default (`true`): slugs created after a deploy are still served on first request, then cached.
+- Admin **PUT** / **DELETE** on [`/api/admin/listings/[id]`](src/app/api/admin/listings/[id]/route.ts) calls `revalidatePath(\`/${locale}/property/${slug}\`)` for every locale so CDN/static cache updates immediately after edits or deletion.
+
+At request time:
 
 1. Calls `getListingBySlug(slug)` — returns `null` → `notFound()`
 2. Builds translation maps for all enum labels (features, amenities, conditions, etc.) server-side
@@ -244,17 +251,17 @@ Defined in [src/app/lib/definitions/listing.types.ts](src/app/lib/definitions/li
 
 **Key union types:**
 
-| Type              | Values                                                                                                                           |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `ListingCategory` | `commercial`, `residential`, `industrial`, `agricultural`                                                                        |
-| `PropertyType`    | `apartment`, `field`, `house`, `land`, `business`, `garage`, `building`, `office`, `warehouse`                                   |
-| `ViewType`        | Canonical values: `sea`, `mountain`, `city`, `countryside`, `lake`, `river`, `forest`, `park`, `beach`, `other`                   |
+| Type              | Values                                                                                                                                             |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ListingCategory` | `commercial`, `residential`, `industrial`, `agricultural`                                                                                          |
+| `PropertyType`    | `apartment`, `field`, `house`, `land`, `business`, `garage`, `building`, `office`, `warehouse`                                                     |
+| `ViewType`        | Canonical values: `sea`, `mountain`, `city`, `countryside`, `lake`, `river`, `forest`, `park`, `beach`, `other`                                    |
 | `Amenities`       | Canonical values: `swimming pool`, `gym`, `jacuzzi`, `sauna`, `steam room`, `tennis court`, `golf course`, `parking`, `garage`, `terrace`, `other` |
-| `Features`        | Canonical values: `air conditioning`, `heating`, `fireplace`, `stove`, `balcony`, `terrace`, `garden`, `parking`, `garage`, `other` |
-| `Furnishing`      | `furnished`, `unfurnished`, `partially furnished`, `other`                                                                       |
-| `SuitableFor`     | Canonical values: `family`, `couple`, `single`, `business`, `students`, `investment`, `embassy`, `vacation home`, `other`         |
-| `EnergyRating`    | `A`–`G`                                                                                                                          |
-| `Condition`       | `new`, `used`, `renovated`, `partially renovated`, `renovation needed`, `other`                                                  |
+| `Features`        | Canonical values: `air conditioning`, `heating`, `fireplace`, `stove`, `balcony`, `terrace`, `garden`, `parking`, `garage`, `other`                |
+| `Furnishing`      | `furnished`, `unfurnished`, `partially furnished`, `other`                                                                                         |
+| `SuitableFor`     | Canonical values: `family`, `couple`, `single`, `business`, `students`, `investment`, `embassy`, `vacation home`, `other`                          |
+| `EnergyRating`    | `A`–`G`                                                                                                                                            |
+| `Condition`       | `new`, `used`, `renovated`, `partially renovated`, `renovation needed`, `other`                                                                    |
 
 For admin-managed array fields (`features`, `amenities`, `view`, `suitableFor`), listings may also store custom free-text values in addition to these canonical options.
 
@@ -370,22 +377,22 @@ All routes live under `/api/admin/`. The middleware protects all of them except 
 
 #### Listing routes
 
-| Method | Path                       | Notes                                                                                                                                                                                                                                                       |
-| ------ | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/admin/listings`      | All listings sorted by `publishedAt` desc. No pagination.                                                                                                                                                                                                   |
+| Method | Path                       | Notes                                                                                                                                                                                                                                       |
+| ------ | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/admin/listings`      | All listings sorted by `publishedAt` desc. No pagination.                                                                                                                                                                                   |
 | POST   | `/api/admin/listings`      | Create. Required: `title.en`, `listingType`, `propertyType`. Generates `id` (UUID), `slug`, `publishedAt`, `updatedAt`. Defaults: `status: active`, `isFeatured/favorite/urgent: false`, arrays default to `[]`. Returns `201 { listing }`. |
-| GET    | `/api/admin/listings/[id]` | Fetch single by custom `id` field (not MongoDB `_id`). Returns `404` if not found.                                                                                                                                                                          |
-| PUT    | `/api/admin/listings/[id]` | Partial update. Sanitizes input. If `title.en` changed, regenerates slug. Updates `updatedAt`. Uses `findOneAndUpdate` with `returnDocument: 'after'`. Returns updated listing.                                                                             |
-| DELETE | `/api/admin/listings/[id]` | Hard delete. Returns `204`.                                                                                                                                                                                                                                 |
+| GET    | `/api/admin/listings/[id]` | Fetch single by custom `id` field (not MongoDB `_id`). Returns `404` if not found.                                                                                                                                                          |
+| PUT    | `/api/admin/listings/[id]` | Partial update. Sanitizes input. If `title.en` changed, regenerates slug. Updates `updatedAt`. Uses `findOneAndUpdate` with `returnDocument: 'after'`. `revalidatePath` per locale for the listing’s property URL. Returns updated listing. |
+| DELETE | `/api/admin/listings/[id]` | Hard delete via `findOneAndDelete` (reads `slug` for cache bust). `revalidatePath` for each locale’s property URL. Returns `200 { ok: true }`.                                                                                              |
 
 #### Image routes
 
-| Method | Path                              | Notes                                                                                                                                                                                                                                                                                 |
-| ------ | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| POST   | `/api/admin/listings/[id]/images` | **Primary path for images** from the admin UI: `multipart/form-data` field `file`. Non-SVG raster images are resized (max width 1920px), encoded as WebP (quality 85), then uploaded to Sevalla; a tiny WebP blur sibling (`ico-{same-stem}.webp`, ~2% dimensions) is uploaded alongside for lazy-load placeholders. SVG images and videos are uploaded raw on this route if used. Max file size `500MB` (same as presign). Videos from the admin UI still use presign + direct PUT + finalize. |
-| POST   | `/api/admin/listings/[id]/media/presign` | Validates `filename`, `contentType`, `size`, and listing existence. Enforces max file size `500MB` (`524288000` bytes). Returns signed Sevalla PUT URL + media metadata (`url`, `name`, `key`, `mediaType`) for direct browser upload.                                              |
-| POST   | `/api/admin/listings/[id]/media/finalize` | Persists uploaded media metadata on listing after successful direct browser upload. Supports both images and videos.                                                                                                                                                              |
-| DELETE | `/api/admin/listings/images`      | Body: `{ listingId, mediaType, mediaUrl, mediaKey }`. Removes the media reference from MongoDB and deletes the object from Sevalla by key. For images, also attempts deletion of the matching `ico-*` key (non-fatal if absent). Returns `200` with an explicit lifecycle confirmation message.                                                                                           |
+| Method | Path                                      | Notes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ------ | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| POST   | `/api/admin/listings/[id]/images`         | **Primary path for images** from the admin UI: `multipart/form-data` field `file`. Non-SVG raster images are resized (max width 1920px), encoded as WebP (quality 85), then uploaded to Sevalla; a tiny WebP blur sibling (`ico-{same-stem}.webp`, ~2% dimensions) is uploaded alongside for lazy-load placeholders. SVG images and videos are uploaded raw on this route if used. Max file size `500MB` (same as presign). Videos from the admin UI still use presign + direct PUT + finalize. |
+| POST   | `/api/admin/listings/[id]/media/presign`  | Validates `filename`, `contentType`, `size`, and listing existence. Enforces max file size `500MB` (`524288000` bytes). Returns signed Sevalla PUT URL + media metadata (`url`, `name`, `key`, `mediaType`) for direct browser upload.                                                                                                                                                                                                                                                          |
+| POST   | `/api/admin/listings/[id]/media/finalize` | Persists uploaded media metadata on listing after successful direct browser upload. Supports both images and videos.                                                                                                                                                                                                                                                                                                                                                                            |
+| DELETE | `/api/admin/listings/images`              | Body: `{ listingId, mediaType, mediaUrl, mediaKey }`. Removes the media reference from MongoDB and deletes the object from Sevalla by key. For images, also attempts deletion of the matching `ico-*` key (non-fatal if absent). Returns `200` with an explicit lifecycle confirmation message.                                                                                                                                                                                                 |
 
 #### Seed route
 
@@ -395,10 +402,10 @@ All routes live under `/api/admin/`. The middleware protects all of them except 
 
 #### Translation route
 
-| Method | Path                    | Notes                                                                                                                                                                                                                           |
-| ------ | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| POST   | `/api/admin/translate`  | Body: `{ text, sourceLocale, field }`. Validates non-empty text and supported locale/field, calls OpenAI `gpt-4o-mini` in JSON mode, and returns `{ translations }` for all non-source locales (always overwrite behavior). |
-| POST   | `/api/admin/improve-description` | Body: `{ text, locale }`. Validates non-empty text and supported locale, calls OpenAI `gpt-4o-mini`, and returns `{ improved }` in the same language as the input locale for preview-first acceptance in the admin form. |
+| Method | Path                             | Notes                                                                                                                                                                                                                       |
+| ------ | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| POST   | `/api/admin/translate`           | Body: `{ text, sourceLocale, field }`. Validates non-empty text and supported locale/field, calls OpenAI `gpt-4o-mini` in JSON mode, and returns `{ translations }` for all non-source locales (always overwrite behavior). |
+| POST   | `/api/admin/improve-description` | Body: `{ text, locale }`. Validates non-empty text and supported locale, calls OpenAI `gpt-4o-mini`, and returns `{ improved }` in the same language as the input locale for preview-first acceptance in the admin form.    |
 
 ### Media Upload Flow
 
@@ -470,6 +477,7 @@ Edit form then shows a non-blocking warning banner and clears the query param.
 
 Direct upload for image/video transport is the quick win and does not include compression/transcoding.
 Follow-up work should add:
+
 - async transcoding worker (FFmpeg or managed service),
 - video processing state on listing media (`pending`, `processing`, `ready`, `failed`),
 - automatic swap from original upload key/URL to compressed delivery output.

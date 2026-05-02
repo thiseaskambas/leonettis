@@ -1,7 +1,11 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
 
-import { getListingsCollection } from '@/app/lib/db/mongodb';
+import { getAdminListings } from '@/app/lib/services/listings-service';
 
+import { parseAdminParams } from './admin-params';
+import AdminFiltersBar from './components/AdminFiltersBar';
+import AdminPagination from './components/AdminPagination';
 import DeleteListingButton from './components/DeleteListingButton';
 import { getListingCategoryLabel, getListingTitleEn } from './listing-row-utils';
 
@@ -38,22 +42,36 @@ function getListingStatus(listing: {
   return { label: 'inactive', className: 'bg-gray-100 text-gray-500' };
 }
 
-export default async function AdminListingsPage() {
-  const collection = await getListingsCollection();
-  const listings = await collection
-    .find({}, { projection: { _id: 0 } })
-    .sort({ updatedAt: -1 })
-    .toArray();
+export default async function AdminListingsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
+  const raw = await searchParams;
+  const params = parseAdminParams(raw);
+  const { listings, total, page, totalPages } =
+    await getAdminListings(params);
 
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Listings</h1>
+        <h1 className="text-2xl font-semibold">
+          Listings
+          <span className="ml-2 text-sm font-normal text-gray-500">
+            ({total} total)
+          </span>
+        </h1>
         <Link
           href="/admin/listings/new"
           className="rounded bg-black px-4 py-2 text-sm text-white">
           New Listing
         </Link>
+      </div>
+
+      <div className="mb-4">
+        <Suspense fallback={<div className="h-9" />}>
+          <AdminFiltersBar />
+        </Suspense>
       </div>
       <div className="overflow-x-auto rounded border border-gray-200">
         <table className="min-w-full text-sm">
@@ -133,6 +151,12 @@ export default async function AdminListingsPage() {
             )}
           </tbody>
         </table>
+      </div>
+
+      <div className="mt-4">
+        <Suspense fallback={null}>
+          <AdminPagination currentPage={page} totalPages={totalPages} />
+        </Suspense>
       </div>
     </div>
   );
