@@ -9,7 +9,6 @@ export async function NavBar() {
     { href: '/buy', label: t('buy'), ariaLabel: t('buy-aria') },
     { href: '/rent', label: t('rent'), ariaLabel: t('rent-aria') },
     { href: '/contact', label: t('list-a-property') },
-    { href: '/blog', label: t('blog') },
     { href: '/about', label: t('about') },
     { href: '/contact', label: t('contact') },
   ];

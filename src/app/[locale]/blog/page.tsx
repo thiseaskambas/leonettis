@@ -1,15 +1,6 @@
-import { blogpostsData } from '@/app/lib/mock-data/blogposts-data';
-import { ArticleRenderer } from '@/app/ui/ArticlesRenderer';
+import { notFound } from 'next/navigation';
 
+/** Blog hidden for now — restore page body from git and re-add nav link when ready. */
 export default function Blog() {
-  return (
-    <main className="dark:bg-tiff-gray-950 min-h-screen p-5 pt-40 md:p-10 md:pt-40">
-      <h1>Blog</h1>
-      <ArticleRenderer
-        title={blogpostsData[0].data.article.title}
-        content={blogpostsData[0].data.article.content}
-        images={blogpostsData[0].data.images}
-      />
-    </main>
-  );
+  notFound();
 }
