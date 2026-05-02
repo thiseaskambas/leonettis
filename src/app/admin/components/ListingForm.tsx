@@ -14,8 +14,16 @@ import {
   SortableContext,
   useSortable,
 } from '@dnd-kit/sortable';
+import { CheckCircle } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from 'react';
+import {
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import {
   getCustomListingValues,
@@ -435,6 +443,8 @@ export default function ListingForm({
     current: number;
     total: number;
   } | null>(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const successDialogRef = useRef<HTMLDialogElement>(null);
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
   );
@@ -454,6 +464,12 @@ export default function ListingForm({
 
     router.replace(buildUrlWithoutMediaUploadParam(pathname, searchParams));
   }, [pathname, router, searchParams, showMediaUploadWarning]);
+
+  useEffect(() => {
+    if (showSuccessModal) {
+      successDialogRef.current?.showModal();
+    }
+  }, [showSuccessModal]);
 
   const uploadListingMediaDirectly = async (
     listingId: string,
@@ -634,6 +650,7 @@ export default function ListingForm({
         );
       } else {
         router.refresh();
+        setShowSuccessModal(true);
       }
     } catch {
       setError('Failed to save listing');
@@ -2027,6 +2044,31 @@ export default function ListingForm({
             ? 'Create Listing'
             : 'Save Changes'}
       </button>
+
+      {showSuccessModal ? (
+        <dialog
+          ref={successDialogRef}
+          className="fixed top-1/2 left-1/2 z-50 w-[calc(100vw-2rem)] max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-xl border-0 p-8 shadow-2xl backdrop:bg-black/50"
+          onClose={() => setShowSuccessModal(false)}
+          onCancel={(e) => e.preventDefault()}>
+          <div className="flex flex-col items-center gap-4 text-center">
+            <CheckCircle
+              className="size-12 shrink-0 text-green-600"
+              aria-hidden
+            />
+            <h2 className="text-lg font-semibold">Changes saved</h2>
+            <p className="text-sm text-gray-500">
+              Your listing has been updated successfully.
+            </p>
+            <button
+              type="button"
+              onClick={() => successDialogRef.current?.close()}
+              className="rounded bg-black px-5 py-2 text-white">
+              Close
+            </button>
+          </div>
+        </dialog>
+      ) : null}
     </form>
   );
 }
