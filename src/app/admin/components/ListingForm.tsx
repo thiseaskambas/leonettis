@@ -33,6 +33,7 @@ import {
 import {
   buildUrlWithoutMediaUploadParam,
   uploadCreateMediaBatch,
+  uploadWithXHR,
 } from '@/app/admin/components/listing-form-upload-utils';
 import type {
   Listing,
@@ -429,6 +430,11 @@ export default function ListingForm({
   const [uploadingMediaName, setUploadingMediaName] = useState<string | null>(
     null
   );
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const [uploadBatch, setUploadBatch] = useState<{
+    current: number;
+    total: number;
+  } | null>(null);
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
   );
@@ -451,7 +457,8 @@ export default function ListingForm({
 
   const uploadListingMediaDirectly = async (
     listingId: string,
-    file: File
+    file: File,
+    onProgress?: (pct: number) => void
   ): Promise<UploadedMedia> => {
     const isVideo = file.type.startsWith('video/');
     if (file.size > MAX_MEDIA_FILE_SIZE_BYTES) {
@@ -498,15 +505,18 @@ export default function ListingForm({
       throw new Error('Invalid presign response');
     }
 
-    const uploadResponse = await fetch(presignBody.uploadUrl, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': file.type || (isVideo ? 'video/mp4' : 'image/jpeg'),
-      },
-      body: file,
-    });
-    if (!uploadResponse.ok) {
-      throw new Error('Direct media upload failed');
+    const contentType = file.type || (isVideo ? 'video/mp4' : 'image/jpeg');
+    if (onProgress) {
+      await uploadWithXHR(presignBody.uploadUrl, file, contentType, onProgress);
+    } else {
+      const uploadResponse = await fetch(presignBody.uploadUrl, {
+        method: 'PUT',
+        headers: { 'Content-Type': contentType },
+        body: file,
+      });
+      if (!uploadResponse.ok) {
+        throw new Error('Direct media upload failed');
+      }
     }
 
     const finalizeResponse = await fetch(
@@ -535,9 +545,10 @@ export default function ListingForm({
 
   const uploadMediaForListing = async (
     listingId: string,
-    file: File
+    file: File,
+    onProgress?: (pct: number) => void
   ): Promise<UploadedMedia> => {
-    return uploadListingMediaDirectly(listingId, file);
+    return uploadListingMediaDirectly(listingId, file, onProgress);
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -579,14 +590,31 @@ export default function ListingForm({
 
         if (mediaFiles.length > 0) {
           setUploading(true);
+          let batchIndex = 0;
           try {
             const uploadResult = await uploadCreateMediaBatch({
               files: mediaFiles,
               onFileStart: (file) => {
+                batchIndex += 1;
                 setUploadingMediaName(file.name);
+                if (file.type.startsWith('video/')) {
+                  setUploadBatch({
+                    current: batchIndex,
+                    total: mediaFiles.length,
+                  });
+                  setUploadProgress(0);
+                } else {
+                  setUploadBatch(null);
+                  setUploadProgress(null);
+                }
               },
               uploadFile: async (file) => {
-                await uploadMediaForListing(createdListing.id, file);
+                const isVideo = file.type.startsWith('video/');
+                await uploadMediaForListing(
+                  createdListing.id,
+                  file,
+                  isVideo ? (pct) => setUploadProgress(pct) : undefined
+                );
               },
             });
 
@@ -594,6 +622,8 @@ export default function ListingForm({
           } finally {
             setUploadingMediaName(null);
             setUploading(false);
+            setUploadProgress(null);
+            setUploadBatch(null);
           }
         }
 
@@ -728,9 +758,15 @@ export default function ListingForm({
     setUploading(true);
     setError(null);
     setUploadingMediaName(file.name);
+    const isVideo = file.type.startsWith('video/');
+    if (isVideo) setUploadProgress(0);
 
     try {
-      const media = await uploadMediaForListing(listing.id, file);
+      const media = await uploadMediaForListing(
+        listing.id,
+        file,
+        isVideo ? (pct) => setUploadProgress(pct) : undefined
+      );
 
       setListing((prev) => {
         if (media.mediaType === 'image') {
@@ -759,6 +795,7 @@ export default function ListingForm({
       setError('Media upload failed');
     } finally {
       setUploadingMediaName(null);
+      setUploadProgress(null);
       setUploading(false);
     }
   };
@@ -1794,6 +1831,32 @@ export default function ListingForm({
                     );
                   })}
                 </ul>
+                {uploading && uploadingMediaName ? (
+                  uploadProgress !== null ? (
+                    <div className="space-y-1 pt-1">
+                      <div className="flex justify-between text-xs text-gray-500">
+                        <span className="truncate font-medium">
+                          {uploadingMediaName}
+                          {uploadBatch
+                            ? ` (${uploadBatch.current} / ${uploadBatch.total} files)`
+                            : ''}
+                        </span>
+                        <span className="ml-2 shrink-0">{uploadProgress}%</span>
+                      </div>
+                      <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
+                        <div
+                          className="h-full rounded-full bg-blue-500 transition-[width] duration-150"
+                          style={{ width: `${uploadProgress}%` }}
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-gray-500">
+                      Uploading:{' '}
+                      <span className="font-medium">{uploadingMediaName}</span>
+                    </p>
+                  )
+                ) : null}
               </div>
             )}
           </>
@@ -1826,10 +1889,27 @@ export default function ListingForm({
               allowed.
             </p>
             {uploadingMediaName ? (
-              <p className="text-xs text-gray-500">
-                Uploading:{' '}
-                <span className="font-medium">{uploadingMediaName}</span>
-              </p>
+              uploadProgress !== null ? (
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <span className="truncate font-medium">
+                      {uploadingMediaName}
+                    </span>
+                    <span className="ml-2 shrink-0">{uploadProgress}%</span>
+                  </div>
+                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
+                    <div
+                      className="h-full rounded-full bg-blue-500 transition-[width] duration-150"
+                      style={{ width: `${uploadProgress}%` }}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <p className="text-xs text-gray-500">
+                  Uploading:{' '}
+                  <span className="font-medium">{uploadingMediaName}</span>
+                </p>
+              )
             ) : null}
             <div className="space-y-2">
               <h3 className="text-sm font-semibold text-gray-700">Images</h3>

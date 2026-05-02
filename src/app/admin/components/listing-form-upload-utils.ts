@@ -56,3 +56,30 @@ export async function uploadCreateMediaBatch<TFile>({
     failed,
   };
 }
+
+export function uploadWithXHR(
+  url: string,
+  file: File,
+  contentType: string,
+  onProgress: (percent: number) => void
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) {
+        onProgress(Math.round((event.loaded / event.total) * 100));
+      }
+    };
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve();
+      } else {
+        reject(new Error('Direct media upload failed'));
+      }
+    };
+    xhr.onerror = () => reject(new Error('Direct media upload failed'));
+    xhr.open('PUT', url);
+    xhr.setRequestHeader('Content-Type', contentType);
+    xhr.send(file);
+  });
+}
