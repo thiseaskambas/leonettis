@@ -17,7 +17,7 @@ export interface Address {
   displayAddress?: string;
 }
 
-type ListingCategory =
+export type ListingCategory =
   | 'commercial'
   | 'residential'
   | 'industrial'
