@@ -96,3 +96,22 @@ export function slugify(input: string): string {
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '');
 }
+
+export type ListingFormSlugMode = 'create' | 'edit';
+
+export function resolveListingFormSlug(
+  mode: ListingFormSlugMode,
+  input: { slug: string; titleEn: string; slugTouched: boolean }
+): string {
+  const trimmedSlug = input.slug.trim();
+
+  if (mode === 'edit') {
+    return trimmedSlug;
+  }
+
+  if (input.slugTouched && trimmedSlug) {
+    return slugify(input.slug);
+  }
+
+  return slugify(input.titleEn || input.slug);
+}

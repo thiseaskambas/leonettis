@@ -51,6 +51,7 @@ import type {
 } from '@/app/lib/definitions/listing.types';
 import { resolveAddressCoordinates } from '@/app/lib/helpers/listing-address-helpers';
 import {
+  resolveListingFormSlug,
   slugify as buildSlug,
   transliterate,
 } from '@/app/lib/helpers/slug-helpers';
@@ -646,12 +647,11 @@ export default function ListingForm({
       }
     }
 
-    const slug =
-      mode === 'create'
-        ? slugTouched && currentListing.slug.trim()
-          ? buildSlug(currentListing.slug)
-          : buildSlug(currentListing.title.en || currentListing.slug)
-        : buildSlug(currentListing.slug) || buildSlug(currentListing.title.en);
+    const slug = resolveListingFormSlug(mode, {
+      slug: currentListing.slug,
+      titleEn: currentListing.title.en,
+      slugTouched,
+    });
 
     const payload: Listing = {
       ...currentListing,
