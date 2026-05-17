@@ -1,4 +1,6 @@
 import type { Listing } from '@/app/lib/definitions/listing.types';
+import { resolveAddressCoordinates } from '@/app/lib/helpers/listing-address-helpers';
+import { slugify } from '@/app/lib/helpers/slug-helpers';
 import { type Locale, locales } from '@/i18n/routing';
 
 const allLocales = Object.keys(locales) as Locale[];
@@ -9,16 +11,6 @@ const LISTING_STATUSES = new Set<Listing['status']>([
   'pending',
   'under_offer',
 ]);
-
-function slugify(input: string): string {
-  return input
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
-}
 
 export function buildListingSlug(listing: Partial<Listing>): string {
   const titleEn = listing.title?.en ?? '';
@@ -266,14 +258,10 @@ export function sanitizeListingInput(payload: unknown): Partial<Listing> {
       region: typeof address.region === 'string' ? address.region : undefined,
       zipCode: typeof address.zipCode === 'string' ? address.zipCode : '',
       country: typeof address.country === 'string' ? address.country : '',
-      displayAddress:
-        typeof address.displayAddress === 'string'
-          ? address.displayAddress
-          : undefined,
-      coordinates: {
-        lat: sanitizeNumber(coordinates.lat) ?? 0,
-        lng: sanitizeNumber(coordinates.lng) ?? 0,
-      },
+      coordinates: resolveAddressCoordinates({
+        lat: sanitizeNumber(coordinates.lat),
+        lng: sanitizeNumber(coordinates.lng),
+      }),
     };
   }
 

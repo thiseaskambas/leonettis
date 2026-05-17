@@ -1,6 +1,7 @@
 import { Bath, Bed, MapPin, Maximize, Phone } from 'lucide-react';
 
 import { LocalizedListing } from '@/app/lib/definitions/listing.types';
+import { formatPublicAddress } from '@/app/lib/helpers/listing-address-helpers';
 import { Link } from '@/i18n/navigation';
 
 interface PropertyDetailsTranslations {
@@ -105,18 +106,7 @@ export default function PropertyDetails({
         }).format(price)
       : translations.priceUponRequest;
 
-  const displayAddress =
-    address.displayAddress ??
-    [
-      address.streetNumber,
-      address.streetName,
-      address.city,
-      address.region,
-      address.state,
-      address.country,
-    ]
-      .filter(Boolean)
-      .join(', ');
+  const publicAddress = formatPublicAddress(address);
 
   // Normalize chip labels — replace spaces/underscores with hyphens for lookup
   const normalizeKey = (s: string) => s.replace(/ /g, '-');
@@ -318,14 +308,14 @@ export default function PropertyDetails({
       )}
 
       {/* Location */}
-      {displayAddress && (
+      {publicAddress && (
         <div className="flex flex-col gap-2">
           <h2 className="text-xs font-semibold tracking-widest text-gray-400 uppercase dark:text-gray-500">
             {translations.address}
           </h2>
           <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
             <MapPin className="h-4 w-4 shrink-0 text-gray-400" />
-            <span>{displayAddress}</span>
+            <span>{publicAddress}</span>
           </div>
         </div>
       )}

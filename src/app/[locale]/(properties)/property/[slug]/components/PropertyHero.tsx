@@ -12,6 +12,7 @@ import type {
   ListingStatus,
   ListingVideo,
 } from '@/app/lib/definitions/listing.types';
+import { formatPublicAddress } from '@/app/lib/helpers/listing-address-helpers';
 import { getMediaUrl } from '@/app/lib/helpers/media-helpers';
 
 type HeroSlide =
@@ -42,9 +43,7 @@ export default function PropertyHero({
   };
   const statusKey = status && status !== 'active' ? status : null;
   const statusColor = statusKey ? statusColors[statusKey] : undefined;
-  const displayAddress =
-    address.displayAddress ??
-    [address.city, address.region, address.state].filter(Boolean).join(', ');
+  const publicAddress = formatPublicAddress(address);
 
   const slides: HeroSlide[] = [
     ...(images?.map((img) => ({
@@ -67,10 +66,10 @@ export default function PropertyHero({
         <h1 className="text-xl font-semibold tracking-wide text-gray-900 md:text-2xl lg:text-3xl dark:text-white">
           {title}
         </h1>
-        {displayAddress && (
+        {publicAddress && (
           <div className="mt-1 flex items-center gap-1.5 text-sm text-gray-700 dark:text-gray-300">
             <MapPin className="h-4 w-4 shrink-0" />
-            <span>{displayAddress}</span>
+            <span>{publicAddress}</span>
           </div>
         )}
       </div>

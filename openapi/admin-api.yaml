@@ -80,6 +80,10 @@ paths:
     post:
       tags: [Admin Listings]
       summary: Create listing
+      description: |
+        Creates a listing. When `slug` is provided in the request body, it is stored (slugified)
+        and is **not** re-derived from `title.en`. When `slug` is omitted or empty, the server
+        generates a slug from `title.en` via transliteration and slugify rules.
       security:
         - adminCookie: []
       requestBody:
@@ -131,6 +135,11 @@ paths:
     put:
       tags: [Admin Listings]
       summary: Update listing by id
+      description: |
+        Partial update. Slug is **not** auto-derived from `title.en` on update. When `slug` is
+        provided, it is slugified (transliteration, lowercase, spaces to hyphens) before save.
+        An explicit empty, whitespace-only, or invalid slug (e.g. characters that normalize to
+        nothing) returns `400`. Use the admin form to change a slug explicitly.
       security:
         - adminCookie: []
       requestBody:
@@ -149,6 +158,8 @@ paths:
                 properties:
                   listing:
                     $ref: '#/components/schemas/Listing'
+        '400':
+          description: Invalid input (e.g. empty or invalid slug)
         '404':
           description: Not found
         '401':
@@ -569,17 +580,17 @@ components:
               type: string
             state:
               type: string
+              description: Administrative state, province, or region, e.g. South Aegean.
             region:
               type: string
+              description: Local region, island, or area used in public address display, e.g. Paros.
             zipCode:
               type: string
             country:
               type: string
-            displayAddress:
-              type: string
             coordinates:
               type: object
-              required: [lat, lng]
+              description: Optional. Omitted or partial lat/lng values are stored as 0 on save.
               properties:
                 lat:
                   type: number

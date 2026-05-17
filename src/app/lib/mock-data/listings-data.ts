@@ -178,7 +178,6 @@ export const listingsData: Listing[] = [
         lat: 0, // Unknown
         lng: 0, // Unknown
       },
-      displayAddress: 'Marpissa, Paros, Greece',
     },
     listingType: 'rent',
     category: ['residential'],
@@ -235,7 +234,6 @@ export const listingsData: Listing[] = [
         lat: 37.0853,
         lng: 25.1489,
       },
-      displayAddress: 'Paros, Cyclades, Greece',
     },
     listingType: 'buy',
     category: ['residential'],
@@ -287,7 +285,6 @@ export const listingsData: Listing[] = [
       zipCode: '',
       country: 'Greece',
       coordinates: { lat: 0, lng: 0 },
-      displayAddress: 'Marpissa, Paros, Greece',
     },
     listingType: 'buy',
     category: ['residential', 'commercial'],
@@ -339,7 +336,6 @@ export const listingsData: Listing[] = [
       country: 'Greece',
       zipCode: '',
       coordinates: { lat: 37.9428, lng: 23.6466 },
-      displayAddress: 'Piraeus, Attica, Greece',
     },
     listingType: 'buy',
     category: ['commercial'],

@@ -21,13 +21,76 @@ describe('listing-admin-helpers', () => {
     expect(slug).toBe('my-new-listing');
   });
 
+  it('slugifies greek title via transliteration', () => {
+    const slug = buildListingSlug({
+      title: {
+        en: 'Βίλα στην Πάρο',
+        fr: '',
+        gr: '',
+        de: '',
+        it: '',
+      },
+    });
+
+    expect(slug).toBe('vila-stin-paro');
+  });
+
+  it('slugifies accented french title', () => {
+    const slug = buildListingSlug({
+      title: {
+        en: "Côte d'Azur Villa",
+        fr: '',
+        gr: '',
+        de: '',
+        it: '',
+      },
+    });
+
+    expect(slug).toBe('cote-dazur-villa');
+  });
+
+  it('slugifies german umlauts', () => {
+    const slug = buildListingSlug({
+      title: {
+        en: 'Schöne Villa',
+        fr: '',
+        gr: '',
+        de: '',
+        it: '',
+      },
+    });
+
+    expect(slug).toBe('schone-villa');
+  });
+
+  it('falls back to slug field when title.en slugifies to empty', () => {
+    const slug = buildListingSlug({
+      title: { en: '!!!', fr: '', gr: '', de: '', it: '' },
+      slug: 'Custom-Slug',
+    });
+
+    expect(slug).toBe('custom-slug');
+  });
+
+  it('generates uuid-based slug when title and slug are empty', () => {
+    const slug = buildListingSlug({
+      title: { en: '', fr: '', gr: '', de: '', it: '' },
+    });
+
+    expect(slug).toMatch(/^listing-[0-9a-f-]{36}$/);
+  });
+
   it('sanitizes array and locale fields', () => {
     const payload = sanitizeListingInput({
       title: { en: 'Hello', fr: 'Bonjour' },
       category: ['residential', '', 1],
       tags: ['one', 'two'],
       address: {
+        streetNumber: '12',
+        streetName: 'Harbor Road',
         city: 'Paros',
+        region: 'Paros',
+        state: 'South Aegean',
         zipCode: '84400',
         country: 'GR',
         coordinates: { lat: 1, lng: 2 },
@@ -38,7 +101,36 @@ describe('listing-admin-helpers', () => {
     expect(payload.title?.gr).toBe('');
     expect(payload.category).toEqual(['residential']);
     expect(payload.tags).toEqual(['one', 'two']);
+    expect(payload.address?.streetNumber).toBe('12');
+    expect(payload.address?.streetName).toBe('Harbor Road');
     expect(payload.address?.city).toBe('Paros');
+    expect(payload.address?.region).toBe('Paros');
+    expect(payload.address?.state).toBe('South Aegean');
+  });
+
+  it('defaults missing coordinates to 0,0', () => {
+    const payload = sanitizeListingInput({
+      address: {
+        city: 'Paros',
+        zipCode: '',
+        country: 'GR',
+      },
+    });
+
+    expect(payload.address?.coordinates).toEqual({ lat: 0, lng: 0 });
+  });
+
+  it('defaults partial coordinates to 0 for missing axis', () => {
+    const payload = sanitizeListingInput({
+      address: {
+        city: 'Paros',
+        zipCode: '',
+        country: 'GR',
+        coordinates: { lat: 5 },
+      },
+    });
+
+    expect(payload.address?.coordinates).toEqual({ lat: 5, lng: 0 });
   });
 
   it('preserves explicit empty arrays for clear operations', () => {

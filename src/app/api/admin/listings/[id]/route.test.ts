@@ -67,6 +67,100 @@ describe('/api/admin/listings/[id] route', () => {
     expect(revalidatePath).not.toHaveBeenCalled();
   });
 
+  it('does not re-derive slug when title.en is updated', async () => {
+    findOneAndUpdate.mockResolvedValueOnce({
+      id: '1',
+      slug: 'original-slug',
+      title: {
+        en: 'New Title',
+        fr: '',
+        gr: '',
+        de: '',
+        it: '',
+      },
+    });
+
+    const request = new Request('http://localhost/api/admin/listings/1', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: {
+          en: 'New Title',
+          fr: '',
+          gr: '',
+          de: '',
+          it: '',
+        },
+        slug: 'original-slug',
+      }),
+    });
+
+    const response = await PUT(request as never, {
+      params: Promise.resolve({ id: '1' }),
+    });
+
+    expect(response.status).toBe(200);
+    const updateDocument = findOneAndUpdate.mock.calls.at(-1)?.[1] as {
+      $set: Record<string, unknown>;
+    };
+    expect(updateDocument.$set.slug).toBe('original-slug');
+    expect(updateDocument.$set.slug).not.toBe('new-title');
+    expect(updateDocument.$set.title).toEqual({
+      en: 'New Title',
+      fr: '',
+      gr: '',
+      de: '',
+      it: '',
+    });
+  });
+
+  it('slugifies explicit slug on update', async () => {
+    findOneAndUpdate.mockResolvedValueOnce({
+      id: '1',
+      slug: 'my-custom-slug',
+    });
+
+    const request = new Request('http://localhost/api/admin/listings/1', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slug: 'My Custom Slug' }),
+    });
+
+    const response = await PUT(request as never, {
+      params: Promise.resolve({ id: '1' }),
+    });
+
+    expect(response.status).toBe(200);
+    const updateDocument = findOneAndUpdate.mock.calls.at(-1)?.[1] as {
+      $set: Record<string, unknown>;
+    };
+    expect(updateDocument.$set.slug).toBe('my-custom-slug');
+  });
+
+  it.each([
+    ['', 'slug cannot be empty'],
+    ['   ', 'slug cannot be empty'],
+    [
+      '!!!',
+      'slug must contain at least one URL-safe character after normalization',
+    ],
+  ])('rejects invalid slug %j with 400', async (slug, error) => {
+    const request = new Request('http://localhost/api/admin/listings/1', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slug }),
+    });
+
+    const response = await PUT(request as never, {
+      params: Promise.resolve({ id: '1' }),
+    });
+
+    expect(response.status).toBe(400);
+    const body = (await response.json()) as { error: string };
+    expect(body.error).toBe(error);
+    expect(findOneAndUpdate).not.toHaveBeenCalled();
+  });
+
   it('persists explicit empty arrays in PUT updates', async () => {
     findOneAndUpdate.mockResolvedValueOnce({
       id: '1',
@@ -329,7 +423,6 @@ describe('/api/admin/listings/[id] route', () => {
     expect(updateDocument.$set.address).not.toHaveProperty('streetNumber');
     expect(updateDocument.$set.address).not.toHaveProperty('state');
     expect(updateDocument.$set.address).not.toHaveProperty('region');
-    expect(updateDocument.$set.address).not.toHaveProperty('displayAddress');
   });
 
   it('preserves video metadata in PUT updates', async () => {

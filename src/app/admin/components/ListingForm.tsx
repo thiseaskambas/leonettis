@@ -44,10 +44,17 @@ import {
   uploadWithXHR,
 } from '@/app/admin/components/listing-form-upload-utils';
 import type {
+  Address,
   Listing,
   ListingImage,
   ListingVideo,
 } from '@/app/lib/definitions/listing.types';
+import { resolveAddressCoordinates } from '@/app/lib/helpers/listing-address-helpers';
+import {
+  resolveListingFormSlug,
+  slugify as buildSlug,
+  transliterate,
+} from '@/app/lib/helpers/slug-helpers';
 
 const LOCALES = ['en', 'fr', 'gr', 'de', 'it'] as const;
 type LocaleCode = (typeof LOCALES)[number];
@@ -187,6 +194,27 @@ const BOOLEAN_FIELDS: { key: BooleanListingField; label: string }[] = [
   { key: 'availableUponRequest', label: 'Available upon request' },
 ];
 
+type AddressTextField = keyof Pick<
+  Address,
+  | 'streetNumber'
+  | 'streetName'
+  | 'city'
+  | 'region'
+  | 'state'
+  | 'zipCode'
+  | 'country'
+>;
+
+const ADDRESS_TEXT_FIELDS: { key: AddressTextField; label: string }[] = [
+  { key: 'streetNumber', label: 'Street number' },
+  { key: 'streetName', label: 'Street name' },
+  { key: 'city', label: 'City' },
+  { key: 'region', label: 'Region / island' },
+  { key: 'state', label: 'State / province' },
+  { key: 'zipCode', label: 'Zip code' },
+  { key: 'country', label: 'Country' },
+];
+
 const MAX_MEDIA_FILE_SIZE_BYTES = 500 * 1024 * 1024;
 
 function toggleArrayValue<T extends string>(
@@ -200,16 +228,6 @@ function toggleArrayValue<T extends string>(
   }
 
   return current.filter((item) => item !== value);
-}
-
-function buildSlug(value: string): string {
-  return value
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
 }
 
 function getMediaKey(media: { key?: string; url: string }): string {
@@ -329,6 +347,12 @@ function getInitialListing(initialListing?: Listing): Listing {
   if (initialListing) {
     return {
       ...initialListing,
+      address: {
+        ...initialListing.address,
+        coordinates: resolveAddressCoordinates(
+          initialListing.address.coordinates
+        ),
+      },
       videos: normalizeListingVideos(initialListing.videos),
     };
   }
@@ -344,7 +368,6 @@ function getInitialListing(initialListing?: Listing): Listing {
       zipCode: '',
       country: '',
       coordinates: { lat: 0, lng: 0 },
-      displayAddress: '',
     },
     listingType: 'buy',
     category: ['residential'],
@@ -430,6 +453,7 @@ export default function ListingForm({
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [translatingTitle, setTranslatingTitle] = useState(false);
+  const [slugTouched, setSlugTouched] = useState(false);
   const [translatingDescription, setTranslatingDescription] = useState(false);
   const [improvingDescription, setImprovingDescription] = useState(false);
   const [descriptionPreview, setDescriptionPreview] = useState<string | null>(
@@ -572,9 +596,65 @@ export default function ListingForm({
     setError(null);
     setIsSubmitting(true);
 
-    const slug = buildSlug(listing.title.en || listing.slug);
+    let currentListing = listing;
+
+    if (!listing.title.en.trim()) {
+      const sourceLocale = (['fr', 'gr', 'de', 'it'] as LocaleCode[]).find(
+        (locale) => listing.title[locale]?.trim()
+      );
+
+      if (sourceLocale) {
+        const sourceTitle = listing.title[sourceLocale]!;
+        setTranslatingTitle(true);
+        try {
+          const response = await fetch('/api/admin/translate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              text: sourceTitle,
+              sourceLocale,
+              field: 'title',
+            }),
+          });
+          if (response.ok) {
+            const body = (await response.json()) as {
+              translations?: Partial<Record<LocaleCode, string>>;
+            };
+            if (body.translations) {
+              currentListing = {
+                ...currentListing,
+                title: { ...currentListing.title, ...body.translations },
+              };
+            }
+          }
+        } catch {
+          // Fall through to transliteration fallback.
+        } finally {
+          setTranslatingTitle(false);
+        }
+
+        if (!currentListing.title.en.trim()) {
+          currentListing = {
+            ...currentListing,
+            title: {
+              ...currentListing.title,
+              en: transliterate(sourceTitle),
+            },
+          };
+        }
+
+        setListing(currentListing);
+      }
+    }
+
+    const slug = resolveListingFormSlug(mode, {
+      slug: currentListing.slug,
+      titleEn: currentListing.title.en,
+      slugTouched,
+    });
+
     const payload: Listing = {
-      ...listing,
+      ...currentListing,
       slug,
     };
 
@@ -987,10 +1067,9 @@ export default function ListingForm({
                 setListing((prev) => ({
                   ...prev,
                   title: { ...prev.title, [activeLocale]: event.target.value },
-                  slug:
-                    activeLocale === 'en'
-                      ? buildSlug(event.target.value)
-                      : buildSlug(prev.title.en),
+                  ...(mode === 'create' && activeLocale === 'en' && !slugTouched
+                    ? { slug: buildSlug(event.target.value) }
+                    : {}),
                 }))
               }
               className="w-full rounded border border-gray-300 px-3 py-2"
@@ -1014,9 +1093,10 @@ export default function ListingForm({
             <label className="mb-1 block text-sm">Slug</label>
             <input
               value={listing.slug}
-              onChange={(event) =>
-                setListing((prev) => ({ ...prev, slug: event.target.value }))
-              }
+              onChange={(event) => {
+                if (mode === 'create') setSlugTouched(true);
+                setListing((prev) => ({ ...prev, slug: event.target.value }));
+              }}
               className="w-full rounded border border-gray-300 px-3 py-2"
               required
             />
@@ -1188,74 +1268,34 @@ export default function ListingForm({
           Address
         </h2>
         <div className="grid gap-3 md:grid-cols-3">
-          <div>
-            <label className="mb-1 block text-sm">City</label>
-            <input
-              value={listing.address.city}
-              onChange={(event) =>
-                setListing((prev) => ({
-                  ...prev,
-                  address: { ...prev.address, city: event.target.value },
-                }))
-              }
-              className="w-full rounded border border-gray-300 px-3 py-2"
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm">Zip code</label>
-            <input
-              value={listing.address.zipCode}
-              onChange={(event) =>
-                setListing((prev) => ({
-                  ...prev,
-                  address: { ...prev.address, zipCode: event.target.value },
-                }))
-              }
-              className="w-full rounded border border-gray-300 px-3 py-2"
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm">Country</label>
-            <input
-              value={listing.address.country}
-              onChange={(event) =>
-                setListing((prev) => ({
-                  ...prev,
-                  address: { ...prev.address, country: event.target.value },
-                }))
-              }
-              className="w-full rounded border border-gray-300 px-3 py-2"
-            />
-          </div>
-          <div className="md:col-span-3">
-            <label className="mb-1 block text-sm">Display address</label>
-            <input
-              value={listing.address.displayAddress ?? ''}
-              onChange={(event) =>
-                setListing((prev) => ({
-                  ...prev,
-                  address: {
-                    ...prev.address,
-                    displayAddress: event.target.value,
-                  },
-                }))
-              }
-              className="w-full rounded border border-gray-300 px-3 py-2"
-            />
-          </div>
+          {ADDRESS_TEXT_FIELDS.map(({ key, label }) => (
+            <div key={key}>
+              <label className="mb-1 block text-sm">{label}</label>
+              <input
+                value={listing.address[key] ?? ''}
+                onChange={(event) =>
+                  setListing((prev) => ({
+                    ...prev,
+                    address: { ...prev.address, [key]: event.target.value },
+                  }))
+                }
+                className="w-full rounded border border-gray-300 px-3 py-2"
+              />
+            </div>
+          ))}
           <div>
             <label className="mb-1 block text-sm">Latitude</label>
             <input
               type="number"
               step="any"
-              value={listing.address.coordinates.lat}
+              value={resolveAddressCoordinates(listing.address.coordinates).lat}
               onChange={(event) =>
                 setListing((prev) => ({
                   ...prev,
                   address: {
                     ...prev.address,
                     coordinates: {
-                      ...prev.address.coordinates,
+                      ...resolveAddressCoordinates(prev.address.coordinates),
                       lat: Number(event.target.value || 0),
                     },
                   },
@@ -1269,14 +1309,14 @@ export default function ListingForm({
             <input
               type="number"
               step="any"
-              value={listing.address.coordinates.lng}
+              value={resolveAddressCoordinates(listing.address.coordinates).lng}
               onChange={(event) =>
                 setListing((prev) => ({
                   ...prev,
                   address: {
                     ...prev.address,
                     coordinates: {
-                      ...prev.address.coordinates,
+                      ...resolveAddressCoordinates(prev.address.coordinates),
                       lng: Number(event.target.value || 0),
                     },
                   },
@@ -2032,7 +2072,7 @@ export default function ListingForm({
 
       <button
         type="submit"
-        disabled={isSubmitting || uploading}
+        disabled={isSubmitting || uploading || translatingTitle}
         className="rounded bg-black px-5 py-2 text-white disabled:opacity-60">
         {isSubmitting || uploading
           ? uploading
