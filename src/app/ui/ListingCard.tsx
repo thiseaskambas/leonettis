@@ -11,6 +11,7 @@ import {
   ListingStatus,
   LocalizedListing,
 } from '@/app/lib/definitions/listing.types';
+import { formatPublicAddress } from '@/app/lib/helpers/listing-address-helpers';
 import { Link } from '@/i18n/navigation';
 
 import { getMediaBlurDataURL, getMediaUrl } from '../lib/helpers/media-helpers';
@@ -101,6 +102,7 @@ export default function ListingCard({
           maximumFractionDigits: 0,
         }).format(price)
       : t('priceUponRequest');
+  const publicAddress = formatPublicAddress(address);
 
   return (
     <div className="group relative w-full min-w-0 overflow-hidden rounded-2xl shadow-sm transition-all duration-500 hover:shadow-xl">
@@ -159,12 +161,12 @@ export default function ListingCard({
           <h3 className="truncate text-lg font-medium tracking-wide text-gray-900 dark:text-white">
             {title}
           </h3>
-          <div className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-300">
-            <MapPin className="h-3 w-3" />
-            <span className="truncate">
-              {address.city}, {address.region}
-            </span>
-          </div>
+          {publicAddress && (
+            <div className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-300">
+              <MapPin className="h-3 w-3" />
+              <span className="truncate">{publicAddress}</span>
+            </div>
+          )}
         </div>
 
         {/* Specs Row */}

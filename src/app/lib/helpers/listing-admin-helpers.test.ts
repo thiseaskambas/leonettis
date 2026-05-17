@@ -27,7 +27,11 @@ describe('listing-admin-helpers', () => {
       category: ['residential', '', 1],
       tags: ['one', 'two'],
       address: {
+        streetNumber: '12',
+        streetName: 'Harbor Road',
         city: 'Paros',
+        region: 'Paros',
+        state: 'South Aegean',
         zipCode: '84400',
         country: 'GR',
         coordinates: { lat: 1, lng: 2 },
@@ -38,7 +42,11 @@ describe('listing-admin-helpers', () => {
     expect(payload.title?.gr).toBe('');
     expect(payload.category).toEqual(['residential']);
     expect(payload.tags).toEqual(['one', 'two']);
+    expect(payload.address?.streetNumber).toBe('12');
+    expect(payload.address?.streetName).toBe('Harbor Road');
     expect(payload.address?.city).toBe('Paros');
+    expect(payload.address?.region).toBe('Paros');
+    expect(payload.address?.state).toBe('South Aegean');
   });
 
   it('preserves explicit empty arrays for clear operations', () => {

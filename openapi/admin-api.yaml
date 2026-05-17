@@ -569,17 +569,16 @@ components:
               type: string
             state:
               type: string
+              description: Administrative state, province, or region, e.g. South Aegean.
             region:
               type: string
+              description: Local region, island, or area used in public address display, e.g. Paros.
             zipCode:
               type: string
             country:
               type: string
-            displayAddress:
-              type: string
             coordinates:
               type: object
-              required: [lat, lng]
               properties:
                 lat:
                   type: number

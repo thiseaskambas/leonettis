@@ -329,7 +329,6 @@ describe('/api/admin/listings/[id] route', () => {
     expect(updateDocument.$set.address).not.toHaveProperty('streetNumber');
     expect(updateDocument.$set.address).not.toHaveProperty('state');
     expect(updateDocument.$set.address).not.toHaveProperty('region');
-    expect(updateDocument.$set.address).not.toHaveProperty('displayAddress');
   });
 
   it('preserves video metadata in PUT updates', async () => {

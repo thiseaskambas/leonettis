@@ -266,10 +266,6 @@ export function sanitizeListingInput(payload: unknown): Partial<Listing> {
       region: typeof address.region === 'string' ? address.region : undefined,
       zipCode: typeof address.zipCode === 'string' ? address.zipCode : '',
       country: typeof address.country === 'string' ? address.country : '',
-      displayAddress:
-        typeof address.displayAddress === 'string'
-          ? address.displayAddress
-          : undefined,
       coordinates: {
         lat: sanitizeNumber(coordinates.lat) ?? 0,
         lng: sanitizeNumber(coordinates.lng) ?? 0,

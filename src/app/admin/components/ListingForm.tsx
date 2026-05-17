@@ -44,6 +44,7 @@ import {
   uploadWithXHR,
 } from '@/app/admin/components/listing-form-upload-utils';
 import type {
+  Address,
   Listing,
   ListingImage,
   ListingVideo,
@@ -185,6 +186,27 @@ const BOOLEAN_FIELDS: { key: BooleanListingField; label: string }[] = [
   { key: 'urgent', label: 'Urgent' },
   { key: 'availableNow', label: 'Available now' },
   { key: 'availableUponRequest', label: 'Available upon request' },
+];
+
+type AddressTextField = keyof Pick<
+  Address,
+  | 'streetNumber'
+  | 'streetName'
+  | 'city'
+  | 'region'
+  | 'state'
+  | 'zipCode'
+  | 'country'
+>;
+
+const ADDRESS_TEXT_FIELDS: { key: AddressTextField; label: string }[] = [
+  { key: 'streetNumber', label: 'Street number' },
+  { key: 'streetName', label: 'Street name' },
+  { key: 'city', label: 'City' },
+  { key: 'region', label: 'Region / island' },
+  { key: 'state', label: 'State / province' },
+  { key: 'zipCode', label: 'Zip code' },
+  { key: 'country', label: 'Country' },
 ];
 
 const MAX_MEDIA_FILE_SIZE_BYTES = 500 * 1024 * 1024;
@@ -344,7 +366,6 @@ function getInitialListing(initialListing?: Listing): Listing {
       zipCode: '',
       country: '',
       coordinates: { lat: 0, lng: 0 },
-      displayAddress: '',
     },
     listingType: 'buy',
     category: ['residential'],
@@ -1188,61 +1209,21 @@ export default function ListingForm({
           Address
         </h2>
         <div className="grid gap-3 md:grid-cols-3">
-          <div>
-            <label className="mb-1 block text-sm">City</label>
-            <input
-              value={listing.address.city}
-              onChange={(event) =>
-                setListing((prev) => ({
-                  ...prev,
-                  address: { ...prev.address, city: event.target.value },
-                }))
-              }
-              className="w-full rounded border border-gray-300 px-3 py-2"
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm">Zip code</label>
-            <input
-              value={listing.address.zipCode}
-              onChange={(event) =>
-                setListing((prev) => ({
-                  ...prev,
-                  address: { ...prev.address, zipCode: event.target.value },
-                }))
-              }
-              className="w-full rounded border border-gray-300 px-3 py-2"
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm">Country</label>
-            <input
-              value={listing.address.country}
-              onChange={(event) =>
-                setListing((prev) => ({
-                  ...prev,
-                  address: { ...prev.address, country: event.target.value },
-                }))
-              }
-              className="w-full rounded border border-gray-300 px-3 py-2"
-            />
-          </div>
-          <div className="md:col-span-3">
-            <label className="mb-1 block text-sm">Display address</label>
-            <input
-              value={listing.address.displayAddress ?? ''}
-              onChange={(event) =>
-                setListing((prev) => ({
-                  ...prev,
-                  address: {
-                    ...prev.address,
-                    displayAddress: event.target.value,
-                  },
-                }))
-              }
-              className="w-full rounded border border-gray-300 px-3 py-2"
-            />
-          </div>
+          {ADDRESS_TEXT_FIELDS.map(({ key, label }) => (
+            <div key={key}>
+              <label className="mb-1 block text-sm">{label}</label>
+              <input
+                value={listing.address[key] ?? ''}
+                onChange={(event) =>
+                  setListing((prev) => ({
+                    ...prev,
+                    address: { ...prev.address, [key]: event.target.value },
+                  }))
+                }
+                className="w-full rounded border border-gray-300 px-3 py-2"
+              />
+            </div>
+          ))}
           <div>
             <label className="mb-1 block text-sm">Latitude</label>
             <input

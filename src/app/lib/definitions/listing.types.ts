@@ -13,8 +13,6 @@ export interface Address {
     lat: number;
     lng: number;
   };
-
-  displayAddress?: string;
 }
 
 export type ListingCategory =

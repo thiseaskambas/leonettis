@@ -236,18 +236,18 @@ Defined in [src/app/lib/definitions/listing.types.ts](src/app/lib/definitions/li
 
 **Required fields on `Listing`:**
 
-| Field          | Type                     | Notes                                          |
-| -------------- | ------------------------ | ---------------------------------------------- |
-| `id`           | `string`                 | UUID, generated on create                      |
-| `slug`         | `string`                 | URL-safe, generated from `title.en`            |
-| `title`        | `Record<Locale, string>` | One string per locale                          |
-| `address`      | `Address`                | city, country, zipCode, coordinates required   |
-| `listingType`  | `'buy' \| 'rent'`        |                                                |
-| `category`     | `ListingCategory[]`      | Array — a listing can span multiple categories |
-| `propertyType` | `PropertyType`           | Single value                                   |
-| `publishedAt`  | `string`                 | ISO 8601                                       |
-| `updatedAt`    | `string`                 | ISO 8601                                       |
-| `tags`         | `string[]`               | Can be empty array                             |
+| Field          | Type                     | Notes                                                              |
+| -------------- | ------------------------ | ------------------------------------------------------------------ |
+| `id`           | `string`                 | UUID, generated on create                                          |
+| `slug`         | `string`                 | URL-safe, generated from `title.en`                                |
+| `title`        | `Record<Locale, string>` | One string per locale                                              |
+| `address`      | `Address`                | Structured address fields; individual fields are optional in admin |
+| `listingType`  | `'buy' \| 'rent'`        |                                                                    |
+| `category`     | `ListingCategory[]`      | Array — a listing can span multiple categories                     |
+| `propertyType` | `PropertyType`           | Single value                                                       |
+| `publishedAt`  | `string`                 | ISO 8601                                                           |
+| `updatedAt`    | `string`                 | ISO 8601                                                           |
+| `tags`         | `string[]`               | Can be empty array                                                 |
 
 **Key union types:**
 
@@ -264,6 +264,8 @@ Defined in [src/app/lib/definitions/listing.types.ts](src/app/lib/definitions/li
 | `Condition`       | `new`, `used`, `renovated`, `partially renovated`, `renovation needed`, `other`                                                                    |
 
 For admin-managed array fields (`features`, `amenities`, `view`, `suitableFor`), listings may also store custom free-text values in addition to these canonical options.
+
+**Address display:** Admin listings can store street number, street name, city, region, state/province, zip code, country, and coordinates. Public listing cards and property detail pages use the structured display format `city, region, state`, omitting missing values. For Greece/Paros data, `region` represents the island/local area such as `Paros`, while `state` represents the administrative region/province such as `South Aegean`.
 
 **`LocalizedListing`** extends `Listing` but with `title: string` and `description?: string` instead of `Record<Locale, string>`. Use this type whenever a component receives a listing that's already been localized.
 
