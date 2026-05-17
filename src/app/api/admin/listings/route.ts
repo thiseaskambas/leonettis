@@ -6,6 +6,7 @@ import {
   buildListingSlug,
   sanitizeListingInput,
 } from '@/app/lib/helpers/listing-admin-helpers';
+import { slugify } from '@/app/lib/helpers/slug-helpers';
 
 export async function GET(): Promise<NextResponse> {
   const collection = await getListingsCollection();
@@ -40,7 +41,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     id: crypto.randomUUID(),
     title: input.title,
     description: input.description,
-    slug: buildListingSlug(input),
+    slug: input.slug?.trim()
+      ? slugify(input.slug.trim())
+      : buildListingSlug(input),
     address: input.address ?? {
       city: '',
       zipCode: '',

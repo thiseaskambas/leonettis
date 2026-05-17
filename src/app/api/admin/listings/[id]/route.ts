@@ -3,10 +3,10 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { getListingsCollection } from '@/app/lib/db/mongodb';
 import {
-  buildListingSlug,
   deepPruneUndefined,
   sanitizeListingInput,
 } from '@/app/lib/helpers/listing-admin-helpers';
+import { slugify } from '@/app/lib/helpers/slug-helpers';
 import { locales } from '@/i18n/routing';
 
 export async function GET(
@@ -45,9 +45,27 @@ export async function PUT(
     );
   }
 
-  if (sanitized.title?.en) {
-    sanitized.slug = buildListingSlug(sanitized);
+  if (sanitized.slug !== undefined) {
+    const trimmedSlug = sanitized.slug.trim();
+    if (!trimmedSlug) {
+      return NextResponse.json(
+        { error: 'slug cannot be empty' },
+        { status: 400 }
+      );
+    }
+    const slug = slugify(trimmedSlug);
+    if (!slug) {
+      return NextResponse.json(
+        {
+          error:
+            'slug must contain at least one URL-safe character after normalization',
+        },
+        { status: 400 }
+      );
+    }
+    sanitized.slug = slug;
   }
+
   sanitized.updatedAt = new Date().toISOString();
 
   // Drop undefined keys recursively so partial PUT requests only update provided fields.

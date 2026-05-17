@@ -21,6 +21,65 @@ describe('listing-admin-helpers', () => {
     expect(slug).toBe('my-new-listing');
   });
 
+  it('slugifies greek title via transliteration', () => {
+    const slug = buildListingSlug({
+      title: {
+        en: 'Βίλα στην Πάρο',
+        fr: '',
+        gr: '',
+        de: '',
+        it: '',
+      },
+    });
+
+    expect(slug).toBe('vila-stin-paro');
+  });
+
+  it('slugifies accented french title', () => {
+    const slug = buildListingSlug({
+      title: {
+        en: "Côte d'Azur Villa",
+        fr: '',
+        gr: '',
+        de: '',
+        it: '',
+      },
+    });
+
+    expect(slug).toBe('cote-dazur-villa');
+  });
+
+  it('slugifies german umlauts', () => {
+    const slug = buildListingSlug({
+      title: {
+        en: 'Schöne Villa',
+        fr: '',
+        gr: '',
+        de: '',
+        it: '',
+      },
+    });
+
+    expect(slug).toBe('schone-villa');
+  });
+
+  it('falls back to slug field when title.en slugifies to empty', () => {
+    const slug = buildListingSlug({
+      title: { en: '!!!', fr: '', gr: '', de: '', it: '' },
+      slug: 'Custom-Slug',
+    });
+
+    expect(slug).toBe('custom-slug');
+  });
+
+  it('generates uuid-based slug when title and slug are empty', () => {
+    const slug = buildListingSlug({
+      title: { en: '', fr: '', gr: '', de: '', it: '' },
+    });
+
+    expect(slug).toMatch(/^listing-[0-9a-f-]{36}$/);
+  });
+
   it('sanitizes array and locale fields', () => {
     const payload = sanitizeListingInput({
       title: { en: 'Hello', fr: 'Bonjour' },

@@ -57,6 +57,7 @@ src/
       helpers/
         admin-auth.ts           # JWT sign/verify, password check
         listing-admin-helpers.ts # Input sanitization, slug generation
+        slug-helpers.ts          # Transliteration + slugify (shared client/server)
         listing-helpers.ts      # DB lookups by slug/id, localization
         listing-search-params.ts # URL query param parser
         media-helpers.ts        # getMediaUrl, getMediaBlurDataURL
@@ -379,13 +380,13 @@ All routes live under `/api/admin/`. The middleware protects all of them except 
 
 #### Listing routes
 
-| Method | Path                       | Notes                                                                                                                                                                                                                                       |
-| ------ | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/admin/listings`      | All listings sorted by `publishedAt` desc. No pagination.                                                                                                                                                                                   |
-| POST   | `/api/admin/listings`      | Create. Required: `title.en`, `listingType`, `propertyType`. Generates `id` (UUID), `slug`, `publishedAt`, `updatedAt`. Defaults: `status: active`, `isFeatured/favorite/urgent: false`, arrays default to `[]`. Returns `201 { listing }`. |
-| GET    | `/api/admin/listings/[id]` | Fetch single by custom `id` field (not MongoDB `_id`). Returns `404` if not found.                                                                                                                                                          |
-| PUT    | `/api/admin/listings/[id]` | Partial update. Sanitizes input. If `title.en` changed, regenerates slug. Updates `updatedAt`. Uses `findOneAndUpdate` with `returnDocument: 'after'`. `revalidatePath` per locale for the listing’s property URL. Returns updated listing. |
-| DELETE | `/api/admin/listings/[id]` | Hard delete via `findOneAndDelete` (reads `slug` for cache bust). `revalidatePath` for each locale’s property URL. Returns `200 { ok: true }`.                                                                                              |
+| Method | Path                       | Notes                                                                                                                                                                                                                                                                                                                           |
+| ------ | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/api/admin/listings`      | All listings sorted by `publishedAt` desc. No pagination.                                                                                                                                                                                                                                                                       |
+| POST   | `/api/admin/listings`      | Create. Required: `title.en`, `listingType`, `propertyType`. Generates `id` (UUID), `publishedAt`, `updatedAt`. Uses request `slug` when provided (slugified); otherwise derives slug from `title.en`. Defaults: `status: active`, `isFeatured/favorite/urgent: false`, arrays default to `[]`. Returns `201 { listing }`.      |
+| GET    | `/api/admin/listings/[id]` | Fetch single by custom `id` field (not MongoDB `_id`). Returns `404` if not found.                                                                                                                                                                                                                                              |
+| PUT    | `/api/admin/listings/[id]` | Partial update. Sanitizes input. Explicit `slug` is slugified when provided (not re-derived from `title.en`); empty or invalid explicit `slug` returns `400`. Updates `updatedAt`. Uses `findOneAndUpdate` with `returnDocument: 'after'`. `revalidatePath` per locale for the listing’s property URL. Returns updated listing. |
+| DELETE | `/api/admin/listings/[id]` | Hard delete via `findOneAndDelete` (reads `slug` for cache bust). `revalidatePath` for each locale’s property URL. Returns `200 { ok: true }`.                                                                                                                                                                                  |
 
 #### Image routes
 
@@ -509,7 +510,7 @@ Follow-up work should add:
 
 **`buildListingSlug(listing: Partial<Listing>): string`**
 
-Generates a URL-safe slug from `title.en` (lowercase, spaces to dashes, special chars stripped). Falls back to a UUID-based slug if the title is empty.
+Generates a URL-safe slug from `title.en` via [`slug-helpers.ts`](src/app/lib/helpers/slug-helpers.ts) (Greek transliteration, NFD diacritic stripping, lowercase, spaces to dashes). Falls back to slugifying an explicit `slug` field, then a UUID-based slug if both are empty. Used on **POST** create when the request omits `slug`; when `slug` is sent, POST stores the slugified value. **PUT** slugifies an explicit `slug` when provided but does not re-derive it from `title.en`.
 
 ### Admin UI Pages
 
@@ -524,7 +525,7 @@ All pages are inside [src/app/admin/](src/app/admin/).
 
 **Shared components:**
 
-- **`ListingForm.tsx`** — large client component covering the full `Listing` schema: multi-locale text inputs, numeric fields, enum selects, boolean toggles, checkbox groups for enum arrays, and unified media upload/delete UI. Features, Amenities, Views, and Suitable for keep predefined checkboxes and also support custom comma-separated entries rendered as removable chips. Create mode keeps additive media queueing with dedupe/remove/clear before submit, attempts each queued upload independently, and redirects with a warning query signal on partial failures; edit mode supports immediate image/video uploads, per-item delete for both types, drag-and-drop image reordering with immediate persistence, and shows a non-blocking warning when redirected from a partial create upload failure. Reordering images updates both `images[]` order and `mainImage` to the first image. The localized title input includes `Translate from <LOCALE> →` controls that call `/api/admin/translate` and overwrite all other locales, while the localized description input supports both `Improve (<LOCALE>)` preview-first rewriting via `/api/admin/improve-description` and `Translate description from <LOCALE> →` propagation. Video uploads (create-mode batch and edit-mode immediate) show a filled progress bar with percentage; create mode also shows a `(current / total)` file counter for the batch.
+- **`ListingForm.tsx`** — large client component covering the full `Listing` schema: multi-locale text inputs, numeric fields, enum selects, boolean toggles, checkbox groups for enum arrays, and unified media upload/delete UI. In create mode, the slug field auto-syncs from `title.en` until the user edits the slug input; after that, title changes no longer overwrite the slug. Features, Amenities, Views, and Suitable for keep predefined checkboxes and also support custom comma-separated entries rendered as removable chips. Create mode keeps additive media queueing with dedupe/remove/clear before submit, attempts each queued upload independently, and redirects with a warning query signal on partial failures; edit mode supports immediate image/video uploads, per-item delete for both types, drag-and-drop image reordering with immediate persistence, and shows a non-blocking warning when redirected from a partial create upload failure. Reordering images updates both `images[]` order and `mainImage` to the first image. The localized title input includes `Translate from <LOCALE> →` controls that call `/api/admin/translate` and overwrite all other locales, while the localized description input supports both `Improve (<LOCALE>)` preview-first rewriting via `/api/admin/improve-description` and `Translate description from <LOCALE> →` propagation. Video uploads (create-mode batch and edit-mode immediate) show a filled progress bar with percentage; create mode also shows a `(current / total)` file counter for the batch.
 - **`DeleteListingButton.tsx`** — inline confirm UI that calls `DELETE /api/admin/listings/[id]` and refreshes the dashboard on success.
 - **`AdminLogoutButton.tsx`** — calls `POST /api/admin/auth/logout`, then redirects to `/admin/login`.
 
@@ -557,8 +558,8 @@ All pages are inside [src/app/admin/](src/app/admin/).
 | `admin-auth.test.ts`                      | `isValidAdminPassword` (correct/incorrect/missing env), JWT sign→verify round-trip                                                             |
 | `listing-admin-helpers.test.ts`           | `buildListingSlug` (normal, empty, existing slug, UUID fallback), `sanitizeListingInput` (field types, array clearing, image key preservation) |
 | `listings-service.test.ts`                | `searchListings` — query construction for each filter type, price range, pagination math                                                       |
-| `api/admin/listings/route.test.ts`        | POST create — required fields validation, 201 response shape                                                                                   |
-| `api/admin/listings/[id]/route.test.ts`   | GET one, PUT update (slug regeneration), DELETE                                                                                                |
+| `api/admin/listings/route.test.ts`        | POST create — required fields validation, explicit slug persistence, 201 response shape                                                        |
+| `api/admin/listings/[id]/route.test.ts`   | GET one, PUT update (slug stability, explicit slug slugification), DELETE                                                                      |
 | `api/admin/listings/images/route.test.ts` | DELETE image — Sevalla + MongoDB cleanup                                                                                                       |
 | `api/admin/auth/login/route.test.ts`      | Login — correct/incorrect password, cookie set                                                                                                 |
 | `api/admin/seed/route.test.ts`            | Seed — insert/skip logic                                                                                                                       |
