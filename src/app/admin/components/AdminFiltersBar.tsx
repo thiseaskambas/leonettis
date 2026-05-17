@@ -2,6 +2,9 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 
+import { useAdminT } from '@/app/admin/lib/admin-lang-context';
+import { labelFor } from '@/app/admin/lib/admin-translations';
+
 import {
   currentSortSelectValue,
   hasActiveFilterParams,
@@ -19,6 +22,7 @@ const selectClass =
 export default function AdminFiltersBar() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useAdminT();
 
   function update(key: string, value: string) {
     const next = new URLSearchParams(searchParams.toString());
@@ -56,71 +60,72 @@ export default function AdminFiltersBar() {
   }
 
   const showClear = hasActiveFilterParams(searchParams);
+  const sortOptions = t.filters.sortOptions as Record<string, string>;
 
   return (
     <div className="flex flex-wrap items-center gap-2">
       <label className="flex items-center gap-1.5 text-sm text-gray-600">
-        <span className="whitespace-nowrap">Status</span>
+        <span className="whitespace-nowrap">{t.filters.status}</span>
         <select
           className={selectClass}
           value={searchParams.get('status') ?? ''}
           onChange={(e) => update('status', e.target.value)}>
-          <option value="">All</option>
+          <option value="">{t.filters.all}</option>
           {LISTING_STATUSES.map((s) => (
             <option key={s} value={s}>
-              {s.replace(/_/g, ' ')}
+              {labelFor(t.filters.statuses, s)}
             </option>
           ))}
         </select>
       </label>
 
       <label className="flex items-center gap-1.5 text-sm text-gray-600">
-        <span className="whitespace-nowrap">Listing type</span>
+        <span className="whitespace-nowrap">{t.filters.listingType}</span>
         <select
           className={selectClass}
           value={searchParams.get('listingType') ?? ''}
           onChange={(e) => update('listingType', e.target.value)}>
-          <option value="">All</option>
-          {LISTING_TYPES.map((t) => (
-            <option key={t} value={t}>
-              {t}
+          <option value="">{t.filters.all}</option>
+          {LISTING_TYPES.map((listingType) => (
+            <option key={listingType} value={listingType}>
+              {labelFor(t.filters.listingTypes, listingType)}
             </option>
           ))}
         </select>
       </label>
 
       <label className="flex items-center gap-1.5 text-sm text-gray-600">
-        <span className="whitespace-nowrap">Category</span>
+        <span className="whitespace-nowrap">{t.filters.category}</span>
         <select
           className={selectClass}
           value={searchParams.get('category') ?? ''}
           onChange={(e) => update('category', e.target.value)}>
-          <option value="">All</option>
+          <option value="">{t.filters.all}</option>
           {LISTING_CATEGORIES.map((c) => (
             <option key={c} value={c}>
-              {c}
+              {labelFor(t.filters.categories, c)}
             </option>
           ))}
         </select>
       </label>
 
       <label className="flex items-center gap-1.5 text-sm text-gray-600">
-        <span className="whitespace-nowrap">Property type</span>
+        <span className="whitespace-nowrap">{t.filters.propertyType}</span>
         <select
           className={selectClass}
           value={searchParams.get('propertyType') ?? ''}
           onChange={(e) => update('propertyType', e.target.value)}>
-          <option value="">All</option>
+          <option value="">{t.filters.all}</option>
           {PROPERTY_TYPES.map((p) => (
             <option key={p} value={p}>
-              {p}
+              {labelFor(t.filters.propertyTypes, p)}
             </option>
           ))}
         </select>
       </label>
 
       <label className="flex items-center gap-1.5 text-sm text-gray-600">
-        <span className="whitespace-nowrap">Sort</span>
+        <span className="whitespace-nowrap">{t.filters.sort}</span>
         <select
           className={selectClass}
           value={currentSortSelectValue(
@@ -130,7 +135,7 @@ export default function AdminFiltersBar() {
           onChange={(e) => onSortChange(e.target.value)}>
           {SORT_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>
-              {opt.label}
+              {sortOptions[opt.value] ?? opt.label}
             </option>
           ))}
         </select>
@@ -141,7 +146,7 @@ export default function AdminFiltersBar() {
           type="button"
           className="text-sm text-gray-600 underline hover:text-gray-900"
           onClick={clearFilters}>
-          Clear filters
+          {t.filters.clearFilters}
         </button>
       )}
     </div>
