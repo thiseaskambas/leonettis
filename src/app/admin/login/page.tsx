@@ -3,8 +3,11 @@
 import { useRouter } from 'next/navigation';
 import { FormEvent, useState } from 'react';
 
+import { useAdminT } from '@/app/admin/lib/admin-lang-context';
+
 export default function AdminLoginPage() {
   const router = useRouter();
+  const t = useAdminT();
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -22,14 +25,14 @@ export default function AdminLoginPage() {
       });
 
       if (!response.ok) {
-        setError('Invalid password');
+        setError(t.login.invalidPassword);
         return;
       }
 
       router.replace('/admin');
       router.refresh();
     } catch {
-      setError('Login failed. Please try again.');
+      setError(t.login.loginFailed);
     } finally {
       setIsSubmitting(false);
     }
@@ -41,10 +44,14 @@ export default function AdminLoginPage() {
         <p className="mb-2 text-center text-sm tracking-wide text-gray-500 uppercase">
           Leonettis
         </p>
-        <h1 className="mb-4 text-center text-2xl font-semibold">Admin Login</h1>
+        <h1 className="mb-4 text-center text-2xl font-semibold">
+          {t.login.title}
+        </h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-medium">Password</label>
+            <label className="mb-1 block text-sm font-medium">
+              {t.login.passwordLabel}
+            </label>
             <input
               type="password"
               value={password}
@@ -60,7 +67,7 @@ export default function AdminLoginPage() {
             type="submit"
             disabled={isSubmitting}
             className="w-full rounded bg-black px-4 py-2 text-white disabled:opacity-60">
-            {isSubmitting ? 'Signing in...' : 'Sign in'}
+            {isSubmitting ? t.login.signingIn : t.login.signIn}
           </button>
         </form>
       </div>

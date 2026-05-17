@@ -33,8 +33,9 @@ src/
         rent/                   # Listings for rent
         property/[slug]/        # Property detail page
       contact/                  # Contact form + API
-    admin/                      # Admin UI (password-protected)
-      components/               # ListingForm, DeleteListingButton, AdminLogoutButton
+    admin/                      # Admin UI (password-protected; custom EN/GR i18n, not next-intl)
+      lib/                      # admin-lang-context, admin-translations
+      components/               # ListingForm, AdminHeader, AdminListingsClient, filters, etc.
       listings/[id]/edit/       # Edit listing page
       listings/new/             # Create listing page
       login/                    # Login page
@@ -514,7 +515,8 @@ Generates a URL-safe slug from `title.en` via [`slug-helpers.ts`](src/app/lib/he
 
 ### Admin UI Pages
 
-All pages are inside [src/app/admin/](src/app/admin/).
+All pages are inside [src/app/admin/](src/app/admin/). Admin UI copy uses a custom React context ([`admin-lang-context.tsx`](src/app/admin/lib/admin-lang-context.tsx)) with typed strings in [`admin-translations.ts`](src/app/admin/lib/admin-translations.ts)—not next-intl. Enum option labels (property type, category, features, amenities, etc.) are sourced from the same [`messages/*.json`](messages/) keys as the public site via [`listing-filter-labels.ts`](src/app/lib/helpers/listing-filter-labels.ts). The header includes an **EN | GR** toggle; the choice persists in `localStorage` under `admin-lang`. Stored listing/API values remain English; only labels change.
+
 
 | Path                        | Component type          | Description                                                                                                |
 | --------------------------- | ----------------------- | ---------------------------------------------------------------------------------------------------------- |
@@ -527,6 +529,8 @@ All pages are inside [src/app/admin/](src/app/admin/).
 
 - **`ListingForm.tsx`** — large client component covering the full `Listing` schema: multi-locale text inputs, numeric fields, enum selects, boolean toggles, checkbox groups for enum arrays, and unified media upload/delete UI. In create mode, the slug field auto-syncs from `title.en` until the user edits the slug input; after that, title changes no longer overwrite the slug. Features, Amenities, Views, and Suitable for keep predefined checkboxes and also support custom comma-separated entries rendered as removable chips. Create mode keeps additive media queueing with dedupe/remove/clear before submit, attempts each queued upload independently, and redirects with a warning query signal on partial failures; edit mode supports immediate image/video uploads, per-item delete for both types, drag-and-drop image reordering with immediate persistence, and shows a non-blocking warning when redirected from a partial create upload failure. Reordering images updates both `images[]` order and `mainImage` to the first image. The localized title input includes `Translate from <LOCALE> →` controls that call `/api/admin/translate` and overwrite all other locales, while the localized description input supports both `Improve (<LOCALE>)` preview-first rewriting via `/api/admin/improve-description` and `Translate description from <LOCALE> →` propagation. Video uploads (create-mode batch and edit-mode immediate) show a filled progress bar with percentage; create mode also shows a `(current / total)` file counter for the batch.
 - **`DeleteListingButton.tsx`** — inline confirm UI that calls `DELETE /api/admin/listings/[id]` and refreshes the dashboard on success.
+- **`AdminHeader.tsx`** — client header with brand link, translated Listings nav, EN|GR language toggle, and logout.
+- **`AdminListingsClient.tsx`** — client listings table and filters (receives server-fetched data as props).
 - **`AdminLogoutButton.tsx`** — calls `POST /api/admin/auth/logout`, then redirects to `/admin/login`.
 
 ### Sevalla Storage Helper

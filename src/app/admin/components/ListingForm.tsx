@@ -55,6 +55,12 @@ import {
   slugify as buildSlug,
   transliterate,
 } from '@/app/lib/helpers/slug-helpers';
+import { useAdminT } from '@/app/admin/lib/admin-lang-context';
+import {
+  formatAdminString,
+  labelFor,
+  translateApiError,
+} from '@/app/admin/lib/admin-translations';
 
 const LOCALES = ['en', 'fr', 'gr', 'de', 'it'] as const;
 type LocaleCode = (typeof LOCALES)[number];
@@ -170,15 +176,9 @@ type NumericListingField =
   | 'yearRenovated'
   | 'leaseDuration';
 
-const NUMERIC_FIELDS: { label: string; key: NumericListingField }[] = [
-  { label: 'Bedrooms', key: 'bedrooms' },
-  { label: 'Bathrooms', key: 'bathrooms' },
-  { label: 'Sqm interior', key: 'squareMetersInterior' },
-  { label: 'Sqm outdoor', key: 'squareMetersOutdoor' },
-  { label: 'Sqm total', key: 'squareMetersTotal' },
-  { label: 'Year built', key: 'yearBuilt' },
-  { label: 'Year renovated', key: 'yearRenovated' },
-  { label: 'Lease duration', key: 'leaseDuration' },
+const NUMERIC_FIELDS: NumericListingField[] = [
+  'bedrooms', 'bathrooms', 'squareMetersInterior', 'squareMetersOutdoor',
+  'squareMetersTotal', 'yearBuilt', 'yearRenovated', 'leaseDuration',
 ];
 
 type BooleanListingField =
@@ -187,11 +187,11 @@ type BooleanListingField =
   | 'availableNow'
   | 'availableUponRequest';
 
-const BOOLEAN_FIELDS: { key: BooleanListingField; label: string }[] = [
-  { key: 'isFeatured', label: 'Featured' },
-  { key: 'urgent', label: 'Urgent' },
-  { key: 'availableNow', label: 'Available now' },
-  { key: 'availableUponRequest', label: 'Available upon request' },
+const BOOLEAN_FIELDS: BooleanListingField[] = [
+  'isFeatured',
+  'urgent',
+  'availableNow',
+  'availableUponRequest',
 ];
 
 type AddressTextField = keyof Pick<
@@ -205,14 +205,14 @@ type AddressTextField = keyof Pick<
   | 'country'
 >;
 
-const ADDRESS_TEXT_FIELDS: { key: AddressTextField; label: string }[] = [
-  { key: 'streetNumber', label: 'Street number' },
-  { key: 'streetName', label: 'Street name' },
-  { key: 'city', label: 'City' },
-  { key: 'region', label: 'Region / island' },
-  { key: 'state', label: 'State / province' },
-  { key: 'zipCode', label: 'Zip code' },
-  { key: 'country', label: 'Country' },
+const ADDRESS_TEXT_FIELDS: AddressTextField[] = [
+  'streetNumber',
+  'streetName',
+  'city',
+  'region',
+  'state',
+  'zipCode',
+  'country',
 ];
 
 const MAX_MEDIA_FILE_SIZE_BYTES = 500 * 1024 * 1024;
@@ -254,6 +254,7 @@ function SortableImageItem({
   isMainImage: boolean;
   onDelete: (mediaType: 'image' | 'video', media: ListingImage) => void;
 }) {
+  const t = useAdminT();
   const {
     attributes,
     listeners,
@@ -290,7 +291,7 @@ function SortableImageItem({
         <p className="truncate text-sm">{image.name}</p>
         {isMainImage ? (
           <span className="rounded bg-cyan-100 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-cyan-700 uppercase">
-            Main
+            {t.form.labels.mainBadge}
           </span>
         ) : null}
       </div>
@@ -299,7 +300,7 @@ function SortableImageItem({
         onPointerDown={(event) => event.stopPropagation()}
         onClick={() => onDelete('image', image)}
         className="rounded border border-red-300 px-2 py-1 text-xs text-red-600">
-        Delete
+        {t.form.media.deleteMedia}
       </button>
     </div>
   );
@@ -432,6 +433,7 @@ export default function ListingForm({
     mediaType: 'image' | 'video';
   };
 
+  const t = useAdminT();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -476,9 +478,9 @@ export default function ListingForm({
   const formTitle = useMemo(
     () =>
       mode === 'create'
-        ? 'Create Listing'
-        : `Edit Listing: ${listing.title.en}`,
-    [listing.title.en, mode]
+        ? t.form.titles.create
+        : formatAdminString(t.form.titles.edit, { title: listing.title.en || '' }),
+    [listing.title.en, mode, t]
   );
   const showMediaUploadWarning = mode === 'edit' && initialMediaUploadWarning;
 
@@ -502,9 +504,7 @@ export default function ListingForm({
   ): Promise<UploadedMedia> => {
     const isVideo = file.type.startsWith('video/');
     if (file.size > MAX_MEDIA_FILE_SIZE_BYTES) {
-      throw new Error(
-        `${isVideo ? 'Video' : 'Image'} exceeds 500MB maximum size`
-      );
+      throw new Error(formatAdminString(t.form.errors.fileTooLarge, { type: isVideo ? t.form.errors.video : t.form.errors.image }));
     }
 
     if (!isVideo) {
@@ -514,9 +514,9 @@ export default function ListingForm({
         method: 'POST',
         body: formData,
       });
-      if (!res.ok) throw new Error('Image upload failed');
+      if (!res.ok) throw new Error(t.form.errors.imageUploadFailed);
       const body = (await res.json()) as { media?: UploadedMedia };
-      if (!body.media) throw new Error('Image upload response missing media');
+      if (!body.media) throw new Error(t.form.errors.imageUploadMissing);
       return body.media;
     }
 
@@ -534,7 +534,7 @@ export default function ListingForm({
     );
 
     if (!presignResponse.ok) {
-      throw new Error('Failed to prepare direct media upload');
+      throw new Error(t.form.errors.prepareUploadFailed);
     }
 
     const presignBody = (await presignResponse.json()) as {
@@ -542,7 +542,7 @@ export default function ListingForm({
       media?: UploadedMedia;
     };
     if (!presignBody.uploadUrl || !presignBody.media) {
-      throw new Error('Invalid presign response');
+      throw new Error(t.form.errors.invalidPresign);
     }
 
     const contentType = file.type || (isVideo ? 'video/mp4' : 'image/jpeg');
@@ -555,7 +555,7 @@ export default function ListingForm({
         body: file,
       });
       if (!uploadResponse.ok) {
-        throw new Error('Direct media upload failed');
+        throw new Error(t.form.errors.directUploadFailed);
       }
     }
 
@@ -570,14 +570,14 @@ export default function ListingForm({
       }
     );
     if (!finalizeResponse.ok) {
-      throw new Error('Failed to finalize uploaded media');
+      throw new Error(t.form.errors.finalizeFailed);
     }
 
     const finalizeBody = (await finalizeResponse.json()) as {
       media?: UploadedMedia;
     };
     if (!finalizeBody.media) {
-      throw new Error('Finalize response is missing media metadata');
+      throw new Error(t.form.errors.finalizeMissing);
     }
 
     return finalizeBody.media;
@@ -675,7 +675,7 @@ export default function ListingForm({
         const body = (await response.json().catch(() => ({}))) as {
           error?: string;
         };
-        setError(body.error ?? 'Failed to save listing');
+        setError(translateApiError(t, body.error ?? t.form.errors.failedToSave));
         return;
       }
 
@@ -733,7 +733,7 @@ export default function ListingForm({
         setShowSuccessModal(true);
       }
     } catch {
-      setError('Failed to save listing');
+      setError(t.form.errors.failedToSave);
     } finally {
       setIsSubmitting(false);
     }
@@ -766,7 +766,7 @@ export default function ListingForm({
         const body = (await response.json().catch(() => ({}))) as {
           error?: string;
         };
-        throw new Error(body.error ?? 'Translation failed');
+        throw new Error(translateApiError(t, body.error ?? t.form.errors.translationFailed));
       }
 
       const body = (await response.json()) as {
@@ -775,7 +775,7 @@ export default function ListingForm({
       const translations = body.translations;
 
       if (!translations || typeof translations !== 'object') {
-        throw new Error('Translation response is invalid');
+        throw new Error(t.form.errors.translationInvalid);
       }
 
       setListing((previous) => {
@@ -801,8 +801,8 @@ export default function ListingForm({
       const message =
         translateError instanceof Error
           ? translateError.message
-          : 'Translation failed';
-      setError(message);
+          : t.form.errors.translationFailed;
+      setError(translateApiError(t, message));
     } finally {
       setLoading(false);
     }
@@ -830,12 +830,12 @@ export default function ListingForm({
         const body = (await response.json().catch(() => ({}))) as {
           error?: string;
         };
-        throw new Error(body.error ?? 'Improvement failed');
+        throw new Error(translateApiError(t, body.error ?? t.form.errors.improvementFailed));
       }
 
       const body = (await response.json()) as { improved?: string };
       if (!body.improved) {
-        throw new Error('Empty response from improve API');
+        throw new Error(t.form.errors.improvementEmpty);
       }
 
       setDescriptionPreview(body.improved);
@@ -843,8 +843,8 @@ export default function ListingForm({
       const message =
         improveError instanceof Error
           ? improveError.message
-          : 'Improvement failed';
-      setError(message);
+          : t.form.errors.improvementFailed;
+      setError(translateApiError(t, message));
     } finally {
       setImprovingDescription(false);
     }
@@ -889,7 +889,7 @@ export default function ListingForm({
         };
       });
     } catch {
-      setError('Media upload failed');
+      setError(t.form.errors.mediaUploadFailed);
     } finally {
       setUploadingMediaName(null);
       setUploadProgress(null);
@@ -904,7 +904,7 @@ export default function ListingForm({
     if (!listing.id) return;
     const key = getMediaKey(media);
     if (!key) {
-      setError('Cannot delete media without a storage key');
+      setError(t.form.errors.mediaDeleteNoKey);
       return;
     }
 
@@ -920,7 +920,7 @@ export default function ListingForm({
     });
 
     if (!response.ok) {
-      setError('Failed to delete media');
+      setError(t.form.errors.mediaDeleteFailed);
       return;
     }
 
@@ -971,7 +971,7 @@ export default function ListingForm({
     });
 
     if (!response.ok) {
-      setError('Failed to save image order');
+      setError(t.form.errors.imageOrderFailed);
       return;
     }
 
@@ -1028,8 +1028,7 @@ export default function ListingForm({
       <h1 className="text-2xl font-semibold">{formTitle}</h1>
       {showMediaUploadWarning && (
         <p className="rounded bg-amber-50 p-3 text-sm text-amber-800">
-          Some media files failed to upload during listing creation. Successful
-          uploads were kept and you can retry failed files below.
+          {t.form.media.mediaUploadWarning}
         </p>
       )}
       {error && (
@@ -1038,7 +1037,7 @@ export default function ListingForm({
 
       <section className="space-y-3 rounded border border-gray-200 p-4">
         <h2 className="mb-3 border-b border-gray-100 pb-2 text-base font-semibold text-gray-700">
-          Localized Content
+          {t.form.sections.localizedContent}
         </h2>
         <div className="flex flex-wrap gap-2">
           {LOCALES.map((locale) => (
@@ -1060,7 +1059,7 @@ export default function ListingForm({
         </div>
         <div className="grid gap-3 md:grid-cols-2">
           <div>
-            <label className="mb-1 block text-sm">Title ({activeLocale})</label>
+            <label className="mb-1 block text-sm">{formatAdminString(t.form.labels.titleLocale, { locale: activeLocale })}</label>
             <input
               value={listing.title[activeLocale] ?? ''}
               onChange={(event) =>
@@ -1084,13 +1083,13 @@ export default function ListingForm({
                 disabled={translatingTitle}
                 className="mt-2 rounded border border-gray-300 px-2 py-1 text-xs text-gray-600 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60">
                 {translatingTitle
-                  ? 'Translating...'
-                  : `Translate title from ${activeLocale.toUpperCase()} →`}
+                  ? t.form.states.translating
+                  : `${t.form.buttons.translateTitle} ${activeLocale.toUpperCase()} →`}
               </button>
             )}
           </div>
           <div>
-            <label className="mb-1 block text-sm">Slug</label>
+            <label className="mb-1 block text-sm">{t.form.labels.slug}</label>
             <input
               value={listing.slug}
               onChange={(event) => {
@@ -1102,9 +1101,7 @@ export default function ListingForm({
             />
           </div>
           <div className="md:col-span-2">
-            <label className="mb-1 block text-sm">
-              Description ({activeLocale})
-            </label>
+            <label className="mb-1 block text-sm">{formatAdminString(t.form.labels.descriptionLocale, { locale: activeLocale })}</label>
             <textarea
               value={listing.description?.[activeLocale] ?? ''}
               onChange={(event) =>
@@ -1129,8 +1126,8 @@ export default function ListingForm({
                   disabled={improvingDescription || translatingDescription}
                   className="rounded border border-gray-300 px-2 py-1 text-xs text-gray-600 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60">
                   {improvingDescription
-                    ? 'Improving...'
-                    : `Improve (${activeLocale.toUpperCase()})`}
+                    ? t.form.states.improving
+                    : `${t.form.buttons.improve} (${activeLocale.toUpperCase()})`}
                 </button>
                 <button
                   type="button"
@@ -1140,16 +1137,14 @@ export default function ListingForm({
                   disabled={translatingDescription || improvingDescription}
                   className="rounded border border-gray-300 px-2 py-1 text-xs text-gray-600 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60">
                   {translatingDescription
-                    ? 'Translating...'
-                    : `Translate description from ${activeLocale.toUpperCase()} →`}
+                    ? t.form.states.translating
+                    : `${t.form.buttons.translateDescription} ${activeLocale.toUpperCase()} →`}
                 </button>
               </div>
             )}
             {descriptionPreview !== null && (
               <div className="mt-3 rounded border border-blue-200 bg-blue-50 p-3 text-sm text-gray-700">
-                <p className="mb-1 text-xs font-semibold text-blue-500 uppercase">
-                  Preview
-                </p>
+                <p className="mb-1 text-xs font-semibold text-blue-500 uppercase">{t.form.preview.preview}</p>
                 <p className="whitespace-pre-wrap">{descriptionPreview}</p>
                 <div className="mt-2 flex gap-2">
                   <button
@@ -1165,13 +1160,13 @@ export default function ListingForm({
                       setDescriptionPreview(null);
                     }}
                     className="rounded bg-blue-600 px-3 py-1 text-xs text-white hover:bg-blue-700">
-                    Accept
+                    {t.form.preview.accept}
                   </button>
                   <button
                     type="button"
                     onClick={() => setDescriptionPreview(null)}
                     className="rounded border border-gray-300 px-3 py-1 text-xs text-gray-600 hover:bg-gray-50">
-                    Discard
+                    {t.form.preview.discard}
                   </button>
                 </div>
               </div>
@@ -1182,11 +1177,11 @@ export default function ListingForm({
 
       <section className="space-y-3 rounded border border-gray-200 p-4">
         <h2 className="mb-3 border-b border-gray-100 pb-2 text-base font-semibold text-gray-700">
-          Core Fields
+          {t.form.sections.coreFields}
         </h2>
         <div className="grid gap-3 md:grid-cols-3">
           <div>
-            <label className="mb-1 block text-sm">Listing Type</label>
+            <label className="mb-1 block text-sm">{t.form.labels.listingType}</label>
             <select
               value={listing.listingType}
               onChange={(event) =>
@@ -1196,12 +1191,12 @@ export default function ListingForm({
                 }))
               }
               className="w-full rounded border border-gray-300 px-3 py-2">
-              <option value="buy">buy</option>
-              <option value="rent">rent</option>
+              <option value="buy">{labelFor(t.filters.listingTypes, 'buy')}</option>
+              <option value="rent">{labelFor(t.filters.listingTypes, 'rent')}</option>
             </select>
           </div>
           <div>
-            <label className="mb-1 block text-sm">Property Type</label>
+            <label className="mb-1 block text-sm">{t.form.labels.propertyType}</label>
             <select
               value={listing.propertyType}
               onChange={(event) =>
@@ -1213,13 +1208,13 @@ export default function ListingForm({
               className="w-full rounded border border-gray-300 px-3 py-2">
               {PROPERTY_TYPES.map((type) => (
                 <option key={type} value={type}>
-                  {type}
+                  {labelFor(t.filters.propertyTypes, type)}
                 </option>
               ))}
             </select>
           </div>
           <div>
-            <label className="mb-1 block text-sm">Price</label>
+            <label className="mb-1 block text-sm">{t.form.labels.price}</label>
             <input
               type="number"
               value={listing.price ?? ''}
@@ -1235,7 +1230,7 @@ export default function ListingForm({
             />
           </div>
           <div className="md:col-span-3">
-            <p className="mb-2 block text-sm">Category</p>
+            <p className="mb-2 block text-sm">{t.form.labels.category}</p>
             <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
               {CATEGORY_OPTIONS.map((option) => (
                 <label
@@ -1255,7 +1250,7 @@ export default function ListingForm({
                       }))
                     }
                   />
-                  <span className="capitalize">{option}</span>
+                  <span>{labelFor(t.filters.categories, option)}</span>
                 </label>
               ))}
             </div>
@@ -1265,12 +1260,14 @@ export default function ListingForm({
 
       <section className="space-y-3 rounded border border-gray-200 p-4">
         <h2 className="mb-3 border-b border-gray-100 pb-2 text-base font-semibold text-gray-700">
-          Address
+          {t.form.sections.address}
         </h2>
         <div className="grid gap-3 md:grid-cols-3">
-          {ADDRESS_TEXT_FIELDS.map(({ key, label }) => (
+          {ADDRESS_TEXT_FIELDS.map((key) => (
             <div key={key}>
-              <label className="mb-1 block text-sm">{label}</label>
+              <label className="mb-1 block text-sm">
+                {t.form.addressFields[key]}
+              </label>
               <input
                 value={listing.address[key] ?? ''}
                 onChange={(event) =>
@@ -1284,7 +1281,7 @@ export default function ListingForm({
             </div>
           ))}
           <div>
-            <label className="mb-1 block text-sm">Latitude</label>
+            <label className="mb-1 block text-sm">{t.form.labels.latitude}</label>
             <input
               type="number"
               step="any"
@@ -1305,7 +1302,7 @@ export default function ListingForm({
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm">Longitude</label>
+            <label className="mb-1 block text-sm">{t.form.labels.longitude}</label>
             <input
               type="number"
               step="any"
@@ -1330,12 +1327,12 @@ export default function ListingForm({
 
       <section className="space-y-3 rounded border border-gray-200 p-4">
         <h2 className="mb-3 border-b border-gray-100 pb-2 text-base font-semibold text-gray-700">
-          Property Details
+          {t.form.sections.propertyDetails}
         </h2>
         <div className="grid gap-3 md:grid-cols-3">
-          {NUMERIC_FIELDS.map(({ label, key }) => (
+          {NUMERIC_FIELDS.map((key) => (
             <div key={key}>
-              <label className="mb-1 block text-sm">{label}</label>
+              <label className="mb-1 block text-sm">{t.form.numericFields[key]}</label>
               <input
                 type="number"
                 value={listing[key] ?? ''}
@@ -1352,7 +1349,7 @@ export default function ListingForm({
             </div>
           ))}
           <div>
-            <label className="mb-1 block text-sm">Furnishing</label>
+            <label className="mb-1 block text-sm">{t.form.labels.furnishing}</label>
             <select
               value={listing.furnishing ?? ''}
               onChange={(event) =>
@@ -1368,13 +1365,13 @@ export default function ListingForm({
               <option value="">-</option>
               {FURNISHING_OPTIONS.map((option) => (
                 <option key={option} value={option}>
-                  {option}
+                  {labelFor(t.form.furnishingOptions, option)}
                 </option>
               ))}
             </select>
           </div>
           <div>
-            <label className="mb-1 block text-sm">Condition</label>
+            <label className="mb-1 block text-sm">{t.form.labels.condition}</label>
             <select
               value={listing.condition ?? ''}
               onChange={(event) =>
@@ -1390,13 +1387,13 @@ export default function ListingForm({
               <option value="">-</option>
               {CONDITION_OPTIONS.map((option) => (
                 <option key={option} value={option}>
-                  {option}
+                  {labelFor(t.form.conditionOptions, option)}
                 </option>
               ))}
             </select>
           </div>
           <div>
-            <label className="mb-1 block text-sm">Energy Rating</label>
+            <label className="mb-1 block text-sm">{t.form.labels.energyRating}</label>
             <select
               value={listing.energyRating ?? ''}
               onChange={(event) =>
@@ -1418,7 +1415,7 @@ export default function ListingForm({
             </select>
           </div>
           <div>
-            <label className="mb-1 block text-sm">Lease Unit</label>
+            <label className="mb-1 block text-sm">{t.form.lease.leaseUnit}</label>
             <select
               value={listing.leaseDurationUnit ?? ''}
               onChange={(event) =>
@@ -1432,12 +1429,12 @@ export default function ListingForm({
               }
               className="w-full rounded border border-gray-300 px-3 py-2">
               <option value="">-</option>
-              <option value="month">month</option>
-              <option value="year">year</option>
+              <option value="month">{t.form.lease.month}</option>
+              <option value="year">{t.form.lease.year}</option>
             </select>
           </div>
           <div>
-            <label className="mb-1 block text-sm">Lease Type</label>
+            <label className="mb-1 block text-sm">{t.form.lease.leaseType}</label>
             <select
               value={listing.leaseDurationType ?? ''}
               onChange={(event) =>
@@ -1451,8 +1448,8 @@ export default function ListingForm({
               }
               className="w-full rounded border border-gray-300 px-3 py-2">
               <option value="">-</option>
-              <option value="fixed">fixed</option>
-              <option value="flexible">flexible</option>
+              <option value="fixed">{t.form.lease.fixed}</option>
+              <option value="flexible">{t.form.lease.flexible}</option>
             </select>
           </div>
         </div>
@@ -1460,11 +1457,11 @@ export default function ListingForm({
 
       <section className="space-y-3 rounded border border-gray-200 p-4">
         <h2 className="mb-3 border-b border-gray-100 pb-2 text-base font-semibold text-gray-700">
-          Multi-select Arrays
+          {t.form.sections.multiselect}
         </h2>
         <div className="grid gap-3 md:grid-cols-2">
           <div>
-            <p className="mb-2 block text-sm">Features</p>
+            <p className="mb-2 block text-sm">{t.form.labels.features}</p>
             <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
               {FEATURE_OPTIONS.map((option) => (
                 <label
@@ -1484,7 +1481,7 @@ export default function ListingForm({
                       }))
                     }
                   />
-                  {option}
+                  {labelFor(t.form.featureOptions, option)}
                 </label>
               ))}
             </div>
@@ -1494,7 +1491,7 @@ export default function ListingForm({
               </label>
               <div className="flex gap-2">
                 <input
-                  placeholder="Add custom values, comma separated"
+                  placeholder={t.form.placeholders.customArrayPlaceholder}
                   value={customArrayInputs.features}
                   onChange={(event) =>
                     setCustomArrayInputs((prev) => ({
@@ -1541,7 +1538,7 @@ export default function ListingForm({
             </div>
           </div>
           <div>
-            <p className="mb-2 block text-sm">Amenities</p>
+            <p className="mb-2 block text-sm">{t.form.labels.amenities}</p>
             <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
               {AMENITY_OPTIONS.map((option) => (
                 <label
@@ -1561,7 +1558,7 @@ export default function ListingForm({
                       }))
                     }
                   />
-                  {option}
+                  {labelFor(t.form.amenityOptions, option)}
                 </label>
               ))}
             </div>
@@ -1571,7 +1568,7 @@ export default function ListingForm({
               </label>
               <div className="flex gap-2">
                 <input
-                  placeholder="Add custom values, comma separated"
+                  placeholder={t.form.placeholders.customArrayPlaceholder}
                   value={customArrayInputs.amenities}
                   onChange={(event) =>
                     setCustomArrayInputs((prev) => ({
@@ -1618,7 +1615,7 @@ export default function ListingForm({
             </div>
           </div>
           <div>
-            <p className="mb-2 block text-sm">Views</p>
+            <p className="mb-2 block text-sm">{t.form.labels.views}</p>
             <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
               {VIEW_OPTIONS.map((option) => (
                 <label
@@ -1638,7 +1635,7 @@ export default function ListingForm({
                       }))
                     }
                   />
-                  {option}
+                  {labelFor(t.form.viewOptions, option)}
                 </label>
               ))}
             </div>
@@ -1648,7 +1645,7 @@ export default function ListingForm({
               </label>
               <div className="flex gap-2">
                 <input
-                  placeholder="Add custom values, comma separated"
+                  placeholder={t.form.placeholders.customArrayPlaceholder}
                   value={customArrayInputs.view}
                   onChange={(event) =>
                     setCustomArrayInputs((prev) => ({
@@ -1695,7 +1692,7 @@ export default function ListingForm({
             </div>
           </div>
           <div>
-            <p className="mb-2 block text-sm">Suitable for</p>
+            <p className="mb-2 block text-sm">{t.form.labels.suitableFor}</p>
             <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
               {SUITABLE_FOR_OPTIONS.map((option) => (
                 <label
@@ -1715,7 +1712,7 @@ export default function ListingForm({
                       }))
                     }
                   />
-                  {option}
+                  {labelFor(t.form.suitableForOptions, option)}
                 </label>
               ))}
             </div>
@@ -1725,7 +1722,7 @@ export default function ListingForm({
               </label>
               <div className="flex gap-2">
                 <input
-                  placeholder="Add custom values, comma separated"
+                  placeholder={t.form.placeholders.customArrayPlaceholder}
                   value={customArrayInputs.suitableFor}
                   onChange={(event) =>
                     setCustomArrayInputs((prev) => ({
@@ -1779,11 +1776,11 @@ export default function ListingForm({
             </div>
           </div>
           <div>
-            <p className="mb-2 block text-sm">Tags</p>
+            <p className="mb-2 block text-sm">{t.form.labels.tags}</p>
             <div className="space-y-2">
               <div className="flex gap-2">
                 <input
-                  placeholder="Add custom values, comma separated"
+                  placeholder={t.form.placeholders.customArrayPlaceholder}
                   value={customArrayInputs.tags}
                   onChange={(event) =>
                     setCustomArrayInputs((prev) => ({
@@ -1830,17 +1827,13 @@ export default function ListingForm({
 
       <section className="space-y-3 rounded border border-gray-200 p-4">
         <h2 className="mb-3 border-b border-gray-100 pb-2 text-base font-semibold text-gray-700">
-          Media
+          {t.form.sections.media}
         </h2>
         {mode === 'create' ? (
           <>
-            <label className="mb-2 block text-sm text-gray-600">
-              Choose photos and videos (uploaded to Sevalla after listing
-              creation)
-            </label>
+            <label className="mb-2 block text-sm text-gray-600">{t.form.media.mediaChooseHint}</label>
             <p className="text-xs text-gray-500">
-              Media files up to {formatFileSize(MAX_MEDIA_FILE_SIZE_BYTES)} are
-              allowed.
+              {formatAdminString(t.form.media.mediaSizeLimit, { size: formatFileSize(MAX_MEDIA_FILE_SIZE_BYTES) })}
             </p>
             <input
               type="file"
@@ -1853,14 +1846,13 @@ export default function ListingForm({
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <p className="text-sm text-gray-600">
-                    {mediaFiles.length} file{mediaFiles.length === 1 ? '' : 's'}{' '}
-                    selected
+                    {formatAdminString(mediaFiles.length === 1 ? t.form.media.fileSelected : t.form.media.filesSelected, { count: mediaFiles.length })}
                   </p>
                   <button
                     type="button"
                     onClick={() => setMediaFiles(clearMediaFiles())}
                     className="rounded border border-gray-300 px-2 py-1 text-xs text-gray-600 hover:bg-gray-50">
-                    Clear all
+                    {t.form.media.clearAll}
                   </button>
                 </div>
                 <ul className="space-y-2">
@@ -1895,7 +1887,7 @@ export default function ListingForm({
                         <span className="truncate font-medium">
                           {uploadingMediaName}
                           {uploadBatch
-                            ? ` (${uploadBatch.current} / ${uploadBatch.total} files)`
+                            ? formatAdminString(t.form.media.batchProgress, { current: uploadBatch.current, total: uploadBatch.total })
                             : ''}
                         </span>
                         <span className="ml-2 shrink-0">{uploadProgress}%</span>
@@ -1909,7 +1901,7 @@ export default function ListingForm({
                     </div>
                   ) : (
                     <p className="text-xs text-gray-500">
-                      Uploading:{' '}
+                      {t.form.states.uploadingProgress}{' '}
                       <span className="font-medium">{uploadingMediaName}</span>
                     </p>
                   )
@@ -1921,7 +1913,7 @@ export default function ListingForm({
           <>
             <label className="flex cursor-pointer items-center justify-center rounded border border-dashed border-gray-300 bg-gray-50 px-4 py-6 text-sm text-gray-600 hover:bg-gray-100">
               <span>
-                {uploading ? 'Uploading media...' : 'Click to upload media'}
+                {uploading ? t.form.states.uploadingMedia : t.form.media.clickToUpload}
               </span>
               <input
                 type="file"
@@ -1942,8 +1934,7 @@ export default function ListingForm({
               />
             </label>
             <p className="text-xs text-gray-500">
-              Media files up to {formatFileSize(MAX_MEDIA_FILE_SIZE_BYTES)} are
-              allowed.
+              {formatAdminString(t.form.media.mediaSizeLimit, { size: formatFileSize(MAX_MEDIA_FILE_SIZE_BYTES) })}
             </p>
             {uploadingMediaName ? (
               uploadProgress !== null ? (
@@ -1969,9 +1960,9 @@ export default function ListingForm({
               )
             ) : null}
             <div className="space-y-2">
-              <h3 className="text-sm font-semibold text-gray-700">Images</h3>
+              <h3 className="text-sm font-semibold text-gray-700">{t.form.labels.images}</h3>
               {(listing.images ?? []).length === 0 ? (
-                <p className="text-sm text-gray-500">No images uploaded.</p>
+                <p className="text-sm text-gray-500">{t.form.media.noImages}</p>
               ) : (
                 <DndContext
                   sensors={sensors}
@@ -1999,9 +1990,9 @@ export default function ListingForm({
               )}
             </div>
             <div className="space-y-2">
-              <h3 className="text-sm font-semibold text-gray-700">Videos</h3>
+              <h3 className="text-sm font-semibold text-gray-700">{t.form.labels.videos}</h3>
               {(listing.videos ?? []).length === 0 ? (
-                <p className="text-sm text-gray-500">No videos uploaded.</p>
+                <p className="text-sm text-gray-500">{t.form.media.noVideos}</p>
               ) : (
                 <div className="grid gap-3 md:grid-cols-2">
                   {(listing.videos ?? []).map((video) => (
@@ -2018,7 +2009,7 @@ export default function ListingForm({
                         type="button"
                         onClick={() => handleMediaDelete('video', video)}
                         className="rounded border border-red-300 px-2 py-1 text-xs text-red-600">
-                        Delete
+                        {t.form.media.deleteMedia}
                       </button>
                     </div>
                   ))}
@@ -2031,10 +2022,10 @@ export default function ListingForm({
 
       <section className="space-y-3 rounded border border-gray-200 p-4">
         <h2 className="mb-3 border-b border-gray-100 pb-2 text-base font-semibold text-gray-700">
-          Status
+          {t.form.sections.status}
         </h2>
         <div>
-          <label className="mb-1 block text-sm">Listing status</label>
+          <label className="mb-1 block text-sm">{t.form.labels.listingStatus}</label>
           <select
             value={listing.status ?? 'active'}
             onChange={(event) =>
@@ -2046,13 +2037,13 @@ export default function ListingForm({
             className="w-full rounded border border-gray-300 px-3 py-2 md:w-80">
             {STATUS_OPTIONS.map((option) => (
               <option key={option} value={option}>
-                {option}
+                {labelFor(t.form.statusOptions, option)}
               </option>
             ))}
           </select>
         </div>
         <div className="grid gap-2 md:grid-cols-3">
-          {BOOLEAN_FIELDS.map(({ key, label }) => (
+          {BOOLEAN_FIELDS.map((key) => (
             <label key={key} className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
@@ -2064,7 +2055,7 @@ export default function ListingForm({
                   }))
                 }
               />
-              {label}
+              {t.form.booleanFields[key]}
             </label>
           ))}
         </div>
@@ -2077,12 +2068,12 @@ export default function ListingForm({
         {isSubmitting || uploading
           ? uploading
             ? uploadingMediaName
-              ? `Uploading ${uploadingMediaName}...`
-              : 'Uploading media...'
-            : 'Saving...'
+              ? formatAdminString(t.form.states.uploadingNamed, { name: uploadingMediaName })
+              : t.form.states.uploadingMedia
+            : t.form.states.saving
           : mode === 'create'
-            ? 'Create Listing'
-            : 'Save Changes'}
+            ? t.form.buttons.create
+            : t.form.buttons.save}
       </button>
 
       {showSuccessModal ? (
@@ -2096,15 +2087,15 @@ export default function ListingForm({
               className="size-12 shrink-0 text-green-600"
               aria-hidden
             />
-            <h2 className="text-lg font-semibold">Changes saved</h2>
+            <h2 className="text-lg font-semibold">{t.form.modal.title}</h2>
             <p className="text-sm text-gray-500">
-              Your listing has been updated successfully.
+              {t.form.modal.body}
             </p>
             <button
               type="button"
               onClick={() => successDialogRef.current?.close()}
               className="rounded bg-black px-5 py-2 text-white">
-              Close
+              {t.form.modal.close}
             </button>
           </div>
         </dialog>
