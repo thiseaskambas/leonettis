@@ -579,6 +579,7 @@ components:
               type: string
             coordinates:
               type: object
+              description: Optional. Omitted or partial lat/lng values are stored as 0 on save.
               properties:
                 lat:
                   type: number

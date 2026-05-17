@@ -49,6 +49,31 @@ describe('listing-admin-helpers', () => {
     expect(payload.address?.state).toBe('South Aegean');
   });
 
+  it('defaults missing coordinates to 0,0', () => {
+    const payload = sanitizeListingInput({
+      address: {
+        city: 'Paros',
+        zipCode: '',
+        country: 'GR',
+      },
+    });
+
+    expect(payload.address?.coordinates).toEqual({ lat: 0, lng: 0 });
+  });
+
+  it('defaults partial coordinates to 0 for missing axis', () => {
+    const payload = sanitizeListingInput({
+      address: {
+        city: 'Paros',
+        zipCode: '',
+        country: 'GR',
+        coordinates: { lat: 5 },
+      },
+    });
+
+    expect(payload.address?.coordinates).toEqual({ lat: 5, lng: 0 });
+  });
+
   it('preserves explicit empty arrays for clear operations', () => {
     const payload = sanitizeListingInput({
       tags: [],

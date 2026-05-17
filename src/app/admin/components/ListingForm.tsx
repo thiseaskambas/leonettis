@@ -49,6 +49,7 @@ import type {
   ListingImage,
   ListingVideo,
 } from '@/app/lib/definitions/listing.types';
+import { resolveAddressCoordinates } from '@/app/lib/helpers/listing-address-helpers';
 
 const LOCALES = ['en', 'fr', 'gr', 'de', 'it'] as const;
 type LocaleCode = (typeof LOCALES)[number];
@@ -351,6 +352,12 @@ function getInitialListing(initialListing?: Listing): Listing {
   if (initialListing) {
     return {
       ...initialListing,
+      address: {
+        ...initialListing.address,
+        coordinates: resolveAddressCoordinates(
+          initialListing.address.coordinates
+        ),
+      },
       videos: normalizeListingVideos(initialListing.videos),
     };
   }
@@ -1229,14 +1236,14 @@ export default function ListingForm({
             <input
               type="number"
               step="any"
-              value={listing.address.coordinates.lat}
+              value={resolveAddressCoordinates(listing.address.coordinates).lat}
               onChange={(event) =>
                 setListing((prev) => ({
                   ...prev,
                   address: {
                     ...prev.address,
                     coordinates: {
-                      ...prev.address.coordinates,
+                      ...resolveAddressCoordinates(prev.address.coordinates),
                       lat: Number(event.target.value || 0),
                     },
                   },
@@ -1250,14 +1257,14 @@ export default function ListingForm({
             <input
               type="number"
               step="any"
-              value={listing.address.coordinates.lng}
+              value={resolveAddressCoordinates(listing.address.coordinates).lng}
               onChange={(event) =>
                 setListing((prev) => ({
                   ...prev,
                   address: {
                     ...prev.address,
                     coordinates: {
-                      ...prev.address.coordinates,
+                      ...resolveAddressCoordinates(prev.address.coordinates),
                       lng: Number(event.target.value || 0),
                     },
                   },

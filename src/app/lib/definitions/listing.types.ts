@@ -9,9 +9,9 @@ export interface Address {
   zipCode: string;
   country: string;
 
-  coordinates: {
-    lat: number;
-    lng: number;
+  coordinates?: {
+    lat?: number;
+    lng?: number;
   };
 }
 

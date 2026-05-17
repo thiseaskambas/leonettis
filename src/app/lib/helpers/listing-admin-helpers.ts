@@ -1,4 +1,5 @@
 import type { Listing } from '@/app/lib/definitions/listing.types';
+import { resolveAddressCoordinates } from '@/app/lib/helpers/listing-address-helpers';
 import { type Locale, locales } from '@/i18n/routing';
 
 const allLocales = Object.keys(locales) as Locale[];
@@ -266,10 +267,10 @@ export function sanitizeListingInput(payload: unknown): Partial<Listing> {
       region: typeof address.region === 'string' ? address.region : undefined,
       zipCode: typeof address.zipCode === 'string' ? address.zipCode : '',
       country: typeof address.country === 'string' ? address.country : '',
-      coordinates: {
-        lat: sanitizeNumber(coordinates.lat) ?? 0,
-        lng: sanitizeNumber(coordinates.lng) ?? 0,
-      },
+      coordinates: resolveAddressCoordinates({
+        lat: sanitizeNumber(coordinates.lat),
+        lng: sanitizeNumber(coordinates.lng),
+      }),
     };
   }
 
