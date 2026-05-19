@@ -1,8 +1,23 @@
 import Image from 'next/image';
-import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import type { Swiper as SwiperType } from 'swiper';
+import { Autoplay, EffectFade, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 import { getMediaUrl } from '@/app/lib/helpers/media-helpers';
+
+function syncHeroVideos(swiper: SwiperType) {
+  swiper.slides.forEach((slideEl, index) => {
+    const video = slideEl.querySelector('video');
+    if (!video) return;
+
+    if (index === swiper.activeIndex) {
+      video.play().catch(() => {});
+    } else {
+      video.pause();
+      video.currentTime = 0;
+    }
+  });
+}
 
 export default function HeroCarousel({
   slides,
@@ -11,8 +26,10 @@ export default function HeroCarousel({
 }) {
   return (
     <Swiper
+      effect="fade"
+      fadeEffect={{ crossFade: true }}
+      speed={1000}
       spaceBetween={0}
-      centeredSlides={true}
       autoplay={{
         delay: 2000,
         disableOnInteraction: false,
@@ -21,7 +38,9 @@ export default function HeroCarousel({
         clickable: true,
       }}
       navigation={true}
-      modules={[Autoplay, Pagination, Navigation]}
+      modules={[Autoplay, EffectFade, Pagination, Navigation]}
+      onSwiper={syncHeroVideos}
+      onSlideChange={syncHeroVideos}
       className="mySwiper swiper-controls-desktop h-screen w-full">
       {slides.map((slide, index) => (
         <SwiperSlide
@@ -32,7 +51,6 @@ export default function HeroCarousel({
             {slide.type === 'video' ? (
               <video
                 className="h-full w-full object-cover object-top"
-                autoPlay
                 muted
                 loop
                 playsInline
