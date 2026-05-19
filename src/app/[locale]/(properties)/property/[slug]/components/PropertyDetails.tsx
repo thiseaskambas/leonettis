@@ -2,6 +2,7 @@ import { Bath, Bed, MapPin, Maximize, Phone } from 'lucide-react';
 
 import { LocalizedListing } from '@/app/lib/definitions/listing.types';
 import { formatPublicAddress } from '@/app/lib/helpers/listing-address-helpers';
+import { isAntiparochiOption } from '@/app/lib/helpers/listing-antiparochi-helpers';
 import { Link } from '@/i18n/navigation';
 
 interface PropertyDetailsTranslations {
@@ -29,6 +30,9 @@ interface PropertyDetailsTranslations {
   availableFrom: string;
   availableUponRequest: string;
   priceUponRequest: string;
+  antiparochi: string;
+  antiparochiOnly: string;
+  antiparochiNegotiable: string;
 }
 
 interface PropertyDetailsProps {
@@ -95,7 +99,15 @@ export default function PropertyDetails({
     availableNow,
     availableFrom,
     availableUponRequest,
+    antiparochi,
   } = listing;
+
+  const antiparochiLabel =
+    antiparochi === 'only'
+      ? translations.antiparochiOnly
+      : antiparochi === 'negotiable'
+        ? translations.antiparochiNegotiable
+        : null;
 
   const priceDisplay =
     price != null
@@ -142,6 +154,11 @@ export default function PropertyDetails({
         {availableFrom && !availableNow && !availableUponRequest && (
           <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
             {translations.availableFrom}: {availableFrom}
+          </span>
+        )}
+        {isAntiparochiOption(antiparochi) && antiparochiLabel && (
+          <span className="rounded-full bg-violet-100 px-3 py-1 text-xs font-semibold text-violet-800 dark:bg-violet-900/30 dark:text-violet-400">
+            {antiparochiLabel}
           </span>
         )}
       </div>
@@ -242,6 +259,9 @@ export default function PropertyDetails({
         )}
         {!!yearBuilt && (
           <DetailRow label={translations.yearBuilt} value={String(yearBuilt)} />
+        )}
+        {isAntiparochiOption(antiparochi) && antiparochiLabel && (
+          <DetailRow label={translations.antiparochi} value={antiparochiLabel} />
         )}
       </div>
 

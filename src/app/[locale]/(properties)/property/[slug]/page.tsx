@@ -171,6 +171,9 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
     availableFrom: t('availableFrom'),
     availableUponRequest: t('availableUponRequest'),
     priceUponRequest: t('priceUponRequest'),
+    antiparochi: t('antiparochi'),
+    antiparochiOnly: t('antiparochiOnly'),
+    antiparochiNegotiable: t('antiparochiNegotiable'),
   };
 
   const breadcrumbTranslations = {

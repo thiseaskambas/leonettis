@@ -9,6 +9,7 @@ export interface ListingSearchParams {
   features?: string[];
   amenities?: string[];
   suitableFor?: string[];
+  antiparochi?: string[];
   minPrice?: number;
   maxPrice?: number;
   page?: number;
@@ -34,6 +35,7 @@ export function parseSearchParams(
     features: toArray(raw.features),
     amenities: toArray(raw.amenities),
     suitableFor: toArray(raw.suitableFor),
+    antiparochi: toArray(raw.antiparochi),
     minPrice: raw.minPrice ? Number(raw.minPrice) : undefined,
     maxPrice: raw.maxPrice ? Number(raw.maxPrice) : undefined,
     page: raw.page ? Number(raw.page) : undefined,

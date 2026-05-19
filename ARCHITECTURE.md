@@ -212,7 +212,7 @@ At request time:
 
 [src/app/ui/ListingsFilters.tsx](src/app/ui/ListingsFilters.tsx) is a client component (`'use client'`).
 
-**9 filter keys:** `category`, `propertyType`, `condition`, `furnishing`, `energyRating`, `viewType`, `features`, `amenities`, `suitableFor`
+**10 filter keys (buy page):** `category`, `propertyType`, `condition`, `furnishing`, `energyRating`, `viewType`, `features`, `amenities`, `suitableFor`, `antiparochi` (buy listings only; rent page omits `antiparochi`)
 
 **Plus:** price range slider (0–2,000,000 EUR, step 10,000)
 

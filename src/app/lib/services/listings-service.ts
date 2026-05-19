@@ -56,6 +56,8 @@ export async function searchListings(
   if (params.amenities?.length) query.amenities = { $in: params.amenities };
   if (params.suitableFor?.length)
     query.suitableFor = { $in: params.suitableFor };
+  if (params.antiparochi?.length)
+    query.antiparochi = { $in: params.antiparochi };
 
   if (params.minPrice != null || params.maxPrice != null) {
     query.price = {

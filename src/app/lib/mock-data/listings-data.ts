@@ -119,6 +119,7 @@ export const listingsData: Listing[] = [
     status: 'sold',
     isFeatured: true,
     tags: ['tag1', 'tag2', 'tag3'],
+    antiparochi: 'negotiable',
     images: [
       py(1, 1),
       py(2, 2),

@@ -161,6 +161,11 @@
         "embassy": "Ambasciata",
         "vacation-home": "Casa vacanze",
         "other": "Altro"
+      },
+      "antiparochi": {
+        "label": "Antiparochi",
+        "only": "Solo antiparochi",
+        "negotiable": "Contanti o antiparochi"
       }
     }
   },
@@ -227,6 +232,9 @@
     "availableFrom": "Disponibile dal",
     "availableUponRequest": "Disponibile su richiesta",
     "priceUponRequest": "Prezzo su richiesta",
+    "antiparochi": "Antiparochi",
+    "antiparochiOnly": "Solo antiparochi",
+    "antiparochiNegotiable": "Contanti o antiparochi",
     "status": {
       "sold": "Venduto",
       "rented": "Affittato",

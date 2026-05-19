@@ -1,5 +1,6 @@
 import type { Listing } from '@/app/lib/definitions/listing.types';
 import { resolveAddressCoordinates } from '@/app/lib/helpers/listing-address-helpers';
+import { sanitizeAntiparochi } from '@/app/lib/helpers/listing-antiparochi-helpers';
 import { slugify } from '@/app/lib/helpers/slug-helpers';
 import { type Locale, locales } from '@/i18n/routing';
 
@@ -237,6 +238,10 @@ export function sanitizeListingInput(payload: unknown): Partial<Listing> {
           .filter(Boolean) as Listing['images'])
       : undefined,
   };
+
+  if ('antiparochi' in raw) {
+    listing.antiparochi = sanitizeAntiparochi(raw.antiparochi);
+  }
 
   const rawAddress = raw.address;
   if (rawAddress && typeof rawAddress === 'object') {

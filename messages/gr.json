@@ -161,6 +161,11 @@
         "embassy": "Πρεσβεία",
         "vacation-home": "Εξοχική Κατοικία",
         "other": "Άλλο"
+      },
+      "antiparochi": {
+        "label": "Αντιπαροχή",
+        "only": "Μόνο Αντιπαροχή",
+        "negotiable": "Μετρητά ή Αντιπαροχή"
       }
     }
   },
@@ -227,6 +232,9 @@
     "availableFrom": "Διαθέσιμο Από",
     "availableUponRequest": "Διαθέσιμο κατόπιν αιτήματος",
     "priceUponRequest": "Τιμή κατόπιν αιτήματος",
+    "antiparochi": "Αντιπαροχή",
+    "antiparochiOnly": "Μόνο Αντιπαροχή",
+    "antiparochiNegotiable": "Μετρητά ή Αντιπαροχή",
     "status": {
       "sold": "Πωλήθηκε",
       "rented": "Ενοικιάστηκε",

@@ -85,6 +85,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     leaseDuration: input.leaseDuration,
     leaseDurationUnit: input.leaseDurationUnit,
     leaseDurationType: input.leaseDurationType,
+    antiparochi: input.antiparochi ?? null,
   };
 
   const collection = await getListingsCollection();
