@@ -161,6 +161,11 @@
         "embassy": "Botschaft",
         "vacation-home": "Ferienhaus",
         "other": "Sonstige"
+      },
+      "antiparochi": {
+        "label": "Antiparochi",
+        "only": "Nur Antiparochi",
+        "negotiable": "Barzahlung oder Antiparochi"
       }
     }
   },
@@ -227,6 +232,9 @@
     "availableFrom": "Verfügbar ab",
     "availableUponRequest": "Auf Anfrage verfügbar",
     "priceUponRequest": "Preis auf Anfrage",
+    "antiparochi": "Antiparochi",
+    "antiparochiOnly": "Nur Antiparochi",
+    "antiparochiNegotiable": "Barzahlung oder Antiparochi",
     "status": {
       "sold": "Verkauft",
       "rented": "Vermietet",

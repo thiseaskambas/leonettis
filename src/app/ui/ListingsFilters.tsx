@@ -21,7 +21,7 @@ import { useRouter } from '@/i18n/navigation';
 
 import type { FilterDef } from '../lib/definitions/search-filters';
 import {
-  FILTERS,
+  getFiltersForListingType,
   getSelectedIds,
   getVisibleOptions,
   pruneSelections,
@@ -42,6 +42,7 @@ const FILTER_KEYS = [
   'features',
   'amenities',
   'suitableFor',
+  'antiparochi',
 ] as const;
 
 interface ListingsFiltersProps {
@@ -161,6 +162,8 @@ const ListingsFilters = ({
     router.replace(`/${listingType}?${params.toString()}`);
   }, [listingType, selections, priceRange, router]);
 
+  const filters = getFiltersForListingType(listingType);
+
   const filterContent = (
     <>
       <Slider
@@ -208,7 +211,7 @@ const ListingsFilters = ({
         allowsMultipleExpanded
         expandedKeys={expandedKeys}
         onExpandedChange={(keys) => setExpandedKeys(keys as Set<Key>)}>
-        {FILTERS.map((filter) => {
+        {filters.map((filter) => {
           const visibleOptions = getVisibleOptions(
             filter.id,
             filter.options,

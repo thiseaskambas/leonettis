@@ -39,6 +39,9 @@ export type ListingStatus =
   | 'pending'
   | 'under_offer';
 
+/** Land-for-apartments deal structure (αντιπαροχή). */
+export type AntiparochiOption = 'only' | 'negotiable';
+
 type ViewType =
   | 'sea'
   | 'mountain'
@@ -159,6 +162,8 @@ export interface Listing {
   leaseDuration?: number;
   leaseDurationUnit?: 'month' | 'year';
   leaseDurationType?: 'fixed' | 'flexible';
+  /** Set when the owner accepts an antiparochi (land-for-apartments) deal. */
+  antiparochi?: AntiparochiOption | null;
 }
 
 export interface LocalizedListing extends Omit<

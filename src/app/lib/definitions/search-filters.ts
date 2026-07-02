@@ -133,6 +133,11 @@ const CONDITIONS: FilterOption[] = [
   { id: 'other', label: 'Other' },
 ];
 
+const ANTIPAROCHI: FilterOption[] = [
+  { id: 'only', label: 'Antiparochi Only' },
+  { id: 'negotiable', label: 'Cash or Antiparochi' },
+];
+
 // ---------------------------------------------------------------------------
 // Filter definitions
 // ---------------------------------------------------------------------------
@@ -191,6 +196,12 @@ export const FILTERS: FilterDef[] = [
     label: 'Suitable For',
     selectionMode: 'multiple',
     options: SUITABLE_FOR,
+  },
+  {
+    id: 'antiparochi',
+    label: 'Antiparochi',
+    selectionMode: 'multiple',
+    options: ANTIPAROCHI,
   },
 ];
 
@@ -326,9 +337,21 @@ export const VISIBILITY_RULES: VisibilityRule[] = [
   },
 ];
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
+/** Filters shown on the public buy/rent listing pages. */
+export const PUBLIC_FILTERS: FilterDef[] = FILTERS.filter(
+  (filter) => filter.id !== 'antiparochi'
+);
+
+export const ANTIPAROCHI_FILTER = FILTERS.find(
+  (filter) => filter.id === 'antiparochi'
+)!;
+
+export function getFiltersForListingType(
+  listingType: 'buy' | 'rent'
+): FilterDef[] {
+  if (listingType === 'buy') return FILTERS;
+  return PUBLIC_FILTERS;
+}
 
 /** Extract selected IDs from a Selection value. */
 export function getSelectedIds(selection: Selection | undefined): string[] {
@@ -428,7 +451,9 @@ export function selectionsToParams(
   const params = new URLSearchParams();
   params.set('listingType', listingType);
 
-  for (const filter of FILTERS) {
+  for (const filter of getFiltersForListingType(
+    listingType as 'buy' | 'rent'
+  )) {
     const ids = getSelectedIds(selections[filter.id]);
     if (ids.length > 0) {
       // multi-value params: ?propertyType=apartment&propertyType=house

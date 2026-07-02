@@ -12,6 +12,7 @@ import {
   LocalizedListing,
 } from '@/app/lib/definitions/listing.types';
 import { formatPublicAddress } from '@/app/lib/helpers/listing-address-helpers';
+import { isAntiparochiOption } from '@/app/lib/helpers/listing-antiparochi-helpers';
 import { Link } from '@/i18n/navigation';
 
 import { getMediaBlurDataURL, getMediaUrl } from '../lib/helpers/media-helpers';
@@ -107,8 +108,17 @@ export default function ListingCard({
   return (
     <div className="group relative w-full min-w-0 overflow-hidden rounded-2xl shadow-sm transition-all duration-500 hover:shadow-xl">
       {/* Price Tag (Top Right) */}
-      <div className="bg-glass-no-border absolute top-3 right-3 z-20 rounded-full px-3 py-1 text-sm font-semibold text-gray-900 dark:text-white">
-        {priceDisplay}
+      <div className="bg-glass-no-border absolute top-3 right-3 z-20 flex flex-col items-end gap-1">
+        {isAntiparochiOption(listing.antiparochi) && (
+          <span className="rounded-full bg-violet-600/90 px-2.5 py-0.5 text-[11px] font-semibold text-white">
+            {listing.antiparochi === 'only'
+              ? t('antiparochiOnly')
+              : t('antiparochiNegotiable')}
+          </span>
+        )}
+        <span className="rounded-full px-3 py-1 text-sm font-semibold text-gray-900 dark:text-white">
+          {priceDisplay}
+        </span>
       </div>
 
       {/* Aspect Ratio Container */}

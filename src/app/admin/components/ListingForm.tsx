@@ -43,6 +43,12 @@ import {
   uploadCreateMediaBatch,
   uploadWithXHR,
 } from '@/app/admin/components/listing-form-upload-utils';
+import { useAdminT } from '@/app/admin/lib/admin-lang-context';
+import {
+  formatAdminString,
+  labelFor,
+  translateApiError,
+} from '@/app/admin/lib/admin-translations';
 import type {
   Address,
   Listing,
@@ -50,20 +56,17 @@ import type {
   ListingVideo,
 } from '@/app/lib/definitions/listing.types';
 import { resolveAddressCoordinates } from '@/app/lib/helpers/listing-address-helpers';
+import { supportsAntiparochi } from '@/app/lib/helpers/listing-antiparochi-helpers';
 import {
   resolveListingFormSlug,
   slugify as buildSlug,
   transliterate,
 } from '@/app/lib/helpers/slug-helpers';
-import { useAdminT } from '@/app/admin/lib/admin-lang-context';
-import {
-  formatAdminString,
-  labelFor,
-  translateApiError,
-} from '@/app/admin/lib/admin-translations';
 
 const LOCALES = ['en', 'fr', 'gr', 'de', 'it'] as const;
 type LocaleCode = (typeof LOCALES)[number];
+
+const ANTIPAROCHI_OPTIONS = ['only', 'negotiable'] as const;
 
 const PROPERTY_TYPES: Listing['propertyType'][] = [
   'apartment',
@@ -177,8 +180,14 @@ type NumericListingField =
   | 'leaseDuration';
 
 const NUMERIC_FIELDS: NumericListingField[] = [
-  'bedrooms', 'bathrooms', 'squareMetersInterior', 'squareMetersOutdoor',
-  'squareMetersTotal', 'yearBuilt', 'yearRenovated', 'leaseDuration',
+  'bedrooms',
+  'bathrooms',
+  'squareMetersInterior',
+  'squareMetersOutdoor',
+  'squareMetersTotal',
+  'yearBuilt',
+  'yearRenovated',
+  'leaseDuration',
 ];
 
 type BooleanListingField =
@@ -405,6 +414,7 @@ function getInitialListing(initialListing?: Listing): Listing {
     leaseDuration: undefined,
     leaseDurationUnit: undefined,
     leaseDurationType: undefined,
+    antiparochi: null,
   };
 }
 
@@ -479,7 +489,9 @@ export default function ListingForm({
     () =>
       mode === 'create'
         ? t.form.titles.create
-        : formatAdminString(t.form.titles.edit, { title: listing.title.en || '' }),
+        : formatAdminString(t.form.titles.edit, {
+            title: listing.title.en || '',
+          }),
     [listing.title.en, mode, t]
   );
   const showMediaUploadWarning = mode === 'edit' && initialMediaUploadWarning;
@@ -504,7 +516,11 @@ export default function ListingForm({
   ): Promise<UploadedMedia> => {
     const isVideo = file.type.startsWith('video/');
     if (file.size > MAX_MEDIA_FILE_SIZE_BYTES) {
-      throw new Error(formatAdminString(t.form.errors.fileTooLarge, { type: isVideo ? t.form.errors.video : t.form.errors.image }));
+      throw new Error(
+        formatAdminString(t.form.errors.fileTooLarge, {
+          type: isVideo ? t.form.errors.video : t.form.errors.image,
+        })
+      );
     }
 
     if (!isVideo) {
@@ -656,6 +672,12 @@ export default function ListingForm({
     const payload: Listing = {
       ...currentListing,
       slug,
+      antiparochi: supportsAntiparochi(
+        currentListing.listingType,
+        currentListing.propertyType
+      )
+        ? (currentListing.antiparochi ?? null)
+        : null,
     };
 
     try {
@@ -675,7 +697,9 @@ export default function ListingForm({
         const body = (await response.json().catch(() => ({}))) as {
           error?: string;
         };
-        setError(translateApiError(t, body.error ?? t.form.errors.failedToSave));
+        setError(
+          translateApiError(t, body.error ?? t.form.errors.failedToSave)
+        );
         return;
       }
 
@@ -766,7 +790,9 @@ export default function ListingForm({
         const body = (await response.json().catch(() => ({}))) as {
           error?: string;
         };
-        throw new Error(translateApiError(t, body.error ?? t.form.errors.translationFailed));
+        throw new Error(
+          translateApiError(t, body.error ?? t.form.errors.translationFailed)
+        );
       }
 
       const body = (await response.json()) as {
@@ -830,7 +856,9 @@ export default function ListingForm({
         const body = (await response.json().catch(() => ({}))) as {
           error?: string;
         };
-        throw new Error(translateApiError(t, body.error ?? t.form.errors.improvementFailed));
+        throw new Error(
+          translateApiError(t, body.error ?? t.form.errors.improvementFailed)
+        );
       }
 
       const body = (await response.json()) as { improved?: string };
@@ -1059,7 +1087,11 @@ export default function ListingForm({
         </div>
         <div className="grid gap-3 md:grid-cols-2">
           <div>
-            <label className="mb-1 block text-sm">{formatAdminString(t.form.labels.titleLocale, { locale: activeLocale })}</label>
+            <label className="mb-1 block text-sm">
+              {formatAdminString(t.form.labels.titleLocale, {
+                locale: activeLocale,
+              })}
+            </label>
             <input
               value={listing.title[activeLocale] ?? ''}
               onChange={(event) =>
@@ -1101,7 +1133,11 @@ export default function ListingForm({
             />
           </div>
           <div className="md:col-span-2">
-            <label className="mb-1 block text-sm">{formatAdminString(t.form.labels.descriptionLocale, { locale: activeLocale })}</label>
+            <label className="mb-1 block text-sm">
+              {formatAdminString(t.form.labels.descriptionLocale, {
+                locale: activeLocale,
+              })}
+            </label>
             <textarea
               value={listing.description?.[activeLocale] ?? ''}
               onChange={(event) =>
@@ -1144,7 +1180,9 @@ export default function ListingForm({
             )}
             {descriptionPreview !== null && (
               <div className="mt-3 rounded border border-blue-200 bg-blue-50 p-3 text-sm text-gray-700">
-                <p className="mb-1 text-xs font-semibold text-blue-500 uppercase">{t.form.preview.preview}</p>
+                <p className="mb-1 text-xs font-semibold text-blue-500 uppercase">
+                  {t.form.preview.preview}
+                </p>
                 <p className="whitespace-pre-wrap">{descriptionPreview}</p>
                 <div className="mt-2 flex gap-2">
                   <button
@@ -1181,7 +1219,9 @@ export default function ListingForm({
         </h2>
         <div className="grid gap-3 md:grid-cols-3">
           <div>
-            <label className="mb-1 block text-sm">{t.form.labels.listingType}</label>
+            <label className="mb-1 block text-sm">
+              {t.form.labels.listingType}
+            </label>
             <select
               value={listing.listingType}
               onChange={(event) =>
@@ -1191,12 +1231,18 @@ export default function ListingForm({
                 }))
               }
               className="w-full rounded border border-gray-300 px-3 py-2">
-              <option value="buy">{labelFor(t.filters.listingTypes, 'buy')}</option>
-              <option value="rent">{labelFor(t.filters.listingTypes, 'rent')}</option>
+              <option value="buy">
+                {labelFor(t.filters.listingTypes, 'buy')}
+              </option>
+              <option value="rent">
+                {labelFor(t.filters.listingTypes, 'rent')}
+              </option>
             </select>
           </div>
           <div>
-            <label className="mb-1 block text-sm">{t.form.labels.propertyType}</label>
+            <label className="mb-1 block text-sm">
+              {t.form.labels.propertyType}
+            </label>
             <select
               value={listing.propertyType}
               onChange={(event) =>
@@ -1213,6 +1259,35 @@ export default function ListingForm({
               ))}
             </select>
           </div>
+          {supportsAntiparochi(listing.listingType, listing.propertyType) ? (
+            <div>
+              <label className="mb-1 block text-sm">
+                {t.form.labels.antiparochi}
+              </label>
+              <select
+                value={listing.antiparochi ?? ''}
+                onChange={(event) =>
+                  setListing((prev) => ({
+                    ...prev,
+                    antiparochi:
+                      event.target.value === ''
+                        ? null
+                        : (event.target.value as Listing['antiparochi']),
+                  }))
+                }
+                className="w-full rounded border border-gray-300 px-3 py-2">
+                <option value="">{t.form.antiparochiOptions.none}</option>
+                {ANTIPAROCHI_OPTIONS.map((option) => (
+                  <option key={option} value={option}>
+                    {labelFor(t.form.antiparochiOptions, option)}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-1 text-xs text-gray-500">
+                {t.form.hints.antiparochi}
+              </p>
+            </div>
+          ) : null}
           <div>
             <label className="mb-1 block text-sm">{t.form.labels.price}</label>
             <input
@@ -1281,7 +1356,9 @@ export default function ListingForm({
             </div>
           ))}
           <div>
-            <label className="mb-1 block text-sm">{t.form.labels.latitude}</label>
+            <label className="mb-1 block text-sm">
+              {t.form.labels.latitude}
+            </label>
             <input
               type="number"
               step="any"
@@ -1302,7 +1379,9 @@ export default function ListingForm({
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm">{t.form.labels.longitude}</label>
+            <label className="mb-1 block text-sm">
+              {t.form.labels.longitude}
+            </label>
             <input
               type="number"
               step="any"
@@ -1332,7 +1411,9 @@ export default function ListingForm({
         <div className="grid gap-3 md:grid-cols-3">
           {NUMERIC_FIELDS.map((key) => (
             <div key={key}>
-              <label className="mb-1 block text-sm">{t.form.numericFields[key]}</label>
+              <label className="mb-1 block text-sm">
+                {t.form.numericFields[key]}
+              </label>
               <input
                 type="number"
                 value={listing[key] ?? ''}
@@ -1349,7 +1430,9 @@ export default function ListingForm({
             </div>
           ))}
           <div>
-            <label className="mb-1 block text-sm">{t.form.labels.furnishing}</label>
+            <label className="mb-1 block text-sm">
+              {t.form.labels.furnishing}
+            </label>
             <select
               value={listing.furnishing ?? ''}
               onChange={(event) =>
@@ -1371,7 +1454,9 @@ export default function ListingForm({
             </select>
           </div>
           <div>
-            <label className="mb-1 block text-sm">{t.form.labels.condition}</label>
+            <label className="mb-1 block text-sm">
+              {t.form.labels.condition}
+            </label>
             <select
               value={listing.condition ?? ''}
               onChange={(event) =>
@@ -1393,7 +1478,9 @@ export default function ListingForm({
             </select>
           </div>
           <div>
-            <label className="mb-1 block text-sm">{t.form.labels.energyRating}</label>
+            <label className="mb-1 block text-sm">
+              {t.form.labels.energyRating}
+            </label>
             <select
               value={listing.energyRating ?? ''}
               onChange={(event) =>
@@ -1415,7 +1502,9 @@ export default function ListingForm({
             </select>
           </div>
           <div>
-            <label className="mb-1 block text-sm">{t.form.lease.leaseUnit}</label>
+            <label className="mb-1 block text-sm">
+              {t.form.lease.leaseUnit}
+            </label>
             <select
               value={listing.leaseDurationUnit ?? ''}
               onChange={(event) =>
@@ -1434,7 +1523,9 @@ export default function ListingForm({
             </select>
           </div>
           <div>
-            <label className="mb-1 block text-sm">{t.form.lease.leaseType}</label>
+            <label className="mb-1 block text-sm">
+              {t.form.lease.leaseType}
+            </label>
             <select
               value={listing.leaseDurationType ?? ''}
               onChange={(event) =>
@@ -1831,9 +1922,13 @@ export default function ListingForm({
         </h2>
         {mode === 'create' ? (
           <>
-            <label className="mb-2 block text-sm text-gray-600">{t.form.media.mediaChooseHint}</label>
+            <label className="mb-2 block text-sm text-gray-600">
+              {t.form.media.mediaChooseHint}
+            </label>
             <p className="text-xs text-gray-500">
-              {formatAdminString(t.form.media.mediaSizeLimit, { size: formatFileSize(MAX_MEDIA_FILE_SIZE_BYTES) })}
+              {formatAdminString(t.form.media.mediaSizeLimit, {
+                size: formatFileSize(MAX_MEDIA_FILE_SIZE_BYTES),
+              })}
             </p>
             <input
               type="file"
@@ -1846,7 +1941,12 @@ export default function ListingForm({
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <p className="text-sm text-gray-600">
-                    {formatAdminString(mediaFiles.length === 1 ? t.form.media.fileSelected : t.form.media.filesSelected, { count: mediaFiles.length })}
+                    {formatAdminString(
+                      mediaFiles.length === 1
+                        ? t.form.media.fileSelected
+                        : t.form.media.filesSelected,
+                      { count: mediaFiles.length }
+                    )}
                   </p>
                   <button
                     type="button"
@@ -1887,7 +1987,10 @@ export default function ListingForm({
                         <span className="truncate font-medium">
                           {uploadingMediaName}
                           {uploadBatch
-                            ? formatAdminString(t.form.media.batchProgress, { current: uploadBatch.current, total: uploadBatch.total })
+                            ? formatAdminString(t.form.media.batchProgress, {
+                                current: uploadBatch.current,
+                                total: uploadBatch.total,
+                              })
                             : ''}
                         </span>
                         <span className="ml-2 shrink-0">{uploadProgress}%</span>
@@ -1913,7 +2016,9 @@ export default function ListingForm({
           <>
             <label className="flex cursor-pointer items-center justify-center rounded border border-dashed border-gray-300 bg-gray-50 px-4 py-6 text-sm text-gray-600 hover:bg-gray-100">
               <span>
-                {uploading ? t.form.states.uploadingMedia : t.form.media.clickToUpload}
+                {uploading
+                  ? t.form.states.uploadingMedia
+                  : t.form.media.clickToUpload}
               </span>
               <input
                 type="file"
@@ -1934,7 +2039,9 @@ export default function ListingForm({
               />
             </label>
             <p className="text-xs text-gray-500">
-              {formatAdminString(t.form.media.mediaSizeLimit, { size: formatFileSize(MAX_MEDIA_FILE_SIZE_BYTES) })}
+              {formatAdminString(t.form.media.mediaSizeLimit, {
+                size: formatFileSize(MAX_MEDIA_FILE_SIZE_BYTES),
+              })}
             </p>
             {uploadingMediaName ? (
               uploadProgress !== null ? (
@@ -1960,7 +2067,9 @@ export default function ListingForm({
               )
             ) : null}
             <div className="space-y-2">
-              <h3 className="text-sm font-semibold text-gray-700">{t.form.labels.images}</h3>
+              <h3 className="text-sm font-semibold text-gray-700">
+                {t.form.labels.images}
+              </h3>
               {(listing.images ?? []).length === 0 ? (
                 <p className="text-sm text-gray-500">{t.form.media.noImages}</p>
               ) : (
@@ -1990,7 +2099,9 @@ export default function ListingForm({
               )}
             </div>
             <div className="space-y-2">
-              <h3 className="text-sm font-semibold text-gray-700">{t.form.labels.videos}</h3>
+              <h3 className="text-sm font-semibold text-gray-700">
+                {t.form.labels.videos}
+              </h3>
               {(listing.videos ?? []).length === 0 ? (
                 <p className="text-sm text-gray-500">{t.form.media.noVideos}</p>
               ) : (
@@ -2025,7 +2136,9 @@ export default function ListingForm({
           {t.form.sections.status}
         </h2>
         <div>
-          <label className="mb-1 block text-sm">{t.form.labels.listingStatus}</label>
+          <label className="mb-1 block text-sm">
+            {t.form.labels.listingStatus}
+          </label>
           <select
             value={listing.status ?? 'active'}
             onChange={(event) =>
@@ -2068,7 +2181,9 @@ export default function ListingForm({
         {isSubmitting || uploading
           ? uploading
             ? uploadingMediaName
-              ? formatAdminString(t.form.states.uploadingNamed, { name: uploadingMediaName })
+              ? formatAdminString(t.form.states.uploadingNamed, {
+                  name: uploadingMediaName,
+                })
               : t.form.states.uploadingMedia
             : t.form.states.saving
           : mode === 'create'
@@ -2088,9 +2203,7 @@ export default function ListingForm({
               aria-hidden
             />
             <h2 className="text-lg font-semibold">{t.form.modal.title}</h2>
-            <p className="text-sm text-gray-500">
-              {t.form.modal.body}
-            </p>
+            <p className="text-sm text-gray-500">{t.form.modal.body}</p>
             <button
               type="button"
               onClick={() => successDialogRef.current?.close()}

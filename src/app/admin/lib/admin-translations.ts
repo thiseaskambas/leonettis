@@ -123,6 +123,7 @@ const en = {
       videos: 'Videos',
       mainBadge: 'Main',
       listingStatus: 'Listing status',
+      antiparochi: 'Antiparochi',
     },
     numericFields: {
       bedrooms: 'Bedrooms',
@@ -148,6 +149,15 @@ const en = {
       urgent: 'Urgent',
       availableNow: 'Available now',
       availableUponRequest: 'Available upon request',
+    },
+    antiparochiOptions: {
+      none: 'Cash sale only',
+      only: 'Antiparochi only',
+      negotiable: 'Cash or antiparochi',
+    },
+    hints: {
+      antiparochi:
+        'Owner accepts a land-for-apartments development deal instead of, or in addition to, a cash sale.',
     },
     furnishingOptions: siteEn.furnishingOptions,
     conditionOptions: siteEn.conditionOptions,
@@ -339,6 +349,7 @@ const gr = {
       videos: 'Βίντεο',
       mainBadge: 'Κύρια',
       listingStatus: 'Κατάσταση καταχώρησης',
+      antiparochi: 'Αντιπαροχή',
     },
     numericFields: {
       bedrooms: 'Υπνοδωμάτια',
@@ -364,6 +375,15 @@ const gr = {
       urgent: 'Επείγον',
       availableNow: 'Διαθέσιμο τώρα',
       availableUponRequest: 'Διαθέσιμο κατόπιν αιτήματος',
+    },
+    antiparochiOptions: {
+      none: 'Μόνο με μετρητά',
+      only: 'Μόνο αντιπαροχή',
+      negotiable: 'Μετρητά ή αντιπαροχή',
+    },
+    hints: {
+      antiparochi:
+        'Ο ιδιοκτήτης δέχεται αντιπαροχή (οικόπεδο έναντι διαμερισμάτων) αντί ή επιπλέον της μετρητής πώλησης.',
     },
     furnishingOptions: siteGr.furnishingOptions,
     conditionOptions: siteGr.conditionOptions,

@@ -161,6 +161,11 @@
         "embassy": "Embassy",
         "vacation-home": "Vacation Home",
         "other": "Other"
+      },
+      "antiparochi": {
+        "label": "Antiparochi",
+        "only": "Antiparochi Only",
+        "negotiable": "Cash or Antiparochi"
       }
     }
   },
@@ -227,6 +232,9 @@
     "availableFrom": "Available From",
     "availableUponRequest": "Available Upon Request",
     "priceUponRequest": "Price Upon Request",
+    "antiparochi": "Antiparochi",
+    "antiparochiOnly": "Antiparochi Only",
+    "antiparochiNegotiable": "Cash or Antiparochi",
     "status": {
       "sold": "Sold",
       "rented": "Rented",

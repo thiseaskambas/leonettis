@@ -187,6 +187,18 @@ describe('listing-admin-helpers', () => {
     expect(payload.suitableFor).toEqual(['family', 'Digital Nomads']);
   });
 
+  it('sanitizes antiparochi deal structure values', () => {
+    expect(sanitizeListingInput({ antiparochi: 'only' }).antiparochi).toBe(
+      'only'
+    );
+    expect(
+      sanitizeListingInput({ antiparochi: 'negotiable' }).antiparochi
+    ).toBe('negotiable');
+    expect(sanitizeListingInput({ antiparochi: 'cash-only' }).antiparochi).toBe(
+      null
+    );
+  });
+
   it('accepts valid status and ignores removed lifecycle booleans', () => {
     const payload = sanitizeListingInput({
       status: 'pending',
