@@ -108,15 +108,15 @@ export default function ListingCard({
   return (
     <div className="group relative w-full min-w-0 overflow-hidden rounded-2xl shadow-sm transition-all duration-500 hover:shadow-xl">
       {/* Price Tag (Top Right) */}
-      <div className="bg-glass-no-border absolute top-3 right-3 z-20 flex flex-col items-end gap-1">
+      <div className="pointer-events-none absolute top-3 right-3 left-3 z-20 flex flex-col items-end gap-1.5">
         {isAntiparochiOption(listing.antiparochi) && (
-          <span className="rounded-full bg-violet-600/90 px-2.5 py-0.5 text-[11px] font-semibold text-white">
+          <span className="inline-block max-w-full truncate rounded-full bg-violet-600/90 px-2.5 py-0.5 text-[11px] font-semibold text-white shadow-sm ring-1 ring-white/20">
             {listing.antiparochi === 'only'
               ? t('antiparochiOnly')
               : t('antiparochiNegotiable')}
           </span>
         )}
-        <span className="rounded-full px-3 py-1 text-sm font-semibold text-gray-900 dark:text-white">
+        <span className="inline-block max-w-full truncate rounded-full bg-gray-950/75 px-3 py-1 text-sm font-semibold text-white shadow-md ring-1 ring-white/25 backdrop-blur-md">
           {priceDisplay}
         </span>
       </div>
