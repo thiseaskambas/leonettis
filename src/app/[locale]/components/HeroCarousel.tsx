@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import type { Swiper as SwiperType } from 'swiper';
-import { Autoplay, EffectFade, Navigation, Pagination } from 'swiper/modules';
+import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 import { getMediaUrl } from '@/app/lib/helpers/media-helpers';
@@ -26,19 +26,17 @@ export default function HeroCarousel({
 }) {
   return (
     <Swiper
-      effect="fade"
-      fadeEffect={{ crossFade: true }}
       speed={1000}
       spaceBetween={0}
       autoplay={{
-        delay: 2000,
+        delay: 8000,
         disableOnInteraction: false,
       }}
       pagination={{
         clickable: true,
       }}
       navigation={true}
-      modules={[Autoplay, EffectFade, Pagination, Navigation]}
+      modules={[Autoplay, Pagination, Navigation]}
       onSwiper={syncHeroVideos}
       onSlideChange={syncHeroVideos}
       className="mySwiper swiper-controls-desktop h-screen w-full">
@@ -46,7 +44,7 @@ export default function HeroCarousel({
         <SwiperSlide
           key={index}
           className="h-full! w-full!"
-          data-swiper-autoplay={slide.type === 'video' ? '5000' : '2000'}>
+          data-swiper-autoplay={slide.type === 'video' ? '8000' : '5000'}>
           <div className="relative h-full w-full">
             {slide.type === 'video' ? (
               <video
