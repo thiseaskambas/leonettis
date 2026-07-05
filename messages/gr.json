@@ -164,8 +164,7 @@
       },
       "antiparochi": {
         "label": "Αντιπαροχή",
-        "only": "Μόνο Αντιπαροχή",
-        "negotiable": "Μετρητά ή Αντιπαροχή"
+        "accepted": "Αντιπαροχή"
       }
     }
   },
@@ -233,8 +232,6 @@
     "availableUponRequest": "Διαθέσιμο κατόπιν αιτήματος",
     "priceUponRequest": "Τιμή κατόπιν αιτήματος",
     "antiparochi": "Αντιπαροχή",
-    "antiparochiOnly": "Μόνο Αντιπαροχή",
-    "antiparochiNegotiable": "Μετρητά ή Αντιπαροχή",
     "status": {
       "sold": "Πωλήθηκε",
       "rented": "Ενοικιάστηκε",

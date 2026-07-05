@@ -5,6 +5,7 @@ import {
   ListingStatus,
   PropertyType,
 } from '../definitions/listing.types';
+import { getAntiparochiQueryValues } from '../helpers/listing-antiparochi-helpers';
 import { ListingSearchParams } from '../helpers/listing-search-params';
 
 export type AdminSortField = 'updatedAt' | 'publishedAt' | 'price' | 'title.en';
@@ -56,8 +57,8 @@ export async function searchListings(
   if (params.amenities?.length) query.amenities = { $in: params.amenities };
   if (params.suitableFor?.length)
     query.suitableFor = { $in: params.suitableFor };
-  if (params.antiparochi?.length)
-    query.antiparochi = { $in: params.antiparochi };
+  const antiparochiValues = getAntiparochiQueryValues(params.antiparochi);
+  if (antiparochiValues.length) query.antiparochi = { $in: antiparochiValues };
 
   if (params.minPrice != null || params.maxPrice != null) {
     query.price = {

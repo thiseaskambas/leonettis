@@ -188,12 +188,15 @@ describe('listing-admin-helpers', () => {
   });
 
   it('sanitizes antiparochi deal structure values', () => {
+    expect(sanitizeListingInput({ antiparochi: 'accepted' }).antiparochi).toBe(
+      'accepted'
+    );
     expect(sanitizeListingInput({ antiparochi: 'only' }).antiparochi).toBe(
-      'only'
+      'accepted'
     );
     expect(
       sanitizeListingInput({ antiparochi: 'negotiable' }).antiparochi
-    ).toBe('negotiable');
+    ).toBe('accepted');
     expect(sanitizeListingInput({ antiparochi: 'cash-only' }).antiparochi).toBe(
       null
     );

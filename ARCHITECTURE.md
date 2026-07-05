@@ -214,6 +214,8 @@ At request time:
 
 **10 filter keys (buy page):** `category`, `propertyType`, `condition`, `furnishing`, `energyRating`, `viewType`, `features`, `amenities`, `suitableFor`, `antiparochi` (buy listings only; rent page omits `antiparochi`)
 
+The `antiparochi` buy filter has a single public option, `accepted`, meaning the seller accepts antiparochi in addition to the default cash sale.
+
 **Plus:** price range slider (0–2,000,000 EUR, step 10,000)
 
 Filter state is read from the URL via `parseSearchParams()` on mount and written back via `router.push()` when the user applies filters. This makes filters bookmarkable and shareable.

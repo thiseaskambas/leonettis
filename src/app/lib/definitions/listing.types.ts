@@ -40,7 +40,7 @@ export type ListingStatus =
   | 'under_offer';
 
 /** Land-for-apartments deal structure (αντιπαροχή). */
-export type AntiparochiOption = 'only' | 'negotiable';
+export type AntiparochiOption = 'accepted';
 
 type ViewType =
   | 'sea'

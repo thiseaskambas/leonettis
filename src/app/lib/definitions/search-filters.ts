@@ -133,10 +133,7 @@ const CONDITIONS: FilterOption[] = [
   { id: 'other', label: 'Other' },
 ];
 
-const ANTIPAROCHI: FilterOption[] = [
-  { id: 'only', label: 'Antiparochi Only' },
-  { id: 'negotiable', label: 'Cash or Antiparochi' },
-];
+const ANTIPAROCHI: FilterOption[] = [{ id: 'accepted', label: 'Antiparochi' }];
 
 // ---------------------------------------------------------------------------
 // Filter definitions

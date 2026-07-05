@@ -668,11 +668,12 @@ components:
           type: boolean
         antiparochi:
           type: string
-          enum: [only, negotiable]
+          enum: [accepted]
           nullable: true
           description: |
             Land-for-apartments deal structure (αντιπαροχή). Applies mainly to land,
-            field, building, and house listings for sale. Null means cash sale only.
+            field, building, and house listings for sale. Accepted means the seller
+            accepts antiparochi in addition to the default cash sale; null means cash sale only.
         condition:
           type: string
         yearBuilt:

@@ -164,8 +164,7 @@
       },
       "antiparochi": {
         "label": "Antiparochi",
-        "only": "Antiparochi uniquement",
-        "negotiable": "Espèces ou antiparochi"
+        "accepted": "Antiparochi"
       }
     }
   },
@@ -233,8 +232,6 @@
     "availableUponRequest": "Disponible sur demande",
     "priceUponRequest": "Prix sur demande",
     "antiparochi": "Antiparochi",
-    "antiparochiOnly": "Antiparochi uniquement",
-    "antiparochiNegotiable": "Espèces ou antiparochi",
     "status": {
       "sold": "Vendu",
       "rented": "Loué",

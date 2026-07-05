@@ -67,6 +67,22 @@ describe('searchListings', () => {
     expect(result.total).toBe(3);
     expect(result.totalPages).toBe(3);
   });
+
+  it('matches canonical and legacy antiparochi values', async () => {
+    countDocuments.mockResolvedValue(0);
+    toArray.mockResolvedValue([]);
+
+    await searchListings({
+      listingType: 'buy',
+      antiparochi: ['accepted'],
+    });
+
+    expect(countDocuments).toHaveBeenCalledWith({
+      listingType: 'buy',
+      status: { $exists: true, $ne: null },
+      antiparochi: { $in: ['accepted', 'only', 'negotiable'] },
+    });
+  });
 });
 
 describe('getAdminListings', () => {

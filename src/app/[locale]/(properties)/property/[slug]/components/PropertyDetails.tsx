@@ -31,8 +31,6 @@ interface PropertyDetailsTranslations {
   availableUponRequest: string;
   priceUponRequest: string;
   antiparochi: string;
-  antiparochiOnly: string;
-  antiparochiNegotiable: string;
 }
 
 interface PropertyDetailsProps {
@@ -102,12 +100,9 @@ export default function PropertyDetails({
     antiparochi,
   } = listing;
 
-  const antiparochiLabel =
-    antiparochi === 'only'
-      ? translations.antiparochiOnly
-      : antiparochi === 'negotiable'
-        ? translations.antiparochiNegotiable
-        : null;
+  const antiparochiLabel = isAntiparochiOption(antiparochi)
+    ? translations.antiparochi
+    : null;
 
   const priceDisplay =
     price != null
@@ -261,7 +256,10 @@ export default function PropertyDetails({
           <DetailRow label={translations.yearBuilt} value={String(yearBuilt)} />
         )}
         {isAntiparochiOption(antiparochi) && antiparochiLabel && (
-          <DetailRow label={translations.antiparochi} value={antiparochiLabel} />
+          <DetailRow
+            label={translations.antiparochi}
+            value={antiparochiLabel}
+          />
         )}
       </div>
 

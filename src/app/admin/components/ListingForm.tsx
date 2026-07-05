@@ -56,7 +56,11 @@ import type {
   ListingVideo,
 } from '@/app/lib/definitions/listing.types';
 import { resolveAddressCoordinates } from '@/app/lib/helpers/listing-address-helpers';
-import { supportsAntiparochi } from '@/app/lib/helpers/listing-antiparochi-helpers';
+import {
+  isAntiparochiOption,
+  sanitizeAntiparochi,
+  supportsAntiparochi,
+} from '@/app/lib/helpers/listing-antiparochi-helpers';
 import {
   resolveListingFormSlug,
   slugify as buildSlug,
@@ -65,8 +69,6 @@ import {
 
 const LOCALES = ['en', 'fr', 'gr', 'de', 'it'] as const;
 type LocaleCode = (typeof LOCALES)[number];
-
-const ANTIPAROCHI_OPTIONS = ['only', 'negotiable'] as const;
 
 const PROPERTY_TYPES: Listing['propertyType'][] = [
   'apartment',
@@ -676,7 +678,7 @@ export default function ListingForm({
         currentListing.listingType,
         currentListing.propertyType
       )
-        ? (currentListing.antiparochi ?? null)
+        ? sanitizeAntiparochi(currentListing.antiparochi)
         : null,
     };
 
@@ -1264,25 +1266,19 @@ export default function ListingForm({
               <label className="mb-1 block text-sm">
                 {t.form.labels.antiparochi}
               </label>
-              <select
-                value={listing.antiparochi ?? ''}
-                onChange={(event) =>
-                  setListing((prev) => ({
-                    ...prev,
-                    antiparochi:
-                      event.target.value === ''
-                        ? null
-                        : (event.target.value as Listing['antiparochi']),
-                  }))
-                }
-                className="w-full rounded border border-gray-300 px-3 py-2">
-                <option value="">{t.form.antiparochiOptions.none}</option>
-                {ANTIPAROCHI_OPTIONS.map((option) => (
-                  <option key={option} value={option}>
-                    {labelFor(t.form.antiparochiOptions, option)}
-                  </option>
-                ))}
-              </select>
+              <label className="flex items-center gap-2 rounded border border-gray-300 px-3 py-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={isAntiparochiOption(listing.antiparochi)}
+                  onChange={(event) =>
+                    setListing((prev) => ({
+                      ...prev,
+                      antiparochi: event.target.checked ? 'accepted' : null,
+                    }))
+                  }
+                />
+                {t.form.antiparochiOptions.accepted}
+              </label>
               <p className="mt-1 text-xs text-gray-500">
                 {t.form.hints.antiparochi}
               </p>

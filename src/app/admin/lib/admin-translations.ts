@@ -151,13 +151,11 @@ const en = {
       availableUponRequest: 'Available upon request',
     },
     antiparochiOptions: {
-      none: 'Cash sale only',
-      only: 'Antiparochi only',
-      negotiable: 'Cash or antiparochi',
+      accepted: 'Seller accepts antiparochi',
     },
     hints: {
       antiparochi:
-        'Owner accepts a land-for-apartments development deal instead of, or in addition to, a cash sale.',
+        'Owner accepts a land-for-apartments development deal in addition to a cash sale.',
     },
     furnishingOptions: siteEn.furnishingOptions,
     conditionOptions: siteEn.conditionOptions,
@@ -377,13 +375,11 @@ const gr = {
       availableUponRequest: 'Διαθέσιμο κατόπιν αιτήματος',
     },
     antiparochiOptions: {
-      none: 'Μόνο με μετρητά',
-      only: 'Μόνο αντιπαροχή',
-      negotiable: 'Μετρητά ή αντιπαροχή',
+      accepted: 'Ο πωλητής δέχεται αντιπαροχή',
     },
     hints: {
       antiparochi:
-        'Ο ιδιοκτήτης δέχεται αντιπαροχή (οικόπεδο έναντι διαμερισμάτων) αντί ή επιπλέον της μετρητής πώλησης.',
+        'Ο ιδιοκτήτης δέχεται αντιπαροχή (οικόπεδο έναντι διαμερισμάτων) επιπλέον της πώλησης με μετρητά.',
     },
     furnishingOptions: siteGr.furnishingOptions,
     conditionOptions: siteGr.conditionOptions,

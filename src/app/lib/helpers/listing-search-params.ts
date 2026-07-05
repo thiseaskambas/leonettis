@@ -1,3 +1,5 @@
+import { normalizeAntiparochiSearchValues } from '@/app/lib/helpers/listing-antiparochi-helpers';
+
 export interface ListingSearchParams {
   listingType: 'buy' | 'rent';
   category?: string[];
@@ -35,7 +37,7 @@ export function parseSearchParams(
     features: toArray(raw.features),
     amenities: toArray(raw.amenities),
     suitableFor: toArray(raw.suitableFor),
-    antiparochi: toArray(raw.antiparochi),
+    antiparochi: normalizeAntiparochiSearchValues(toArray(raw.antiparochi)),
     minPrice: raw.minPrice ? Number(raw.minPrice) : undefined,
     maxPrice: raw.maxPrice ? Number(raw.maxPrice) : undefined,
     page: raw.page ? Number(raw.page) : undefined,

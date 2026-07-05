@@ -164,8 +164,7 @@
       },
       "antiparochi": {
         "label": "Antiparochi",
-        "only": "Antiparochi Only",
-        "negotiable": "Cash or Antiparochi"
+        "accepted": "Antiparochi"
       }
     }
   },
@@ -233,8 +232,6 @@
     "availableUponRequest": "Available Upon Request",
     "priceUponRequest": "Price Upon Request",
     "antiparochi": "Antiparochi",
-    "antiparochiOnly": "Antiparochi Only",
-    "antiparochiNegotiable": "Cash or Antiparochi",
     "status": {
       "sold": "Sold",
       "rented": "Rented",
