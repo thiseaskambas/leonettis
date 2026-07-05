@@ -9,6 +9,7 @@ export default function Home() {
     { type: 'video', src: 'homepage/lowflight.mov' },
     { type: 'video', src: 'homepage/makronisi.mov' },
     { type: 'video', src: 'homepage/drios.mov' },
+    { type: 'video', src: 'homepage/marpissa.mov' },
   ];
 
   return (
