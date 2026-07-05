@@ -129,7 +129,9 @@ export interface Listing {
   address: Address;
   listingType: 'buy' | 'rent';
   category: ListingCategory[];
+  /** Legacy primary property type; use propertyTypes for multi-type listings. */
   propertyType: PropertyType;
+  propertyTypes?: PropertyType[];
   id: string;
   price?: number;
   bedrooms?: number;

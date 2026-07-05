@@ -83,6 +83,25 @@ describe('searchListings', () => {
       antiparochi: { $in: ['accepted', 'only', 'negotiable'] },
     });
   });
+
+  it('matches selected property types against new arrays and legacy strings', async () => {
+    countDocuments.mockResolvedValue(0);
+    toArray.mockResolvedValue([]);
+
+    await searchListings({
+      listingType: 'buy',
+      propertyType: ['warehouse', 'office'],
+    });
+
+    expect(countDocuments).toHaveBeenCalledWith({
+      listingType: 'buy',
+      status: { $exists: true, $nin: [null, 'paused'] },
+      $or: [
+        { propertyTypes: { $in: ['warehouse', 'office'] } },
+        { propertyType: { $in: ['warehouse', 'office'] } },
+      ],
+    });
+  });
 });
 
 describe('getAdminListings', () => {
@@ -140,7 +159,10 @@ describe('getAdminListings', () => {
 
     expect(countDocuments).toHaveBeenCalledWith({
       listingType: 'rent',
-      propertyType: 'apartment',
+      $or: [
+        { propertyTypes: { $in: ['apartment'] } },
+        { propertyType: { $in: ['apartment'] } },
+      ],
     });
     expect(cursor.sort).toHaveBeenCalledWith({ price: 1 });
   });

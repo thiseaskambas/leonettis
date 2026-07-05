@@ -36,6 +36,15 @@ export interface PaginatedListings {
 const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = 20;
 
+function buildPropertyTypesQuery(propertyTypes: PropertyType[]) {
+  return {
+    $or: [
+      { propertyTypes: { $in: propertyTypes } },
+      { propertyType: { $in: propertyTypes } },
+    ],
+  };
+}
+
 export async function searchListings(
   params: ListingSearchParams
 ): Promise<PaginatedListings> {
@@ -48,7 +57,10 @@ export async function searchListings(
 
   if (params.category?.length) query.category = { $in: params.category };
   if (params.propertyType?.length)
-    query.propertyType = { $in: params.propertyType };
+    Object.assign(
+      query,
+      buildPropertyTypesQuery(params.propertyType as PropertyType[])
+    );
   if (params.condition?.length) query.condition = { $in: params.condition };
   if (params.furnishing?.length) query.furnishing = { $in: params.furnishing };
   if (params.energyRating?.length)
@@ -92,7 +104,8 @@ export async function getAdminListings(
   if (params.status) query.status = params.status;
   if (params.listingType) query.listingType = params.listingType;
   if (params.category) query.category = { $in: [params.category] };
-  if (params.propertyType) query.propertyType = params.propertyType;
+  if (params.propertyType)
+    Object.assign(query, buildPropertyTypesQuery([params.propertyType]));
 
   const sortField = params.sortField ?? 'updatedAt';
   const sortDir: 1 | -1 = params.sortDirection === 'asc' ? 1 : -1;

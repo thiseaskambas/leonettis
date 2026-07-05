@@ -187,6 +187,24 @@ describe('listing-admin-helpers', () => {
     expect(payload.suitableFor).toEqual(['family', 'Digital Nomads']);
   });
 
+  it('normalizes multiple property types and primary property type', () => {
+    const payload = sanitizeListingInput({
+      propertyTypes: ['business', 'warehouse', 'office'],
+    });
+
+    expect(payload.propertyType).toBe('business');
+    expect(payload.propertyTypes).toEqual(['business', 'warehouse', 'office']);
+  });
+
+  it('normalizes legacy property type into propertyTypes', () => {
+    const payload = sanitizeListingInput({
+      propertyType: 'house',
+    });
+
+    expect(payload.propertyType).toBe('house');
+    expect(payload.propertyTypes).toEqual(['house']);
+  });
+
   it('sanitizes antiparochi deal structure values', () => {
     expect(sanitizeListingInput({ antiparochi: 'accepted' }).antiparochi).toBe(
       'accepted'

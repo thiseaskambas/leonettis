@@ -3,6 +3,7 @@ import { Bath, Bed, MapPin, Maximize, Phone } from 'lucide-react';
 import { LocalizedListing } from '@/app/lib/definitions/listing.types';
 import { formatPublicAddress } from '@/app/lib/helpers/listing-address-helpers';
 import { isAntiparochiOption } from '@/app/lib/helpers/listing-antiparochi-helpers';
+import { normalizePropertyTypes } from '@/app/lib/helpers/listing-property-type-helpers';
 import { Link } from '@/i18n/navigation';
 
 interface PropertyDetailsTranslations {
@@ -84,6 +85,7 @@ export default function PropertyDetails({
     squareMetersOutdoor,
     squareMetersTotal,
     propertyType,
+    propertyTypes,
     category,
     condition,
     furnishing,
@@ -114,6 +116,10 @@ export default function PropertyDetails({
       : translations.priceUponRequest;
 
   const publicAddress = formatPublicAddress(address);
+  const displayPropertyTypes = normalizePropertyTypes({
+    propertyType,
+    propertyTypes,
+  });
 
   // Normalize chip labels — replace spaces/underscores with hyphens for lookup
   const normalizeKey = (s: string) => s.replace(/ /g, '-');
@@ -224,7 +230,9 @@ export default function PropertyDetails({
       <div className="grid grid-cols-2 gap-6 rounded-2xl border border-gray-200/60 bg-white/40 p-6 md:grid-cols-3 dark:border-gray-700/40 dark:bg-white/5">
         <DetailRow
           label={translations.propertyType}
-          value={filterTranslations.propertyType[propertyType] ?? propertyType}
+          value={displayPropertyTypes
+            .map((type) => filterTranslations.propertyType[type] ?? type)
+            .join(', ')}
         />
         <DetailRow
           label={translations.category}

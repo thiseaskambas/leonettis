@@ -54,6 +54,7 @@ import type {
   Listing,
   ListingImage,
   ListingVideo,
+  PropertyType,
 } from '@/app/lib/definitions/listing.types';
 import { resolveAddressCoordinates } from '@/app/lib/helpers/listing-address-helpers';
 import {
@@ -61,6 +62,10 @@ import {
   sanitizeAntiparochi,
   supportsAntiparochi,
 } from '@/app/lib/helpers/listing-antiparochi-helpers';
+import {
+  getPrimaryPropertyType,
+  normalizePropertyTypes,
+} from '@/app/lib/helpers/listing-property-type-helpers';
 import { LISTING_STATUS_VALUES } from '@/app/lib/helpers/listing-status-helpers';
 import {
   resolveListingFormSlug,
@@ -71,7 +76,7 @@ import {
 const LOCALES = ['en', 'fr', 'gr', 'de', 'it'] as const;
 type LocaleCode = (typeof LOCALES)[number];
 
-const PROPERTY_TYPES: Listing['propertyType'][] = [
+const PROPERTY_TYPES: PropertyType[] = [
   'apartment',
   'field',
   'house',
@@ -350,10 +355,25 @@ function baseLocalizedText() {
   return { en: '', fr: '', gr: '', de: '', it: '' };
 }
 
+function supportsAntiparochiPropertyTypes(
+  listingType: Listing['listingType'],
+  propertyTypes: PropertyType[]
+): boolean {
+  return propertyTypes.some((propertyType) =>
+    supportsAntiparochi(listingType, propertyType)
+  );
+}
+
 function getInitialListing(initialListing?: Listing): Listing {
   if (initialListing) {
+    const propertyTypes = normalizePropertyTypes(initialListing);
+
     return {
       ...initialListing,
+      propertyType:
+        getPrimaryPropertyType(initialListing, 'house') ??
+        initialListing.propertyType,
+      propertyTypes,
       address: {
         ...initialListing.address,
         coordinates: resolveAddressCoordinates(
@@ -379,6 +399,7 @@ function getInitialListing(initialListing?: Listing): Listing {
     listingType: 'buy',
     category: ['residential'],
     propertyType: 'house',
+    propertyTypes: ['house'],
     price: undefined,
     bedrooms: undefined,
     bathrooms: undefined,
@@ -492,6 +513,11 @@ export default function ListingForm({
     [listing.title.en, mode, t]
   );
   const showMediaUploadWarning = mode === 'edit' && initialMediaUploadWarning;
+  const selectedPropertyTypes = normalizePropertyTypes(listing);
+  const listingSupportsAntiparochi = supportsAntiparochiPropertyTypes(
+    listing.listingType,
+    selectedPropertyTypes
+  );
 
   useEffect(() => {
     if (!showMediaUploadWarning) return;
@@ -666,12 +692,21 @@ export default function ListingForm({
       slugTouched,
     });
 
+    const propertyTypes = normalizePropertyTypes(currentListing);
+    if (propertyTypes.length === 0) {
+      setError(t.form.errors.propertyTypeRequired);
+      setIsSubmitting(false);
+      return;
+    }
+
     const payload: Listing = {
       ...currentListing,
       slug,
-      antiparochi: supportsAntiparochi(
+      propertyType: propertyTypes[0],
+      propertyTypes,
+      antiparochi: supportsAntiparochiPropertyTypes(
         currentListing.listingType,
-        currentListing.propertyType
+        propertyTypes
       )
         ? sanitizeAntiparochi(currentListing.antiparochi)
         : null,
@@ -1240,23 +1275,49 @@ export default function ListingForm({
             <label className="mb-1 block text-sm">
               {t.form.labels.propertyType}
             </label>
-            <select
-              value={listing.propertyType}
-              onChange={(event) =>
-                setListing((prev) => ({
-                  ...prev,
-                  propertyType: event.target.value as Listing['propertyType'],
-                }))
-              }
-              className="w-full rounded border border-gray-300 px-3 py-2">
+            <div className="grid grid-cols-1 gap-2 rounded border border-gray-300 p-3 sm:grid-cols-2 lg:grid-cols-3">
               {PROPERTY_TYPES.map((type) => (
-                <option key={type} value={type}>
+                <label key={type} className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={selectedPropertyTypes.includes(type)}
+                    disabled={
+                      selectedPropertyTypes.includes(type) &&
+                      selectedPropertyTypes.length === 1
+                    }
+                    onChange={(event) =>
+                      setListing((prev) => {
+                        const propertyTypes = toggleArrayValue(
+                          normalizePropertyTypes(prev),
+                          type,
+                          event.target.checked
+                        );
+                        const propertyType =
+                          getPrimaryPropertyType(
+                            { propertyType: prev.propertyType, propertyTypes },
+                            prev.propertyType
+                          ) ?? prev.propertyType;
+
+                        return {
+                          ...prev,
+                          propertyType,
+                          propertyTypes,
+                          antiparochi: supportsAntiparochiPropertyTypes(
+                            prev.listingType,
+                            propertyTypes
+                          )
+                            ? prev.antiparochi
+                            : null,
+                        };
+                      })
+                    }
+                  />
                   {labelFor(t.filters.propertyTypes, type)}
-                </option>
+                </label>
               ))}
-            </select>
+            </div>
           </div>
-          {supportsAntiparochi(listing.listingType, listing.propertyType) ? (
+          {listingSupportsAntiparochi ? (
             <div>
               <label className="mb-1 block text-sm">
                 {t.form.labels.antiparochi}

@@ -48,7 +48,7 @@ const PROPERTY_TYPES: FilterOption[] = [
   { id: 'house', label: 'House' },
   { id: 'building', label: 'Building' },
   { id: 'office', label: 'Office' },
-  { id: 'business', label: 'Business' },
+  { id: 'business', label: 'Commercial Space' },
   { id: 'warehouse', label: 'Warehouse' },
   { id: 'field', label: 'Field' },
   { id: 'land', label: 'Land' },

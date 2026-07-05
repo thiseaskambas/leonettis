@@ -1,6 +1,10 @@
 import type { Listing } from '@/app/lib/definitions/listing.types';
 import { resolveAddressCoordinates } from '@/app/lib/helpers/listing-address-helpers';
 import { sanitizeAntiparochi } from '@/app/lib/helpers/listing-antiparochi-helpers';
+import {
+  getPrimaryPropertyType,
+  normalizePropertyTypes,
+} from '@/app/lib/helpers/listing-property-type-helpers';
 import { isListingStatus } from '@/app/lib/helpers/listing-status-helpers';
 import { slugify } from '@/app/lib/helpers/slug-helpers';
 import { type Locale, locales } from '@/i18n/routing';
@@ -135,6 +139,17 @@ export function sanitizeListingInput(payload: unknown): Partial<Listing> {
 
   const title = sanitizeLocaleRecord(raw.title);
   const description = sanitizeLocaleRecord(raw.description);
+  const propertyType =
+    typeof raw.propertyType === 'string'
+      ? (raw.propertyType as Listing['propertyType'])
+      : undefined;
+  const propertyTypes = sanitizeStringArray(
+    raw.propertyTypes
+  ) as Listing['propertyTypes'];
+  const normalizedPropertyTypes = normalizePropertyTypes({
+    propertyType,
+    propertyTypes,
+  });
 
   const listing: Partial<Listing> = {
     id: typeof raw.id === 'string' ? raw.id : undefined,
@@ -146,10 +161,9 @@ export function sanitizeListingInput(payload: unknown): Partial<Listing> {
         ? raw.listingType
         : undefined,
     category: sanitizeStringArray(raw.category) as Listing['category'],
-    propertyType:
-      typeof raw.propertyType === 'string'
-        ? (raw.propertyType as Listing['propertyType'])
-        : undefined,
+    propertyType: getPrimaryPropertyType({ propertyType, propertyTypes }),
+    propertyTypes:
+      normalizedPropertyTypes.length > 0 ? normalizedPropertyTypes : undefined,
     price: sanitizeNumber(raw.price),
     bedrooms: sanitizeNumber(raw.bedrooms),
     bathrooms: sanitizeNumber(raw.bathrooms),

@@ -107,7 +107,7 @@ const en = {
       description: 'Description',
       descriptionLocale: 'Description ({locale})',
       listingType: 'Listing Type',
-      propertyType: 'Property Type',
+      propertyType: 'Property Types',
       price: 'Price',
       category: 'Category',
       furnishing: 'Furnishing',
@@ -227,6 +227,7 @@ const en = {
       improvementFailed: 'Improvement failed',
       improvementEmpty: 'Empty response from improve API',
       mediaUploadFailed: 'Media upload failed',
+      propertyTypeRequired: 'Select at least one property type',
       mediaDeleteNoKey: 'Cannot delete media without a storage key',
       mediaDeleteFailed: 'Failed to delete media',
       imageOrderFailed: 'Failed to save image order',
@@ -336,7 +337,7 @@ const gr = {
       description: 'Περιγραφή',
       descriptionLocale: 'Περιγραφή ({locale})',
       listingType: 'Τύπος Αγγελίας',
-      propertyType: 'Τύπος Ακινήτου',
+      propertyType: 'Τύποι Ακινήτου',
       price: 'Τιμή',
       category: 'Κατηγορία',
       furnishing: 'Επίπλωση',
@@ -456,6 +457,7 @@ const gr = {
       improvementFailed: 'Αποτυχία βελτίωσης',
       improvementEmpty: 'Κενή απάντηση από το API',
       mediaUploadFailed: 'Αποτυχία μεταφόρτωσης',
+      propertyTypeRequired: 'Επιλέξτε τουλάχιστον έναν τύπο ακινήτου',
       mediaDeleteNoKey: 'Δεν υπάρχει κλειδί αποθήκευσης',
       mediaDeleteFailed: 'Αποτυχία διαγραφής πολυμέσου',
       imageOrderFailed: 'Αποτυχία αποθήκευσης σειράς',
@@ -500,6 +502,8 @@ const API_ERROR_MAP: Record<
   'Finalize response is missing media metadata': 'finalizeMissing',
   'Translation response is invalid': 'translationInvalid',
   'Empty response from improve API': 'improvementEmpty',
+  'Missing required fields: title.en, listingType, propertyTypes':
+    'propertyTypeRequired',
 };
 
 export function translateApiError(

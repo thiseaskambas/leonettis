@@ -555,7 +555,7 @@ components:
     ListingInput:
       type: object
       required:
-        [title, slug, address, listingType, category, propertyType, tags]
+        [title, slug, address, listingType, category, propertyTypes, tags]
       properties:
         id:
           type: string
@@ -605,6 +605,11 @@ components:
             type: string
         propertyType:
           type: string
+          description: Legacy primary property type; set from the first propertyTypes value.
+        propertyTypes:
+          type: array
+          items:
+            type: string
         price:
           type: number
         bedrooms:

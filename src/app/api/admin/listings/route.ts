@@ -27,10 +27,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   const input = sanitizeListingInput(payload);
-  if (!input.title?.en || !input.listingType || !input.propertyType) {
+  if (
+    !input.title?.en ||
+    !input.listingType ||
+    !input.propertyType ||
+    !input.propertyTypes?.length
+  ) {
     return NextResponse.json(
       {
-        error: 'Missing required fields: title.en, listingType, propertyType',
+        error: 'Missing required fields: title.en, listingType, propertyTypes',
       },
       { status: 400 }
     );
@@ -53,6 +58,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     listingType: input.listingType,
     category: input.category ?? ['residential'],
     propertyType: input.propertyType,
+    propertyTypes: input.propertyTypes,
     price: input.price,
     bedrooms: input.bedrooms,
     bathrooms: input.bathrooms,

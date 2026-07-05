@@ -91,6 +91,60 @@ describe('/api/admin/listings route', () => {
     );
   });
 
+  it('persists multiple property types and primary legacy property type', async () => {
+    const request = new Request('http://localhost/api/admin/listings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: {
+          en: 'Flexible Commercial Space',
+          fr: '',
+          gr: '',
+          de: '',
+          it: '',
+        },
+        listingType: 'buy',
+        propertyTypes: ['business', 'warehouse', 'office'],
+        category: ['commercial'],
+        tags: [],
+      }),
+    });
+
+    const response = await POST(request as never);
+
+    expect(response.status).toBe(201);
+    expect(insertOne).toHaveBeenCalledWith(
+      expect.objectContaining({
+        propertyType: 'business',
+        propertyTypes: ['business', 'warehouse', 'office'],
+      })
+    );
+  });
+
+  it('normalizes legacy propertyType to propertyTypes in create payload', async () => {
+    const request = new Request('http://localhost/api/admin/listings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: { en: 'Legacy House', fr: '', gr: '', de: '', it: '' },
+        listingType: 'buy',
+        propertyType: 'house',
+        category: ['residential'],
+        tags: [],
+      }),
+    });
+
+    const response = await POST(request as never);
+
+    expect(response.status).toBe(201);
+    expect(insertOne).toHaveBeenCalledWith(
+      expect.objectContaining({
+        propertyType: 'house',
+        propertyTypes: ['house'],
+      })
+    );
+  });
+
   it('persists explicit paused status in create payload', async () => {
     const request = new Request('http://localhost/api/admin/listings', {
       method: 'POST',
