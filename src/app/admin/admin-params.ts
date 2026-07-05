@@ -11,19 +11,17 @@ import type {
   ListingStatus,
   PropertyType,
 } from '@/app/lib/definitions/listing.types';
+import {
+  isListingStatus as isKnownListingStatus,
+  LISTING_STATUS_VALUES,
+} from '@/app/lib/helpers/listing-status-helpers';
 import type {
   AdminListingsParams,
   AdminSortDirection,
   AdminSortField,
 } from '@/app/lib/services/listings-service';
 
-export const LISTING_STATUSES = [
-  'active',
-  'sold',
-  'rented',
-  'pending',
-  'under_offer',
-] as const satisfies readonly ListingStatus[];
+export const LISTING_STATUSES = LISTING_STATUS_VALUES;
 
 export const LISTING_TYPES = ['buy', 'rent'] as const satisfies readonly (
   | 'buy'
@@ -71,10 +69,7 @@ export const SORT_OPTIONS: ReadonlyArray<{
 ] as const;
 
 export function isListingStatus(v: unknown): v is ListingStatus {
-  return (
-    typeof v === 'string' &&
-    (LISTING_STATUSES as readonly string[]).includes(v)
-  );
+  return isKnownListingStatus(v);
 }
 
 export function isListingType(v: unknown): v is 'buy' | 'rent' {
@@ -90,8 +85,7 @@ export function isListingCategory(v: unknown): v is ListingCategory {
 
 export function isPropertyType(v: unknown): v is PropertyType {
   return (
-    typeof v === 'string' &&
-    (PROPERTY_TYPES as readonly string[]).includes(v)
+    typeof v === 'string' && (PROPERTY_TYPES as readonly string[]).includes(v)
   );
 }
 
@@ -174,8 +168,8 @@ export function hasActiveFilterParams(
 
   return Boolean(
     get('status') ||
-      get('listingType') ||
-      get('category') ||
-      get('propertyType')
+    get('listingType') ||
+    get('category') ||
+    get('propertyType')
   );
 }

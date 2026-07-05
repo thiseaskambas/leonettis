@@ -1,17 +1,11 @@
 import type { Listing } from '@/app/lib/definitions/listing.types';
 import { resolveAddressCoordinates } from '@/app/lib/helpers/listing-address-helpers';
 import { sanitizeAntiparochi } from '@/app/lib/helpers/listing-antiparochi-helpers';
+import { isListingStatus } from '@/app/lib/helpers/listing-status-helpers';
 import { slugify } from '@/app/lib/helpers/slug-helpers';
 import { type Locale, locales } from '@/i18n/routing';
 
 const allLocales = Object.keys(locales) as Locale[];
-const LISTING_STATUSES = new Set<Listing['status']>([
-  'active',
-  'sold',
-  'rented',
-  'pending',
-  'under_offer',
-]);
 
 export function buildListingSlug(listing: Partial<Listing>): string {
   const titleEn = listing.title?.en ?? '';
@@ -176,11 +170,7 @@ export function sanitizeListingInput(payload: unknown): Partial<Listing> {
     amenities: sanitizeStringArray(raw.amenities) as Listing['amenities'],
     suitableFor: sanitizeStringArray(raw.suitableFor) as Listing['suitableFor'],
     view: sanitizeStringArray(raw.view) as Listing['view'],
-    status:
-      typeof raw.status === 'string' &&
-      LISTING_STATUSES.has(raw.status as Listing['status'])
-        ? (raw.status as Listing['status'])
-        : undefined,
+    status: isListingStatus(raw.status) ? raw.status : undefined,
     isFeatured: sanitizeBoolean(raw.isFeatured),
     tags: sanitizeStringArray(raw.tags),
     favorite: sanitizeBoolean(raw.favorite),

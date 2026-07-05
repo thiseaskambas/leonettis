@@ -197,7 +197,7 @@ getLocalizedListing(listing, locale) [listing-helpers.ts]
 
 [src/app/[locale]/(properties)/property/[slug]/page.tsx](<src/app/[locale]/(properties)/property/[slug]/page.tsx>) uses **ISR** (Incremental Static Regeneration), not `force-dynamic`:
 
-- `generateStaticParams()` loads all published listing slugs via `getAllPublishedSlugs()` in [listings-service.ts](src/app/lib/services/listings-service.ts) and pairs each slug with every locale from [routing.ts](src/i18n/routing.ts), so those pages are pre-rendered at build time (requires MongoDB during the build).
+- `generateStaticParams()` loads all public listing slugs via `getAllPublishedSlugs()` in [listings-service.ts](src/app/lib/services/listings-service.ts), excluding paused listings, and pairs each slug with every locale from [routing.ts](src/i18n/routing.ts), so those pages are pre-rendered at build time (requires MongoDB during the build).
 - `export const revalidate = 3600` — stale pages refresh in the background at most once per hour.
 - `dynamicParams` remains default (`true`): slugs created after a deploy are still served on first request, then cached.
 - Admin **PUT** / **DELETE** on [`/api/admin/listings/[id]`](src/app/api/admin/listings/[id]/route.ts) calls `revalidatePath(\`/${locale}/property/${slug}\`)` for every locale so CDN/static cache updates immediately after edits or deletion.
@@ -259,6 +259,7 @@ Defined in [src/app/lib/definitions/listing.types.ts](src/app/lib/definitions/li
 | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `ListingCategory` | `commercial`, `residential`, `industrial`, `agricultural`                                                                                          |
 | `PropertyType`    | `apartment`, `field`, `house`, `land`, `business`, `garage`, `building`, `office`, `warehouse`                                                     |
+| `ListingStatus`   | `active`, `sold`, `rented`, `pending`, `under_offer`, `paused`; `paused` is admin-visible but excluded from public listing/detail pages             |
 | `ViewType`        | Canonical values: `sea`, `mountain`, `city`, `countryside`, `lake`, `river`, `forest`, `park`, `beach`, `other`                                    |
 | `Amenities`       | Canonical values: `swimming pool`, `gym`, `jacuzzi`, `sauna`, `steam room`, `tennis court`, `golf course`, `parking`, `garage`, `terrace`, `other` |
 | `Features`        | Canonical values: `air conditioning`, `heating`, `fireplace`, `stove`, `balcony`, `terrace`, `garden`, `parking`, `garage`, `other`                |

@@ -61,6 +61,7 @@ import {
   sanitizeAntiparochi,
   supportsAntiparochi,
 } from '@/app/lib/helpers/listing-antiparochi-helpers';
+import { LISTING_STATUS_VALUES } from '@/app/lib/helpers/listing-status-helpers';
 import {
   resolveListingFormSlug,
   slugify as buildSlug,
@@ -163,13 +164,7 @@ const ENERGY_RATING_OPTIONS: NonNullable<Listing['energyRating']>[] = [
   'G',
 ];
 
-const STATUS_OPTIONS: NonNullable<Listing['status']>[] = [
-  'active',
-  'sold',
-  'rented',
-  'pending',
-  'under_offer',
-];
+const STATUS_OPTIONS = LISTING_STATUS_VALUES;
 
 type NumericListingField =
   | 'bedrooms'

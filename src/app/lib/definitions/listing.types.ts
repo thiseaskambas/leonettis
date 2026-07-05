@@ -37,7 +37,8 @@ export type ListingStatus =
   | 'sold'
   | 'rented'
   | 'pending'
-  | 'under_offer';
+  | 'under_offer'
+  | 'paused';
 
 /** Land-for-apartments deal structure (αντιπαροχή). */
 export type AntiparochiOption = 'accepted';

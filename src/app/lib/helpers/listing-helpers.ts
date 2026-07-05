@@ -2,15 +2,14 @@ import { Locale } from '@/i18n/routing';
 
 import { getListingsCollection } from '../db/mongodb';
 import { Listing, LocalizedListing } from '../definitions/listing.types';
+import { buildPublicListingStatusQuery } from './listing-status-helpers';
 
 export async function getListingBySlug(slug: string): Promise<Listing | null> {
   const collection = await getListingsCollection();
-  const listing = await collection.findOne({ slug }, { projection: { _id: 0 } });
-  if (!listing?.status) {
-    return null;
-  }
-
-  return listing;
+  return await collection.findOne(
+    { slug, status: buildPublicListingStatusQuery() },
+    { projection: { _id: 0 } }
+  );
 }
 
 export async function getListingById(id: string): Promise<Listing | null> {

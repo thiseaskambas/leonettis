@@ -204,13 +204,13 @@ describe('listing-admin-helpers', () => {
 
   it('accepts valid status and ignores removed lifecycle booleans', () => {
     const payload = sanitizeListingInput({
-      status: 'pending',
+      status: 'paused',
       isActive: true,
       isSold: true,
       isRented: true,
     });
 
-    expect(payload.status).toBe('pending');
+    expect(payload.status).toBe('paused');
     expect(payload).not.toHaveProperty('isActive');
     expect(payload).not.toHaveProperty('isSold');
     expect(payload).not.toHaveProperty('isRented');

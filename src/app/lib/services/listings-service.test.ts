@@ -58,7 +58,7 @@ describe('searchListings', () => {
 
     expect(countDocuments).toHaveBeenCalledWith({
       listingType: 'buy',
-      status: { $exists: true, $ne: null },
+      status: { $exists: true, $nin: [null, 'paused'] },
       category: { $in: ['residential'] },
       price: { $gte: 100, $lte: 200 },
     });
@@ -79,7 +79,7 @@ describe('searchListings', () => {
 
     expect(countDocuments).toHaveBeenCalledWith({
       listingType: 'buy',
-      status: { $exists: true, $ne: null },
+      status: { $exists: true, $nin: [null, 'paused'] },
       antiparochi: { $in: ['accepted', 'only', 'negotiable'] },
     });
   });
@@ -111,9 +111,9 @@ describe('getAdminListings', () => {
     countDocuments.mockResolvedValue(0);
     toArray.mockResolvedValue([]);
 
-    await getAdminListings({ status: 'active' });
+    await getAdminListings({ status: 'paused' });
 
-    expect(countDocuments).toHaveBeenCalledWith({ status: 'active' });
+    expect(countDocuments).toHaveBeenCalledWith({ status: 'paused' });
   });
 
   it('builds category filter with $in single value', async () => {
@@ -161,7 +161,7 @@ describe('getAllPublishedSlugs', () => {
     vi.clearAllMocks();
   });
 
-  it('queries published listings and returns slugs', async () => {
+  it('queries public listings and returns slugs', async () => {
     toArray.mockResolvedValueOnce([
       { slug: 'paros-villa' },
       { slug: 'naoussa-flat' },
@@ -170,7 +170,7 @@ describe('getAllPublishedSlugs', () => {
     const slugs = await getAllPublishedSlugs();
 
     expect(find).toHaveBeenCalledWith(
-      { status: { $exists: true, $ne: null } },
+      { status: { $exists: true, $nin: [null, 'paused'] } },
       { projection: { slug: 1, _id: 0 } }
     );
     expect(slugs).toEqual(['paros-villa', 'naoussa-flat']);

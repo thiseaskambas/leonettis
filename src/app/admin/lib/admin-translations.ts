@@ -51,6 +51,7 @@ const en = {
       rented: siteEn.statuses.rented,
       pending: siteEn.statuses.pending,
       under_offer: siteEn.statuses.under_offer,
+      paused: 'Paused',
       inactive: 'inactive',
     },
   },
@@ -74,7 +75,7 @@ const en = {
     },
     listingTypes: siteEn.listingTypes,
     categories: siteEn.categories,
-    statuses: { active: 'active', ...siteEn.statuses },
+    statuses: { active: 'active', ...siteEn.statuses, paused: 'Paused' },
     propertyTypes: siteEn.propertyTypes,
   },
   delete: {
@@ -163,7 +164,11 @@ const en = {
     amenityOptions: siteEn.amenityOptions,
     viewOptions: siteEn.viewOptions,
     suitableForOptions: siteEn.suitableForOptions,
-    statusOptions: { active: 'active', ...siteEn.statusOptions },
+    statusOptions: {
+      active: 'active',
+      ...siteEn.statusOptions,
+      paused: 'Paused',
+    },
     lease: {
       leaseUnit: 'Lease Unit',
       leaseType: 'Lease Type',
@@ -275,6 +280,7 @@ const gr = {
       rented: siteGr.statuses.rented,
       pending: siteGr.statuses.pending,
       under_offer: siteGr.statuses.under_offer,
+      paused: 'Σε παύση',
       inactive: 'ανενεργό',
     },
   },
@@ -298,7 +304,7 @@ const gr = {
     },
     listingTypes: siteGr.listingTypes,
     categories: siteGr.categories,
-    statuses: { active: 'ενεργό', ...siteGr.statuses },
+    statuses: { active: 'ενεργό', ...siteGr.statuses, paused: 'Σε παύση' },
     propertyTypes: siteGr.propertyTypes,
   },
   delete: {
@@ -387,7 +393,11 @@ const gr = {
     amenityOptions: siteGr.amenityOptions,
     viewOptions: siteGr.viewOptions,
     suitableForOptions: siteGr.suitableForOptions,
-    statusOptions: { active: 'ενεργό', ...siteGr.statusOptions },
+    statusOptions: {
+      active: 'ενεργό',
+      ...siteGr.statusOptions,
+      paused: 'Σε παύση',
+    },
     lease: {
       leaseUnit: 'Μονάδα μίσθωσης',
       leaseType: 'Τύπος μίσθωσης',

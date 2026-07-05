@@ -655,7 +655,7 @@ components:
           type: string
         status:
           type: string
-          enum: [active, sold, rented, pending, under_offer]
+          enum: [active, sold, rented, pending, under_offer, paused]
         isFeatured:
           type: boolean
         tags:

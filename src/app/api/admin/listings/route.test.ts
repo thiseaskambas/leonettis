@@ -90,4 +90,26 @@ describe('/api/admin/listings route', () => {
       })
     );
   });
+
+  it('persists explicit paused status in create payload', async () => {
+    const request = new Request('http://localhost/api/admin/listings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: { en: 'Paused Villa', fr: '', gr: '', de: '', it: '' },
+        listingType: 'buy',
+        propertyType: 'house',
+        status: 'paused',
+      }),
+    });
+
+    const response = await POST(request as never);
+
+    expect(response.status).toBe(201);
+    expect(insertOne).toHaveBeenCalledWith(
+      expect.objectContaining({
+        status: 'paused',
+      })
+    );
+  });
 });

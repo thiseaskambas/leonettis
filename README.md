@@ -128,7 +128,7 @@ OpenAPI spec for admin endpoints:
 - Property detail pages now render both a Photo Gallery and a dedicated Video Gallery section below it.
 - Admin listing form supports per-field AI translation for `title` and `description` from the active locale into the other 4 locales via `POST /api/admin/translate` (always overwrites target locales).
 - Admin listing form also supports description-only AI improvement for the active locale via `POST /api/admin/improve-description`, showing a preview with Accept/Discard before replacing textarea content.
-- Listing lifecycle is controlled via `status` (`active`, `sold`, `rented`, `pending`, `under_offer`); listings without `status` are excluded from public list/detail pages, and non-active statuses render translated banners.
+- Listing lifecycle is controlled via `status` (`active`, `sold`, `rented`, `pending`, `under_offer`, `paused`); listings without `status` and listings with `paused` status are excluded from public list/detail pages, while public non-active statuses render translated banners.
 
 ### Verification checklist
 

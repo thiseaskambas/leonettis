@@ -137,6 +137,36 @@ describe('/api/admin/listings/[id] route', () => {
     expect(updateDocument.$set.slug).toBe('my-custom-slug');
   });
 
+  it('persists paused status in PUT updates', async () => {
+    findOneAndUpdate.mockResolvedValueOnce({
+      id: '1',
+      slug: 'mock-slug',
+      status: 'paused',
+    });
+
+    const request = new Request('http://localhost/api/admin/listings/1', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'paused' }),
+    });
+
+    const response = await PUT(request as never, {
+      params: Promise.resolve({ id: '1' }),
+    });
+
+    expect(response.status).toBe(200);
+    expect(findOneAndUpdate).toHaveBeenCalledWith(
+      { id: '1' },
+      {
+        $set: expect.objectContaining({
+          status: 'paused',
+          updatedAt: expect.any(String),
+        }),
+      },
+      { returnDocument: 'after', projection: { _id: 0 } }
+    );
+  });
+
   it.each([
     ['', 'slug cannot be empty'],
     ['   ', 'slug cannot be empty'],

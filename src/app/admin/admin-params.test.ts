@@ -14,14 +14,14 @@ describe('parseAdminParams', () => {
   it('parses valid filters and page', () => {
     expect(
       parseAdminParams({
-        status: 'active',
+        status: 'paused',
         listingType: 'buy',
         category: 'residential',
         propertyType: 'house',
         page: '3',
       })
     ).toEqual({
-      status: 'active',
+      status: 'paused',
       listingType: 'buy',
       category: 'residential',
       propertyType: 'house',

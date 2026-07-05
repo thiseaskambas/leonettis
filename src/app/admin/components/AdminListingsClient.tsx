@@ -19,12 +19,13 @@ type ListingStatusKey =
   | 'rented'
   | 'pending'
   | 'under_offer'
+  | 'paused'
   | 'featured'
   | 'active'
   | 'inactive';
 
 function getListingStatusKey(listing: {
-  status?: 'active' | 'sold' | 'rented' | 'pending' | 'under_offer';
+  status?: Listing['status'];
   isFeatured?: boolean;
 }): { key: ListingStatusKey; className: string } {
   if (listing.status === 'sold') {
@@ -38,6 +39,9 @@ function getListingStatusKey(listing: {
   }
   if (listing.status === 'under_offer') {
     return { key: 'under_offer', className: 'bg-purple-100 text-purple-700' };
+  }
+  if (listing.status === 'paused') {
+    return { key: 'paused', className: 'bg-slate-100 text-slate-700' };
   }
   if (listing.isFeatured) {
     return { key: 'featured', className: 'bg-blue-100 text-blue-700' };

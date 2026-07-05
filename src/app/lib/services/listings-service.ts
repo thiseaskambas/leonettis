@@ -7,6 +7,7 @@ import {
 } from '../definitions/listing.types';
 import { getAntiparochiQueryValues } from '../helpers/listing-antiparochi-helpers';
 import { ListingSearchParams } from '../helpers/listing-search-params';
+import { buildPublicListingStatusQuery } from '../helpers/listing-status-helpers';
 
 export type AdminSortField = 'updatedAt' | 'publishedAt' | 'price' | 'title.en';
 
@@ -42,7 +43,7 @@ export async function searchListings(
   const limit = params.limit ?? DEFAULT_LIMIT;
   const query: Record<string, unknown> = {
     listingType: params.listingType,
-    status: { $exists: true, $ne: null },
+    status: buildPublicListingStatusQuery(),
   };
 
   if (params.category?.length) query.category = { $in: params.category };
@@ -113,7 +114,7 @@ export async function getAdminListings(
 export async function getAllPublishedSlugs(): Promise<string[]> {
   const collection = await getListingsCollection();
   const filter: Record<string, unknown> = {
-    status: { $exists: true, $ne: null },
+    status: buildPublicListingStatusQuery(),
   };
   const docs = await collection
     .find(filter, { projection: { slug: 1, _id: 0 } })
