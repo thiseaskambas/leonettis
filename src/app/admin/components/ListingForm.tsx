@@ -15,6 +15,7 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CheckCircle } from 'lucide-react';
+import Image from 'next/image';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   ChangeEvent,
@@ -292,10 +293,12 @@ function SortableImageItem({
       {...attributes}
       {...listeners}
       className="cursor-grab rounded border border-gray-200 p-3 active:cursor-grabbing">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <Image
         src={image.url}
         alt={image.name}
+        width={320}
+        height={180}
+        sizes="(min-width: 768px) 33vw, 100vw"
         className="mb-2 h-28 w-full rounded object-cover"
       />
       <div className="mb-2 flex items-center justify-between gap-2">
