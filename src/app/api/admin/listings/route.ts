@@ -8,6 +8,14 @@ import {
 } from '@/app/lib/helpers/listing-admin-helpers';
 import { slugify } from '@/app/lib/helpers/slug-helpers';
 
+function isDuplicateKeyError(error: unknown): boolean {
+  return (
+    !!error &&
+    typeof error === 'object' &&
+    (error as { code?: unknown }).code === 11000
+  );
+}
+
 export async function GET(): Promise<NextResponse> {
   const collection = await getListingsCollection();
   const listings = await collection
@@ -42,13 +50,29 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   const now = new Date().toISOString();
+  let slug = buildListingSlug(input);
+
+  if (input.slug !== undefined) {
+    const trimmedSlug = input.slug.trim();
+    if (trimmedSlug) {
+      slug = slugify(trimmedSlug);
+      if (!slug) {
+        return NextResponse.json(
+          {
+            error:
+              'slug must contain at least one URL-safe character after normalization',
+          },
+          { status: 400 }
+        );
+      }
+    }
+  }
+
   const listing: Listing = {
     id: crypto.randomUUID(),
     title: input.title,
     description: input.description,
-    slug: input.slug?.trim()
-      ? slugify(input.slug.trim())
-      : buildListingSlug(input),
+    slug,
     address: input.address ?? {
       city: '',
       zipCode: '',
@@ -95,7 +119,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   };
 
   const collection = await getListingsCollection();
-  await collection.insertOne(listing);
+  try {
+    await collection.insertOne(listing);
+  } catch (error) {
+    if (isDuplicateKeyError(error)) {
+      return NextResponse.json(
+        { error: 'slug already exists' },
+        { status: 400 }
+      );
+    }
+
+    throw error;
+  }
 
   return NextResponse.json({ listing }, { status: 201 });
 }

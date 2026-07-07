@@ -83,7 +83,9 @@ paths:
       description: |
         Creates a listing. When `slug` is provided in the request body, it is stored (slugified)
         and is **not** re-derived from `title.en`. When `slug` is omitted or empty, the server
-        generates a slug from `title.en` via transliteration and slugify rules.
+        generates a slug from `title.en` via transliteration and slugify rules. The admin create
+        form can auto-translate a non-English title into `title.en` before posting so the generated
+        slug is based on the persisted English title.
       security:
         - adminCookie: []
       requestBody:
@@ -103,7 +105,7 @@ paths:
                   listing:
                     $ref: '#/components/schemas/Listing'
         '400':
-          description: Validation error
+          description: Validation error, invalid slug, or duplicate slug
         '401':
           description: Unauthorized
   /api/admin/listings/{id}:
@@ -554,8 +556,7 @@ components:
       enum: [en, fr, gr, de, it]
     ListingInput:
       type: object
-      required:
-        [title, slug, address, listingType, category, propertyTypes, tags]
+      required: [title, address, listingType, category, propertyTypes, tags]
       properties:
         id:
           type: string
@@ -569,6 +570,7 @@ components:
             type: string
         slug:
           type: string
+          description: Optional on create. Empty or omitted values are generated from title.en.
         address:
           type: object
           properties:

@@ -40,6 +40,13 @@ import {
   removeMediaFileByKey,
 } from '@/app/admin/components/listing-form-media-utils';
 import {
+  getTitleTranslationSourceLocale,
+  hasInvalidManualCreateSlug,
+  LISTING_FORM_LOCALES as LOCALES,
+  type ListingFormLocaleCode as LocaleCode,
+  mergeRequiredEnglishTitleTranslation,
+} from '@/app/admin/components/listing-form-submit-utils';
+import {
   buildUrlWithoutMediaUploadParam,
   uploadCreateMediaBatch,
   uploadWithXHR,
@@ -71,11 +78,7 @@ import { LISTING_STATUS_VALUES } from '@/app/lib/helpers/listing-status-helpers'
 import {
   resolveListingFormSlug,
   slugify as buildSlug,
-  transliterate,
 } from '@/app/lib/helpers/slug-helpers';
-
-const LOCALES = ['en', 'fr', 'gr', 'de', 'it'] as const;
-type LocaleCode = (typeof LOCALES)[number];
 
 const PROPERTY_TYPES: PropertyType[] = [
   'apartment',
@@ -640,13 +643,14 @@ export default function ListingForm({
 
     let currentListing = listing;
 
-    if (!listing.title.en.trim()) {
-      const sourceLocale = (['fr', 'gr', 'de', 'it'] as LocaleCode[]).find(
-        (locale) => listing.title[locale]?.trim()
+    if (!currentListing.title.en.trim()) {
+      const sourceLocale = getTitleTranslationSourceLocale(
+        currentListing.title,
+        activeLocale
       );
 
       if (sourceLocale) {
-        const sourceTitle = listing.title[sourceLocale]!;
+        const sourceTitle = currentListing.title[sourceLocale]!;
         setTranslatingTitle(true);
         try {
           const response = await fetch('/api/admin/translate', {
@@ -658,35 +662,64 @@ export default function ListingForm({
               field: 'title',
             }),
           });
-          if (response.ok) {
-            const body = (await response.json()) as {
-              translations?: Partial<Record<LocaleCode, string>>;
+
+          if (!response.ok) {
+            const body = (await response.json().catch(() => ({}))) as {
+              error?: string;
             };
-            if (body.translations) {
-              currentListing = {
-                ...currentListing,
-                title: { ...currentListing.title, ...body.translations },
-              };
-            }
+            setError(
+              translateApiError(
+                t,
+                body.error ?? t.form.errors.translationFailed
+              )
+            );
+            setIsSubmitting(false);
+            return;
           }
-        } catch {
-          // Fall through to transliteration fallback.
+
+          const body = (await response.json()) as {
+            translations?: Partial<Record<LocaleCode, string>>;
+          };
+          const translatedTitle = mergeRequiredEnglishTitleTranslation(
+            currentListing.title,
+            body.translations
+          );
+
+          if (!translatedTitle) {
+            setError(t.form.errors.translationInvalid);
+            setIsSubmitting(false);
+            return;
+          }
+
+          currentListing = {
+            ...currentListing,
+            title: translatedTitle,
+          };
+          setListing(currentListing);
+        } catch (translateError) {
+          const message =
+            translateError instanceof Error
+              ? translateError.message
+              : t.form.errors.translationFailed;
+          setError(translateApiError(t, message));
+          setIsSubmitting(false);
+          return;
         } finally {
           setTranslatingTitle(false);
         }
-
-        if (!currentListing.title.en.trim()) {
-          currentListing = {
-            ...currentListing,
-            title: {
-              ...currentListing.title,
-              en: transliterate(sourceTitle),
-            },
-          };
-        }
-
-        setListing(currentListing);
       }
+    }
+
+    if (!currentListing.title.en.trim()) {
+      setError(t.form.errors.titleRequired);
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (hasInvalidManualCreateSlug(mode, currentListing.slug, slugTouched)) {
+      setError(t.form.errors.slugInvalid);
+      setIsSubmitting(false);
+      return;
     }
 
     const slug = resolveListingFormSlug(mode, {
@@ -694,6 +727,12 @@ export default function ListingForm({
       titleEn: currentListing.title.en,
       slugTouched,
     });
+
+    if (!slug) {
+      setError(t.form.errors.slugInvalid);
+      setIsSubmitting(false);
+      return;
+    }
 
     const propertyTypes = normalizePropertyTypes(currentListing);
     if (propertyTypes.length === 0) {
@@ -1139,7 +1178,6 @@ export default function ListingForm({
                 }))
               }
               className="w-full rounded border border-gray-300 px-3 py-2"
-              required={activeLocale === 'en'}
             />
             {(listing.title[activeLocale] ?? '').trim() && (
               <button
@@ -1164,8 +1202,11 @@ export default function ListingForm({
                 setListing((prev) => ({ ...prev, slug: event.target.value }));
               }}
               className="w-full rounded border border-gray-300 px-3 py-2"
-              required
+              required={mode === 'edit'}
             />
+            {mode === 'create' && (
+              <p className="mt-1 text-xs text-gray-500">{t.form.hints.slug}</p>
+            )}
           </div>
           <div className="md:col-span-2">
             <label className="mb-1 block text-sm">

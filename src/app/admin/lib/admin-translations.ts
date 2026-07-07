@@ -155,6 +155,7 @@ const en = {
       accepted: 'Seller accepts antiparochi',
     },
     hints: {
+      slug: 'Optional. Leave blank to generate from the English title when saving.',
       antiparochi:
         'Owner accepts a land-for-apartments development deal in addition to a cash sale.',
     },
@@ -222,6 +223,9 @@ const en = {
     },
     errors: {
       failedToSave: 'Failed to save listing',
+      titleRequired: 'Enter a title in English or another locale',
+      slugInvalid: 'Enter a slug with at least one URL-safe character',
+      slugDuplicate: 'A listing with this slug already exists',
       translationFailed: 'Translation failed',
       translationInvalid: 'Translation response is invalid',
       improvementFailed: 'Improvement failed',
@@ -385,6 +389,7 @@ const gr = {
       accepted: 'Ο πωλητής δέχεται αντιπαροχή',
     },
     hints: {
+      slug: 'Προαιρετικό. Αφήστε το κενό για να δημιουργηθεί από τον αγγλικό τίτλο κατά την αποθήκευση.',
       antiparochi:
         'Ο ιδιοκτήτης δέχεται αντιπαροχή (οικόπεδο έναντι διαμερισμάτων) επιπλέον της πώλησης με μετρητά.',
     },
@@ -452,6 +457,10 @@ const gr = {
     },
     errors: {
       failedToSave: 'Αποτυχία αποθήκευσης',
+      titleRequired: 'Προσθέστε τίτλο στα Αγγλικά ή σε άλλη γλώσσα',
+      slugInvalid:
+        'Το slug πρέπει να περιέχει τουλάχιστον έναν ασφαλή χαρακτήρα URL',
+      slugDuplicate: 'Υπάρχει ήδη καταχώρηση με αυτό το slug',
       translationFailed: 'Αποτυχία μετάφρασης',
       translationInvalid: 'Μη έγκυρη απάντηση μετάφρασης',
       improvementFailed: 'Αποτυχία βελτίωσης',
@@ -487,6 +496,10 @@ const API_ERROR_MAP: Record<
   keyof (typeof adminT)['en']['form']['errors']
 > = {
   'Failed to save listing': 'failedToSave',
+  'slug cannot be empty': 'slugInvalid',
+  'slug must contain at least one URL-safe character after normalization':
+    'slugInvalid',
+  'slug already exists': 'slugDuplicate',
   'Translation failed': 'translationFailed',
   'Improvement failed': 'improvementFailed',
   'Media upload failed': 'mediaUploadFailed',

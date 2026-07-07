@@ -31,6 +31,16 @@ describe('resolveListingFormSlug', () => {
     ).toBe('beach-house');
   });
 
+  it('derives slug from title.en on create when a touched slug is cleared', () => {
+    expect(
+      resolveListingFormSlug('create', {
+        slug: '   ',
+        titleEn: 'Beach House',
+        slugTouched: true,
+      })
+    ).toBe('beach-house');
+  });
+
   it('slugifies explicit slug on create when slugTouched', () => {
     expect(
       resolveListingFormSlug('create', {
