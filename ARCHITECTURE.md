@@ -93,7 +93,7 @@ Copy `.example.env` to `.env.local` and fill in all values before running locall
 
 | Variable               | Required | Description                                                 |
 | ---------------------- | -------- | ----------------------------------------------------------- |
-| `NEXT_PUBLIC_SITE_URL` | Yes      | Canonical public site origin used for absolute sitemap URLs |
+| `NEXT_PUBLIC_SITE_URL` | Yes      | Canonical public site origin used for sitemap and robots URLs |
 
 ### Admin authentication
 
@@ -148,9 +148,11 @@ Locales are defined in [src/i18n/routing.ts](src/i18n/routing.ts):
 
 Always use `Link`, `useRouter`, and `redirect` from [src/i18n/navigation.ts](src/i18n/navigation.ts) — these are locale-aware wrappers. Never import from `next/navigation` or `next/link` directly in public pages.
 
-### Sitemap
+### Robots & Sitemap
 
 [src/app/sitemap.ts](src/app/sitemap.ts) serves `/sitemap.xml` via Next.js metadata routes. It requires `NEXT_PUBLIC_SITE_URL`, includes localized static pages plus public property detail pages for every locale, and uses hreflang alternates with `el-GR` for Greek while keeping `/gr/...` route segments.
+
+[src/app/robots.ts](src/app/robots.ts) serves `/robots.txt`, allows public crawling, disallows `/admin` and `/api/`, and points crawlers to `${NEXT_PUBLIC_SITE_URL}/sitemap.xml`. Admin pages also export `noindex,nofollow` robots metadata from [src/app/admin/layout.tsx](src/app/admin/layout.tsx).
 
 **Translation pattern:**
 

@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 
 import type { ListingVideo } from '@/app/lib/definitions/listing.types';
 import { getMediaUrl } from '@/app/lib/helpers/media-helpers';
+import { getSiteUrl } from '@/app/lib/helpers/site-url';
 import {
   getSitemapListings,
   type SitemapListing,
@@ -38,33 +39,6 @@ const localeCodes = Object.keys(locales) as Locale[];
 function normalizeRoutePath(path: string): string {
   if (!path || path === '/') return '';
   return path.startsWith('/') ? path : `/${path}`;
-}
-
-export function getRequiredSiteUrl(
-  rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL
-): string {
-  const trimmed = rawSiteUrl?.trim();
-
-  if (!trimmed) {
-    throw new Error('NEXT_PUBLIC_SITE_URL is not configured');
-  }
-
-  let parsed: URL;
-  try {
-    parsed = new URL(trimmed);
-  } catch {
-    throw new Error('NEXT_PUBLIC_SITE_URL must be an absolute http(s) URL');
-  }
-
-  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-    throw new Error('NEXT_PUBLIC_SITE_URL must be an absolute http(s) URL');
-  }
-
-  if (parsed.search || parsed.hash) {
-    throw new Error('NEXT_PUBLIC_SITE_URL must not include query or hash');
-  }
-
-  return trimmed.replace(/\/+$/, '');
 }
 
 export function buildLocalizedUrl(
@@ -206,7 +180,7 @@ export function buildPropertySitemapEntries(
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const siteUrl = getRequiredSiteUrl();
+  const siteUrl = getSiteUrl();
   const listings = await getSitemapListings();
 
   return [

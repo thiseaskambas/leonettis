@@ -1,7 +1,20 @@
 import '../globals.css';
 
+import type { Metadata } from 'next';
+
 import AdminHeader from './components/AdminHeader';
 import { AdminLangProvider } from './lib/admin-lang-context';
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
+  },
+};
 
 export default function AdminLayout({
   children,

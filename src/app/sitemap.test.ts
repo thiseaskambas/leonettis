@@ -12,7 +12,6 @@ import sitemap, {
   buildLanguageAlternates,
   buildPropertySitemapEntries,
   buildStaticSitemapEntries,
-  getRequiredSiteUrl,
   resolveAbsoluteHttpUrl,
 } from './sitemap';
 
@@ -53,21 +52,6 @@ describe('sitemap helpers', () => {
     } else {
       process.env.NEXT_PUBLIC_MEDIA_BASE_URL = originalMediaBaseUrl;
     }
-  });
-
-  it('requires an absolute http(s) site URL and strips trailing slashes', () => {
-    expect(getRequiredSiteUrl(' https://www.leonettis.com/// ')).toBe(
-      'https://www.leonettis.com'
-    );
-    expect(() => getRequiredSiteUrl()).toThrow(
-      'NEXT_PUBLIC_SITE_URL is not configured'
-    );
-    expect(() => getRequiredSiteUrl('ftp://www.leonettis.com')).toThrow(
-      'NEXT_PUBLIC_SITE_URL must be an absolute http(s) URL'
-    );
-    expect(() =>
-      getRequiredSiteUrl('https://www.leonettis.com?preview=1')
-    ).toThrow('NEXT_PUBLIC_SITE_URL must not include query or hash');
   });
 
   it('builds hreflang alternates with el-GR and x-default', () => {

@@ -77,6 +77,9 @@ OPENAI_API_KEY=...
 ### Routes
 
 - Public localized pages continue to use `/{locale}/...`.
+- SEO metadata routes:
+  - `GET /robots.txt` disallows `/admin` and `/api/`, and points to `/sitemap.xml`.
+  - `GET /sitemap.xml` uses `NEXT_PUBLIC_SITE_URL` for absolute public URLs.
 - Admin UI is not locale-prefixed:
   - `/admin/login`
   - `/admin`
