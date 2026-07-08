@@ -33,6 +33,17 @@ export interface PaginatedListings {
   totalPages: number;
 }
 
+export type SitemapListing = Pick<
+  Listing,
+  | 'slug'
+  | 'title'
+  | 'description'
+  | 'images'
+  | 'videos'
+  | 'publishedAt'
+  | 'updatedAt'
+>;
+
 const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = 20;
 
@@ -133,4 +144,27 @@ export async function getAllPublishedSlugs(): Promise<string[]> {
     .find(filter, { projection: { slug: 1, _id: 0 } })
     .toArray();
   return docs.map((d) => d.slug as string);
+}
+
+export async function getSitemapListings(): Promise<SitemapListing[]> {
+  const collection = await getListingsCollection();
+  const filter: Record<string, unknown> = {
+    status: buildPublicListingStatusQuery(),
+  };
+  const docs = await collection
+    .find(filter, {
+      projection: {
+        slug: 1,
+        title: 1,
+        description: 1,
+        images: 1,
+        videos: 1,
+        publishedAt: 1,
+        updatedAt: 1,
+        _id: 0,
+      },
+    })
+    .sort({ slug: 1 })
+    .toArray();
+  return docs as SitemapListing[];
 }

@@ -89,6 +89,12 @@ Copy `.example.env` to `.env.local` and fill in all values before running locall
 | `MONGODB_URI`     | Yes      | MongoDB Atlas connection string      |
 | `MONGODB_DB_NAME` | No       | Database name (default: `leonettis`) |
 
+### Public site URL
+
+| Variable               | Required | Description                                                 |
+| ---------------------- | -------- | ----------------------------------------------------------- |
+| `NEXT_PUBLIC_SITE_URL` | Yes      | Canonical public site origin used for absolute sitemap URLs |
+
 ### Admin authentication
 
 | Variable           | Required                   | Description                                      |
@@ -141,6 +147,10 @@ Locales are defined in [src/i18n/routing.ts](src/i18n/routing.ts):
 `localePrefix: 'always'` means every public URL includes the locale segment, e.g. `/en/buy`, `/fr/rent`.
 
 Always use `Link`, `useRouter`, and `redirect` from [src/i18n/navigation.ts](src/i18n/navigation.ts) — these are locale-aware wrappers. Never import from `next/navigation` or `next/link` directly in public pages.
+
+### Sitemap
+
+[src/app/sitemap.ts](src/app/sitemap.ts) serves `/sitemap.xml` via Next.js metadata routes. It requires `NEXT_PUBLIC_SITE_URL`, includes localized static pages plus public property detail pages for every locale, and uses hreflang alternates with `el-GR` for Greek while keeping `/gr/...` route segments.
 
 **Translation pattern:**
 

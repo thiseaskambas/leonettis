@@ -28,6 +28,7 @@ vi.mock('../db/mongodb', () => ({
 import {
   getAdminListings,
   getAllPublishedSlugs,
+  getSitemapListings,
   searchListings,
 } from './listings-service';
 
@@ -196,5 +197,49 @@ describe('getAllPublishedSlugs', () => {
       { projection: { slug: 1, _id: 0 } }
     );
     expect(slugs).toEqual(['paros-villa', 'naoussa-flat']);
+  });
+});
+
+describe('getSitemapListings', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('queries public listings with sitemap projection', async () => {
+    toArray.mockResolvedValueOnce([
+      {
+        slug: 'paros-villa',
+        title: { en: 'Paros Villa' },
+        updatedAt: '2026-01-01T00:00:00.000Z',
+        publishedAt: '2025-01-01T00:00:00.000Z',
+      },
+    ]);
+
+    const listings = await getSitemapListings();
+
+    expect(find).toHaveBeenCalledWith(
+      { status: { $exists: true, $nin: [null, 'paused'] } },
+      {
+        projection: {
+          slug: 1,
+          title: 1,
+          description: 1,
+          images: 1,
+          videos: 1,
+          publishedAt: 1,
+          updatedAt: 1,
+          _id: 0,
+        },
+      }
+    );
+    expect(cursor.sort).toHaveBeenCalledWith({ slug: 1 });
+    expect(listings).toEqual([
+      {
+        slug: 'paros-villa',
+        title: { en: 'Paros Villa' },
+        updatedAt: '2026-01-01T00:00:00.000Z',
+        publishedAt: '2025-01-01T00:00:00.000Z',
+      },
+    ]);
   });
 });
