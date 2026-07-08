@@ -3,6 +3,9 @@
     "title": {
       "default": "Leonetti's Real Estate",
       "template": "%s | Leonetti's"
+    },
+    "description": {
+      "default": "Ανακαλύψτε ξεχωριστές κατοικίες και επενδυτικά ακίνητα στην Πάρο και την Ελλάδα με τη Leonetti's Real Estate."
     }
   },
   "nav": {

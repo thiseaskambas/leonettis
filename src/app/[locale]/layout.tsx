@@ -11,6 +11,7 @@ import {
 } from 'next-intl/server';
 import { ThemeProvider } from 'next-themes';
 
+import { buildSharedMetadata } from '@/app/lib/helpers/metadata-helpers';
 import { isValidLocale } from '@/i18n/routing';
 
 import GlassSVG from '../ui/GlassSVG';
@@ -35,12 +36,19 @@ export async function generateMetadata({
 
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'metadata' });
+  const title = t('title.default');
+  const description = t('description.default');
 
   return {
     title: {
-      default: t('title.default'),
+      default: title,
       template: t('title.template'),
     },
+    ...buildSharedMetadata({
+      locale,
+      title,
+      description,
+    }),
   };
 }
 

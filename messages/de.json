@@ -3,6 +3,9 @@
     "title": {
       "default": "Leonetti's Immobilien",
       "template": "%s | Leonetti's"
+    },
+    "description": {
+      "default": "Entdecken Sie besondere Wohn- und Anlageimmobilien auf Paros und in Griechenland mit Leonetti's Immobilien."
     }
   },
   "nav": {

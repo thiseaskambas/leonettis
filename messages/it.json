@@ -3,6 +3,9 @@
     "title": {
       "default": "Leonetti's Immobiliare",
       "template": "%s | Leonetti's"
+    },
+    "description": {
+      "default": "Scopri case e immobili d'investimento esclusivi a Paros e in Grecia con Leonetti's Immobiliare."
     }
   },
   "nav": {

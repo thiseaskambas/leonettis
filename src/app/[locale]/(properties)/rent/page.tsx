@@ -4,6 +4,7 @@ import { getLocale, getTranslations, setRequestLocale } from 'next-intl/server';
 import { LocalizedListing } from '@/app/lib/definitions/listing.types';
 import { getLocalizedListing } from '@/app/lib/helpers/listing-helpers';
 import { parseSearchParams } from '@/app/lib/helpers/listing-search-params';
+import { buildSharedMetadata } from '@/app/lib/helpers/metadata-helpers';
 import { searchListings } from '@/app/lib/services/listings-service';
 import ListingCard from '@/app/ui/ListingCard';
 import ListingsFilters from '@/app/ui/ListingsFilters';
@@ -27,8 +28,19 @@ export async function generateMetadata({
   }
 
   setRequestLocale(locale);
-  const t = await getTranslations('rent');
-  return { title: t('title') };
+  const t = await getTranslations({ locale, namespace: 'rent' });
+  const title = t('title');
+  const description = t('description');
+
+  return {
+    title,
+    ...buildSharedMetadata({
+      locale,
+      path: '/rent',
+      title,
+      description,
+    }),
+  };
 }
 
 export default async function Rent({ searchParams }: RentPageProps) {

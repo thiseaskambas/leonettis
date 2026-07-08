@@ -3,6 +3,9 @@
     "title": {
       "default": "Immobilier Leonetti's",
       "template": "%s | Leonetti's"
+    },
+    "description": {
+      "default": "Découvrez des maisons et biens d'investissement d'exception à Paros et en Grèce avec Leonetti's Immobilier."
     }
   },
   "nav": {

@@ -6,6 +6,12 @@ import {
   getListingBySlug,
   getLocalizedListing,
 } from '@/app/lib/helpers/listing-helpers';
+import {
+  buildPropertyDescription,
+  buildSharedMetadata,
+  getPropertyPreviewImage,
+} from '@/app/lib/helpers/metadata-helpers';
+import { getSiteUrl } from '@/app/lib/helpers/site-url';
 import { getAllPublishedSlugs } from '@/app/lib/services/listings-service';
 import { isValidLocale, Locale, locales } from '@/i18n/routing';
 
@@ -44,7 +50,20 @@ export async function generateMetadata({
     return {};
   }
   const listing = getLocalizedListing(raw, locale as Locale);
-  return { title: listing.title };
+  const siteUrl = getSiteUrl();
+  const description = buildPropertyDescription(listing);
+
+  return {
+    title: listing.title,
+    ...buildSharedMetadata({
+      locale,
+      path: `/property/${listing.slug}`,
+      title: listing.title,
+      description,
+      image: getPropertyPreviewImage(listing, siteUrl),
+      siteUrl,
+    }),
+  };
 }
 
 export default async function PropertyPage({ params }: PropertyPageProps) {

@@ -3,6 +3,9 @@
     "title": {
       "default": "Leonetti's Real Estate",
       "template": "%s | Leonetti's"
+    },
+    "description": {
+      "default": "Discover distinctive homes and investment properties across Paros and Greece with Leonetti's Real Estate."
     }
   },
   "nav": {
