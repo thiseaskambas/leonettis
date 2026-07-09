@@ -1,6 +1,37 @@
-import { getTranslations } from 'next-intl/server';
+import type { Metadata } from 'next';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
+
+import { buildSharedMetadata } from '@/app/lib/helpers/metadata-helpers';
+import { isValidLocale } from '@/i18n/routing';
 
 import ContactForm from './ContactForm';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+
+  if (!isValidLocale(locale)) {
+    return {};
+  }
+
+  setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: 'contact' });
+  const title = t('title');
+  const description = t('subtitle');
+
+  return {
+    title,
+    ...buildSharedMetadata({
+      locale,
+      path: '/contact',
+      title,
+      description,
+    }),
+  };
+}
 
 export default async function ContactPage() {
   const t = await getTranslations('contact');

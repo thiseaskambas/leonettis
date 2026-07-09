@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
 import type { LocalizedListing } from '@/app/lib/definitions/listing.types';
+import { getLocaleLanguageTag, locales } from '@/i18n/routing';
 
 import {
   buildLanguageAlternates,
@@ -51,6 +52,11 @@ function createListing(
 }
 
 describe('metadata helpers', () => {
+  it('keeps Greek on the gr URL prefix while emitting el-GR', () => {
+    expect(locales.gr.value).toBe('gr');
+    expect(getLocaleLanguageTag('gr')).toBe('el-GR');
+  });
+
   it('builds localized canonical URLs', () => {
     expect(buildLocalizedUrl(siteUrl, 'en', '')).toBe(
       'https://www.leonettis.com/en'

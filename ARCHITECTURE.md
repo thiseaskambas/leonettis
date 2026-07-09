@@ -154,7 +154,7 @@ Always use `Link`, `useRouter`, and `redirect` from [src/i18n/navigation.ts](src
 
 [src/app/robots.ts](src/app/robots.ts) serves `/robots.txt`, allows public crawling, disallows `/admin` and `/api/`, and points crawlers to `${NEXT_PUBLIC_SITE_URL}/sitemap.xml`. Admin pages also export `noindex,nofollow` robots metadata from [src/app/admin/layout.tsx](src/app/admin/layout.tsx).
 
-Localized home, buy, rent, and property detail pages use the same public site URL for canonical URLs, Open Graph URLs, Twitter cards, and localized alternates.
+Localized home, about, buy, rent, contact, list-a-property, and property detail pages use the same public site URL for canonical URLs, Open Graph URLs, Twitter cards, and localized alternates.
 
 **Translation pattern:**
 

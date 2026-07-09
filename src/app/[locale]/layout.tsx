@@ -12,7 +12,7 @@ import {
 import { ThemeProvider } from 'next-themes';
 
 import { buildSharedMetadata } from '@/app/lib/helpers/metadata-helpers';
-import { isValidLocale } from '@/i18n/routing';
+import { getLocaleLanguageTag, isValidLocale } from '@/i18n/routing';
 
 import GlassSVG from '../ui/GlassSVG';
 import { NavBar } from '../ui/NavBar';
@@ -68,7 +68,10 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={inter.variable} suppressHydrationWarning>
+    <html
+      lang={getLocaleLanguageTag(locale)}
+      className={inter.variable}
+      suppressHydrationWarning>
       <body className="antialiased">
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider

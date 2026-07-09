@@ -4,7 +4,12 @@ import type { LocalizedListing } from '@/app/lib/definitions/listing.types';
 import { formatPublicAddress } from '@/app/lib/helpers/listing-address-helpers';
 import { getMediaUrl } from '@/app/lib/helpers/media-helpers';
 import { getSiteUrl } from '@/app/lib/helpers/site-url';
-import { type Locale, locales } from '@/i18n/routing';
+import {
+  getLocaleLanguageTag,
+  type Locale,
+  localeCodes,
+  type LocaleLanguageTag,
+} from '@/i18n/routing';
 
 export const SITE_NAME = "Leonetti's";
 export const DEFAULT_LOCALE = 'en' satisfies Locale;
@@ -15,12 +20,12 @@ const DEFAULT_PREVIEW_IMAGE_WIDTH = 2480;
 const DEFAULT_PREVIEW_IMAGE_HEIGHT = 1076;
 
 export const HREFLANG_BY_LOCALE = {
-  en: 'en',
-  fr: 'fr',
-  gr: 'el-GR',
-  de: 'de',
-  it: 'it',
-} as const satisfies Record<Locale, string>;
+  en: getLocaleLanguageTag('en'),
+  fr: getLocaleLanguageTag('fr'),
+  gr: getLocaleLanguageTag('gr'),
+  de: getLocaleLanguageTag('de'),
+  it: getLocaleLanguageTag('it'),
+} as const satisfies Record<Locale, LocaleLanguageTag>;
 
 export const OPEN_GRAPH_LOCALE_BY_LOCALE = {
   en: 'en_US',
@@ -29,8 +34,6 @@ export const OPEN_GRAPH_LOCALE_BY_LOCALE = {
   de: 'de_DE',
   it: 'it_IT',
 } as const satisfies Record<Locale, string>;
-
-const localeCodes = Object.keys(locales) as Locale[];
 
 export interface PreviewImage {
   url: string;

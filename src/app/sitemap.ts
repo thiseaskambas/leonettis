@@ -2,18 +2,22 @@ import type { MetadataRoute } from 'next';
 
 import type { ListingVideo } from '@/app/lib/definitions/listing.types';
 import { getMediaUrl } from '@/app/lib/helpers/media-helpers';
+import {
+  buildLanguageAlternates,
+  buildLocalizedUrl,
+  DEFAULT_LOCALE,
+} from '@/app/lib/helpers/metadata-helpers';
 import { getSiteUrl } from '@/app/lib/helpers/site-url';
 import {
   getSitemapListings,
   type SitemapListing,
 } from '@/app/lib/services/listings-service';
-import { type Locale, locales } from '@/i18n/routing';
+import { type Locale, localeCodes } from '@/i18n/routing';
 
 type SitemapEntry = MetadataRoute.Sitemap[number];
-type SitemapLanguages = NonNullable<
-  NonNullable<SitemapEntry['alternates']>['languages']
->;
 type SitemapVideo = NonNullable<SitemapEntry['videos']>[number];
+
+export { buildLanguageAlternates, buildLocalizedUrl };
 
 export const STATIC_SITEMAP_PATHS = [
   '',
@@ -23,44 +27,6 @@ export const STATIC_SITEMAP_PATHS = [
   '/contact',
   '/list-a-property',
 ] as const;
-
-const DEFAULT_LOCALE = 'en' satisfies Locale;
-
-const HREFLANG_BY_LOCALE = {
-  en: 'en',
-  fr: 'fr',
-  gr: 'el-GR',
-  de: 'de',
-  it: 'it',
-} as const satisfies Record<Locale, string>;
-
-const localeCodes = Object.keys(locales) as Locale[];
-
-function normalizeRoutePath(path: string): string {
-  if (!path || path === '/') return '';
-  return path.startsWith('/') ? path : `/${path}`;
-}
-
-export function buildLocalizedUrl(
-  siteUrl: string,
-  locale: Locale,
-  path: string
-): string {
-  return `${siteUrl}/${locale}${normalizeRoutePath(path)}`;
-}
-
-export function buildLanguageAlternates(
-  siteUrl: string,
-  path: string
-): SitemapLanguages {
-  const languages = localeCodes.reduce<SitemapLanguages>((acc, locale) => {
-    acc[HREFLANG_BY_LOCALE[locale]] = buildLocalizedUrl(siteUrl, locale, path);
-    return acc;
-  }, {});
-
-  languages['x-default'] = buildLocalizedUrl(siteUrl, DEFAULT_LOCALE, path);
-  return languages;
-}
 
 export function resolveAbsoluteHttpUrl(
   value: string | undefined,
